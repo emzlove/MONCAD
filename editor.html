@@ -1,1 +1,259 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MONCAD | 2D Floor Planner</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #101820;
+    color: white;
+}
+
+header {
+    background: #182630;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #D6B56D;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.workspace {
+    display: flex;
+    min-height: calc(100vh - 65px);
+}
+
+.toolbar {
+    width: 190px;
+    background: #182630;
+    padding: 20px;
+}
+
+.toolbar h3 {
+    color: #D6B56D;
+}
+
+.tool {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    background: #263946;
+    color: white;
+    border: 1px solid #405462;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.tool.active {
+    background: #D6B56D;
+    color: #101820;
+}
+
+.canvas-area {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
+}
+
+canvas {
+    background: white;
+    width: 100%;
+    max-width: 1100px;
+    height: 650px;
+    display: block;
+    border-radius: 5px;
+    cursor: crosshair;
+}
+
+@media(max-width: 600px) {
+    .workspace {
+        flex-direction: column;
+    }
+
+    .toolbar {
+        width: 100%;
+    }
+
+    canvas {
+        height: 450px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">MONCAD</div>
+    <div>2D Floor Planner</div>
+</header>
+
+<div class="workspace">
+
+    <aside class="toolbar">
+        <h3>Drawing Tools</h3>
+
+        <button class="tool active" data-tool="wall">Wall</button>
+        <button class="tool" data-tool="room">Room</button>
+        <button class="tool" data-tool="door">Door</button>
+        <button class="tool" data-tool="window">Window</button>
+        <button class="tool" data-tool="erase">Erase</button>
+        <button class="tool" id="clear">Clear Plan</button>
+    </aside>
+
+    <main class="canvas-area">
+        <h2>Design Your Floor Plan</h2>
+        <p>Select a tool and draw on the workspace.</p>
+        <canvas id="floorCanvas"></canvas>
+    </main>
+
+</div>
+
+<script>
+const canvas = document.getElementById("floorCanvas");
+const ctx = canvas.getContext("2d");
+
+let tool = "wall";
+let drawing = false;
+let start = null;
+let elements = [];
+
+function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const image = document.createElement("canvas");
+    image.width = canvas.width;
+    image.height = canvas.height;
+    image.getContext("2d").drawImage(canvas, 0, 0);
+
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    if (image.width && image.height) {
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+    redraw();
+}
+
+function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "#e5e5e5";
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x < canvas.width; x += 25) {
+        for (let y = 0; y < canvas.height; y += 25) {
+            ctx.strokeRect(x, y, 1, 1);
+        }
+    }
+
+    elements.forEach(drawElement);
+}
+
+function drawElement(item) {
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#182630";
+
+    if (item.type === "wall") {
+        ctx.beginPath();
+        ctx.moveTo(item.x1, item.y1);
+        ctx.lineTo(item.x2, item.y2);
+        ctx.stroke();
+    }
+
+    if (item.type === "room") {
+        ctx.strokeRect(
+            item.x1, item.y1,
+            item.x2 - item.x1,
+            item.y2 - item.y1
+        );
+    }
+
+    if (item.type === "door") {
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(item.x1, item.y1, 25, 0, Math.PI / 2);
+        ctx.stroke();
+    }
+
+    if (item.type === "window") {
+        ctx.lineWidth = 7;
+        ctx.strokeStyle = "#268ac0";
+        ctx.beginPath();
+        ctx.moveTo(item.x1, item.y1);
+        ctx.lineTo(item.x2, item.y2);
+        ctx.stroke();
+    }
+}
+
+function position(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
+}
+
+document.querySelectorAll(".tool[data-tool]").forEach(button => {
+    button.addEventListener("click", () => {
+        tool = button.dataset.tool;
+
+        document.querySelectorAll(".tool[data-tool]")
+            .forEach(b => b.classList.remove("active"));
+
+        button.classList.add("active");
+    });
+});
+
+canvas.addEventListener("pointerdown", event => {
+    drawing = true;
+    start = position(event);
+    canvas.setPointerCapture(event.pointerId);
+});
+
+canvas.addEventListener("pointerup", event => {
+    if (!drawing) return;
+
+    const end = position(event);
+
+    if (tool === "erase") {
+        elements.pop();
+    } else {
+        elements.push({
+            type: tool,
+            x1: start.x,
+            y1: start.y,
+            x2: end.x,
+            y2: end.y
+        });
+    }
+
+    drawing = false;
+    redraw();
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+    elements = [];
+    redraw();
+});
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+</script>
+
+</body>
+</html>
+
