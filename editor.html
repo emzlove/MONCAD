@@ -4,936 +4,1072 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MONCAD | 2D Floor Planner</title>
-
+<title>MONCAD | Architectural Design Studio</title>
 <style>
-* {
-    box-sizing: border-box;
+:root {
+  --navy:#101820;
+  --panel:#182630;
+  --panel2:#263946;
+  --gold:#d6b56d;
+  --line:#405462;
+  --text:#f5f7f8;
 }
-
+* { box-sizing:border-box; }
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #101820;
-    color: white;
+  margin:0;
+  background:var(--navy);
+  color:var(--text);
+  font-family:Arial,sans-serif;
 }
-
 header {
-    background: #182630;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
+  min-height:65px;
+  padding:13px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
 }
-
 .logo {
-    color: #D6B56D;
-    font-size: 26px;
-    font-weight: bold;
+  font-size:25px;
+  font-weight:bold;
+  letter-spacing:2px;
+  color:var(--gold);
 }
-
-.workspace {
-    display: flex;
-    min-height: calc(100vh - 60px);
+.header-note { color:#b9c7cf; font-size:13px; }
+.layout { display:flex; min-height:calc(100vh - 65px); }
+.sidebar {
+  width:250px;
+  flex-shrink:0;
+  padding:16px;
+  background:var(--panel);
+  border-right:1px solid var(--line);
+  overflow-y:auto;
 }
-
-.toolbar {
-    width: 205px;
-    flex-shrink: 0;
-    background: #182630;
-    padding: 15px;
+.sidebar h3 {
+  color:var(--gold);
+  font-size:14px;
+  margin:5px 0 12px;
 }
-
-.toolbar h3 {
-    color: #D6B56D;
-    margin-top: 10px;
+.tool-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
 }
-
-.tool {
-    width: 100%;
-    min-height: 44px;
-    padding: 10px;
-    margin: 4px 0;
-    background: #263946;
-    color: white;
-    border: 1px solid #405462;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    touch-action: manipulation;
+button {
+  font:inherit;
+  cursor:pointer;
 }
-
-.tool.active {
-    background: #D6B56D;
-    color: #101820;
-    font-weight: bold;
+.tool,.action,.mode-button {
+  color:white;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:10px 7px;
+  min-height:40px;
 }
-
-.tool:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+.tool.active,.mode-button.active {
+  color:var(--navy);
+  background:var(--gold);
+  border-color:var(--gold);
+  font-weight:bold;
 }
-
-.toolbar-divider {
-    border: 0;
-    border-top: 1px solid #405462;
-    margin: 16px 0;
+.action {
+  width:100%;
+  margin-top:7px;
 }
-
-.canvas-area {
-    flex: 1;
-    min-width: 0;
-    padding: 15px;
+button:hover { border-color:var(--gold); }
+.section {
+  border-top:1px solid var(--line);
+  margin-top:16px;
+  padding-top:13px;
 }
-
-.canvas-area h2 {
-    margin: 5px 0;
+.field-label {
+  display:block;
+  font-size:12px;
+  color:#cbd5db;
+  margin:10px 0 5px;
 }
-
-.canvas-area p {
-    color: #bdc7ce;
-    font-size: 14px;
+input {
+  width:100%;
+  padding:10px;
+  color:white;
+  background:#0e1820;
+  border:1px solid var(--line);
+  border-radius:5px;
+  font-size:15px;
 }
-
-.canvas-wrapper {
-    width: 100%;
-    height: min(70vh, 700px);
-    min-height: 350px;
-    overflow: hidden;
-    background: white;
-    border: 2px solid #405462;
-    border-radius: 6px;
-    position: relative;
+input:focus { outline:1px solid var(--gold); }
+.help {
+  color:#aebdc6;
+  font-size:11px;
+  line-height:1.5;
 }
-
+.main {
+  flex:1;
+  min-width:0;
+  padding:17px;
+}
+.topline {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:13px;
+}
+.main h2 { margin:0 0 5px; font-size:21px; }
+.subtitle { color:#aebdc6; font-size:12px; margin:0; }
+.mode-switch { display:flex; gap:7px; }
+.mode-button { min-width:105px; }
+.canvas-shell {
+  height:min(75vh,800px);
+  min-height:420px;
+  border:2px solid var(--line);
+  border-radius:7px;
+  background:white;
+  overflow:hidden;
+}
 canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: white;
-    cursor: crosshair;
-    touch-action: none;
+  display:block;
+  width:100%;
+  height:100%;
+  touch-action:none;
 }
-
-.navigation {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 12px 0;
-}
-
-.navigation button {
-    padding: 10px 14px;
-    background: #263946;
-    color: white;
-    border: 1px solid #405462;
-    border-radius: 6px;
-    min-height: 42px;
-    cursor: pointer;
-}
-
-.navigation button:disabled {
-    opacity: 0.4;
-}
-
 .status {
-    color: #D6B56D;
-    font-size: 13px;
-    margin-top: 10px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:8px;
+  color:#c4d0d7;
+  font-size:12px;
+  padding:10px 2px;
 }
-
-@media (max-width: 700px) {
-    .workspace {
-        flex-direction: column;
-    }
-
-    .toolbar {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 5px;
-        padding: 10px;
-    }
-
-    .toolbar h3 {
-        grid-column: 1 / -1;
-        margin: 5px 0;
-    }
-
-    .toolbar-divider {
-        display: none;
-    }
-
-    .tool {
-        margin: 0;
-        padding: 9px 4px;
-        font-size: 13px;
-    }
-
-    .canvas-area {
-        padding: 12px;
-    }
-
-    .canvas-wrapper {
-        height: 60vh;
-        min-height: 350px;
-    }
+.status strong { color:var(--gold); }
+@media(max-width:760px) {
+  .layout { flex-direction:column; }
+  .sidebar {
+    width:100%;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+  }
+  .main { padding:12px; }
+  .canvas-shell { height:62vh; min-height:380px; }
+  header { padding:12px 14px; }
 }
 </style>
 </head>
-
 <body>
 
 <header>
-    <div class="logo">MONCAD</div>
-    <div>2D Floor Planner</div>
+  <div class="logo">MONCAD</div>
+  <div class="header-note">Architectural Design Studio</div>
 </header>
 
-<div class="workspace">
+<div class="layout">
+<aside class="sidebar">
 
-    <aside class="toolbar">
+  <h3>Drawing Tools</h3>
+  <div class="tool-grid">
+    <button class="tool active" data-tool="wall">Wall</button>
+    <button class="tool" data-tool="room">Room</button>
+    <button class="tool" data-tool="door">Door</button>
+    <button class="tool" data-tool="window">Window</button>
+    <button class="tool" data-tool="select">Select</button>
+    <button class="tool" data-tool="pan">Pan</button>
+    <button class="tool" data-tool="erase">Erase</button>
+  </div>
 
-        <h3>Navigation</h3>
+  <div class="section">
+    <h3>Measurements</h3>
 
-        <button class="tool" data-tool="select">Select</button>
-        <button class="tool" data-tool="pan">Pan / Move</button>
+    <label class="field-label" for="wallLength">Wall length (metres)</label>
+    <input id="wallLength" type="number" min="0" step="0.01" placeholder="Example: 4.50">
 
-        <hr class="toolbar-divider">
+    <label class="field-label" for="roomWidth">Room width (metres)</label>
+    <input id="roomWidth" type="number" min="0" step="0.01" placeholder="Example: 4.00">
 
-        <h3>Drawing Tools</h3>
+    <label class="field-label" for="roomDepth">Room depth (metres)</label>
+    <input id="roomDepth" type="number" min="0" step="0.01" placeholder="Example: 3.00">
 
-        <button class="tool active" data-tool="wall">Wall</button>
-        <button class="tool" data-tool="room">Room</button>
-        <button class="tool" data-tool="door">Door</button>
-        <button class="tool" data-tool="window">Window</button>
-        <button class="tool" data-tool="erase">Erase</button>
+    <label class="field-label" for="openingWidth">Door / window width (metres)</label>
+    <input id="openingWidth" type="number" min="0" step="0.01" placeholder="Example: 0.90">
 
-        <hr class="toolbar-divider">
+    <p class="help">
+      Enter a dimension before drawing to use that exact measurement.
+      Leave it blank for freehand drawing, snapped to 10 cm.
+    </p>
+  </div>
 
-        <h3>Plan</h3>
+  <div class="section">
+    <h3>3D Settings</h3>
+    <label class="field-label" for="wallHeight">Wall height (metres)</label>
+    <input id="wallHeight" type="number" min="0.1" step="0.1" value="2.80">
 
-        <button class="tool" id="undo">Undo</button>
-        <button class="tool" id="redo">Redo</button>
-        <button class="tool" id="clear">Clear Plan</button>
+    <label class="field-label" for="wallThickness">Wall thickness (cm)</label>
+    <input id="wallThickness" type="number" min="1" step="1" value="15">
 
-    </aside>
+    <p class="help">These settings control the 3D preview. They do not change the 2D floor-plan dimensions.</p>
+  </div>
 
-    <main class="canvas-area">
+  <div class="section">
+    <h3>Edit Plan</h3>
+    <button class="action" id="undoBtn">↶ Undo</button>
+    <button class="action" id="redoBtn">↷ Redo</button>
+    <button class="action" id="deleteBtn">Delete Selected</button>
+    <button class="action" id="clearBtn">Clear Plan</button>
+  </div>
 
-        <h2>Design Your Floor Plan</h2>
+  <div class="section">
+    <h3>View Controls</h3>
+    <button class="action" id="zoomIn">＋ Zoom In</button>
+    <button class="action" id="zoomOut">－ Zoom Out</button>
+    <button class="action" id="fitBtn">Fit Drawing</button>
+    <button class="action" id="resetBtn">Reset View</button>
+  </div>
 
-        <p id="instructions">
-            Select a tool and draw on the workspace.
-        </p>
+  <div class="section">
+    <h3>Project</h3>
+    <button class="action" id="saveBtn">Save Plan</button>
+    <button class="action" id="loadBtn">Load Saved Plan</button>
+    <button class="action" id="exportBtn">Export PNG</button>
+    <p class="help">Local browser saving is for this device and browser only. It is not cloud storage.</p>
+  </div>
+</aside>
 
-        <div class="navigation">
-            <button id="zoomOut">− Zoom</button>
-            <button id="zoomIn">+ Zoom</button>
-            <button id="fitScreen">Fit to Screen</button>
-            <button id="resetView">Reset View</button>
-        </div>
+<main class="main">
+  <div class="topline">
+    <div>
+      <h2 id="viewTitle">2D Floor Plan</h2>
+      <p class="subtitle" id="viewDescription">Create an accurately measured floor plan.</p>
+    </div>
+    <div class="mode-switch">
+      <button class="mode-button active" id="mode2d">2D PLAN</button>
+      <button class="mode-button" id="mode3d">3D VIEW</button>
+    </div>
+  </div>
 
-        <div class="canvas-wrapper">
-            <canvas id="floorCanvas"></canvas>
-        </div>
+  <div class="canvas-shell">
+    <canvas id="designCanvas"></canvas>
+  </div>
 
-        <div class="status" id="status">
-            Active tool: Wall
-        </div>
-
-    </main>
-
+  <div class="status">
+    <span id="toolStatus">Tool: <strong>Wall</strong></span>
+    <span id="measureStatus">Ready to draw</span>
+    <span id="zoomStatus">Zoom: 100%</span>
+  </div>
+</main>
 </div>
 
 <script>
-const canvas = document.getElementById("floorCanvas");
+"use strict";
+
+/*
+  MONCAD SHARED DESIGN MODEL
+  All plan coordinates are stored in centimetres.
+  100 cm = 1 metre.
+  2D and 3D views use the same project data.
+*/
+
+const canvas = document.getElementById("designCanvas");
 const ctx = canvas.getContext("2d");
 
+const STORAGE_KEY = "moncad_architectural_project_v2";
+
+const fields = {
+  wall: document.getElementById("wallLength"),
+  width: document.getElementById("roomWidth"),
+  depth: document.getElementById("roomDepth"),
+  opening: document.getElementById("openingWidth"),
+  height: document.getElementById("wallHeight"),
+  thickness: document.getElementById("wallThickness")
+};
+
+let project = {
+  version: 2,
+  units: "centimetres",
+  elements: [],
+  nextId: 1
+};
+
+let mode = "2d";
 let tool = "wall";
-let elements = [];
+let selectedId = null;
+let drawing = false;
+let panning = false;
+let start = null;
+let current = null;
+let lastPointer = null;
 let undoStack = [];
 let redoStack = [];
 
-let scale = 1;
-let offsetX = 0;
-let offsetY = 0;
-
-let drawing = false;
-let start = null;
-let current = null;
-
-let selectedIndex = -1;
-let movingElement = null;
-
-let pointers = new Map();
-let gestureActive = false;
-let lastGesture = null;
-
-const instructions = document.getElementById("instructions");
-const status = document.getElementById("status");
-
-const toolMessages = {
-    select: "Tap an object and drag it to move it.",
-    pan: "Drag to move the canvas. Use two fingers to pan and zoom.",
-    wall: "Drag to draw a wall.",
-    room: "Drag to create a rectangular room.",
-    door: "Drag to place a door symbol.",
-    window: "Drag to draw a window.",
-    erase: "Tap an object to erase it."
+let camera = {
+  scale: 1.2,
+  x: 55,
+  y: 55
 };
 
-function saveHistory() {
-    undoStack.push(JSON.stringify(elements));
+const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
+const snap = n => Math.round(n/10)*10;
+const metres = cm => (cm/100).toFixed(2) + " m";
 
-    if (undoStack.length > 50) {
-        undoStack.shift();
-    }
-
-    redoStack = [];
-    updateHistoryButtons();
+function numeric(field) {
+  const raw = field.value.trim();
+  const n = Number(raw);
+  return raw !== "" && Number.isFinite(n) && n > 0 ? n : null;
 }
 
-function updateHistoryButtons() {
-    document.getElementById("undo").disabled = undoStack.length === 0;
-    document.getElementById("redo").disabled = redoStack.length === 0;
+function historySave() {
+  undoStack.push(JSON.stringify(project));
+  if (undoStack.length > 70) undoStack.shift();
+  redoStack = [];
 }
 
-function undo() {
-    if (!undoStack.length) return;
-
-    redoStack.push(JSON.stringify(elements));
-    elements = JSON.parse(undoStack.pop());
-
-    selectedIndex = -1;
-    redraw();
-    updateHistoryButtons();
+function restoreProject(json) {
+  project = JSON.parse(json);
+  selectedId = null;
+  redraw();
 }
 
-function redo() {
-    if (!redoStack.length) return;
+function nextId() {
+  return project.nextId++;
+}
 
-    undoStack.push(JSON.stringify(elements));
-    elements = JSON.parse(redoStack.pop());
+function pointerPosition(event) {
+  const r = canvas.getBoundingClientRect();
+  return { x:event.clientX-r.left, y:event.clientY-r.top };
+}
 
-    selectedIndex = -1;
-    redraw();
-    updateHistoryButtons();
+function screenToWorld(p) {
+  return {
+    x:(p.x-camera.x)/camera.scale,
+    y:(p.y-camera.y)/camera.scale
+  };
+}
+
+function worldToScreen(p) {
+  return {
+    x:p.x*camera.scale+camera.x,
+    y:p.y*camera.scale+camera.y
+  };
 }
 
 function resizeCanvas() {
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-
-    redraw();
+  const r = canvas.getBoundingClientRect();
+  const dpr = Math.max(1,window.devicePixelRatio || 1);
+  canvas.width = Math.round(r.width*dpr);
+  canvas.height = Math.round(r.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  redraw();
 }
 
-function screenToWorld(point) {
-    return {
-        x: (point.x - offsetX) / scale,
-        y: (point.y - offsetY) / scale
-    };
+function setStatus(message) {
+  document.getElementById("measureStatus").textContent = message;
 }
 
-function getPosition(event) {
-    const rect = canvas.getBoundingClientRect();
+function drawGrid(width,height) {
+  const step = 50*camera.scale;
+  if (step < 8) return;
 
-    return {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top
-    };
+  const ox = ((camera.x%step)+step)%step;
+  const oy = ((camera.y%step)+step)%step;
+
+  ctx.save();
+  ctx.strokeStyle = "#edf0f2";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+
+  for (let x=ox;x<width;x+=step) {
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,height);
+  }
+  for (let y=oy;y<height;y+=step) {
+    ctx.moveTo(0,y);
+    ctx.lineTo(width,y);
+  }
+
+  ctx.stroke();
+  ctx.restore();
 }
 
-function drawElement(item) {
-    ctx.save();
+function drawLabel(x,y,text) {
+  ctx.save();
+  ctx.font = "12px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const w = ctx.measureText(text).width+10;
+  ctx.fillStyle = "rgba(255,255,255,0.94)";
+  ctx.fillRect(x-w/2,y-10,w,20);
+  ctx.fillStyle = "#172630";
+  ctx.fillText(text,x,y);
+  ctx.restore();
+}
 
-    ctx.lineCap = "square";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#182630";
-    ctx.fillStyle = "#182630";
-    ctx.lineWidth = 5;
+function drawDimension(a,b,label,offsetX=0,offsetY=0) {
+  drawLabel(
+    (a.x+b.x)/2+offsetX,
+    (a.y+b.y)/2+offsetY,
+    label
+  );
+}
 
-    if (item.type === "wall") {
-        ctx.beginPath();
-        ctx.moveTo(item.x1, item.y1);
-        ctx.lineTo(item.x2, item.y2);
-        ctx.stroke();
-    }
+function draw2DElement(item) {
+  const a = worldToScreen({x:item.x1,y:item.y1});
+  const b = worldToScreen({x:item.x2,y:item.y2});
+  const selected = item.id === selectedId;
 
-    if (item.type === "room") {
-        ctx.strokeRect(
-            item.x1,
-            item.y1,
-            item.x2 - item.x1,
-            item.y2 - item.y1
-        );
-    }
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  if (item.type === "room") {
+    const left = Math.min(a.x,b.x);
+    const top = Math.min(a.y,b.y);
+    const width = Math.abs(b.x-a.x);
+    const height = Math.abs(b.y-a.y);
+    const realWidth = Math.abs(item.x2-item.x1);
+    const realDepth = Math.abs(item.y2-item.y1);
+
+    ctx.strokeStyle = selected ? "#d28b22" : "#182630";
+    ctx.lineWidth = selected ? 5 : 3;
+    ctx.strokeRect(left,top,width,height);
+
+    drawDimension(
+      {x:left,y:top-16},
+      {x:left+width,y:top-16},
+      metres(realWidth)
+    );
+    drawDimension(
+      {x:left-17,y:top},
+      {x:left-17,y:top+height},
+      metres(realDepth)
+    );
+
+    drawLabel(
+      left+width/2,
+      top+height/2,
+      (realWidth*realDepth/10000).toFixed(2)+" m²"
+    );
+  }
+
+  if (item.type === "wall") {
+    ctx.strokeStyle = selected ? "#d28b22" : "#182630";
+    ctx.lineWidth = selected ? 5 : 3;
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.stroke();
+
+    drawDimension(
+      {x:a.x,y:a.y-15},
+      {x:b.x,y:b.y-15},
+      metres(Math.hypot(item.x2-item.x1,item.y2-item.y1))
+    );
+  }
+
+  if (item.type === "door" || item.type === "window") {
+    ctx.strokeStyle = item.type === "door" ? "#b17c38" : "#168ac4";
+    ctx.lineWidth = selected ? 7 : 5;
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.stroke();
 
     if (item.type === "door") {
-        ctx.lineWidth = 3;
-
-        const radius = Math.max(
-            10,
-            Math.hypot(item.x2 - item.x1, item.y2 - item.y1)
-        );
-
+      const length = Math.hypot(b.x-a.x,b.y-a.y);
+      if (length > 2) {
+        const angle = Math.atan2(b.y-a.y,b.x-a.x);
         ctx.beginPath();
-        ctx.moveTo(item.x1, item.y1);
-        ctx.lineTo(item.x1 + radius, item.y1);
+        ctx.arc(a.x,a.y,length,angle,angle+Math.PI/2);
+        ctx.strokeStyle = "#647783";
+        ctx.lineWidth = 1.2;
         ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(
-            item.x1,
-            item.y1,
-            radius,
-            0,
-            Math.PI / 2
-        );
-        ctx.stroke();
+      }
+    } else {
+      const dx=b.x-a.x, dy=b.y-a.y;
+      const len=Math.hypot(dx,dy)||1;
+      const ox=-dy/len*4, oy=dx/len*4;
+      ctx.strokeStyle="#168ac4";
+      ctx.lineWidth=1.5;
+      ctx.beginPath();
+      ctx.moveTo(a.x+ox,a.y+oy);
+      ctx.lineTo(b.x+ox,b.y+oy);
+      ctx.stroke();
     }
 
-    if (item.type === "window") {
-        ctx.lineWidth = 7;
-        ctx.strokeStyle = "#268ac0";
+    drawDimension(
+      {x:a.x,y:a.y-15},
+      {x:b.x,y:b.y-15},
+      metres(Math.hypot(item.x2-item.x1,item.y2-item.y1))
+    );
+  }
 
-        ctx.beginPath();
-        ctx.moveTo(item.x1, item.y1);
-        ctx.lineTo(item.x2, item.y2);
-        ctx.stroke();
+  ctx.restore();
+}
+
+function redraw2D() {
+  const w=canvas.clientWidth, h=canvas.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle="#fff";
+  ctx.fillRect(0,0,w,h);
+  drawGrid(w,h);
+
+  project.elements.forEach(draw2DElement);
+
+  if (drawing && start && current) {
+    const a=worldToScreen(start);
+    const b=worldToScreen(current);
+    ctx.save();
+    ctx.strokeStyle="#d6a94f";
+    ctx.lineWidth=2;
+    ctx.setLineDash([6,4]);
+
+    if (tool==="room") {
+      ctx.strokeRect(a.x,a.y,b.x-a.x,b.y-a.y);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(a.x,a.y);
+      ctx.lineTo(b.x,b.y);
+      ctx.stroke();
     }
-
     ctx.restore();
+  }
+
+  document.getElementById("zoomStatus").textContent =
+    "Zoom: "+Math.round(camera.scale/1.2*100)+"%";
+}
+
+/* ---------- 3D ISOMETRIC PREVIEW ---------- */
+
+function project3D(x,y,z,centerX,centerY,scale) {
+  const angle=Math.PI/6;
+  return {
+    x:centerX+(x-y)*Math.cos(angle)*scale,
+    y:centerY+(x+y)*Math.sin(angle)*scale-z*scale
+  };
+}
+
+function polygon(points,fill,stroke="#667985") {
+  ctx.beginPath();
+  points.forEach((p,i)=>{
+    if (i===0) ctx.moveTo(p.x,p.y);
+    else ctx.lineTo(p.x,p.y);
+  });
+  ctx.closePath();
+  ctx.fillStyle=fill;
+  ctx.fill();
+  ctx.strokeStyle=stroke;
+  ctx.lineWidth=1;
+  ctx.stroke();
+}
+
+function prism(x1,y1,x2,y2,thickness,height,cx,cy,scale,color) {
+  const dx=x2-x1, dy=y2-y1;
+  const length=Math.hypot(dx,dy);
+  if (length<1) return;
+
+  const nx=-dy/length*thickness/2;
+  const ny=dx/length*thickness/2;
+
+  const A=[x1+nx,y1+ny];
+  const B=[x2+nx,y2+ny];
+  const C=[x2-nx,y2-ny];
+  const D=[x1-nx,y1-ny];
+
+  const p=(v,z)=>project3D(v[0],v[1],z,cx,cy,scale);
+
+  const a=p(A,0), b=p(B,0), c=p(C,0), d=p(D,0);
+  const at=p(A,height), bt=p(B,height);
+  const ct=p(C,height), dt=p(D,height);
+
+  polygon([a,b,bt,at],color);
+  polygon([b,c,ct,bt],"#c0cbd1");
+  polygon([at,bt,ct,dt],"#e3e9ec");
+}
+
+function drawRoomFloor(item,cx,cy,scale) {
+  const x1=Math.min(item.x1,item.x2);
+  const x2=Math.max(item.x1,item.x2);
+  const y1=Math.min(item.y1,item.y2);
+  const y2=Math.max(item.y1,item.y2);
+
+  const pts=[
+    project3D(x1,y1,0,cx,cy,scale),
+    project3D(x2,y1,0,cx,cy,scale),
+    project3D(x2,y2,0,cx,cy,scale),
+    project3D(x1,y2,0,cx,cy,scale)
+  ];
+
+  polygon(pts,"#e7e2d8","#8999a2");
+}
+
+function draw3D() {
+  const w=canvas.clientWidth, h=canvas.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle="#f1f4f6";
+  ctx.fillRect(0,0,w,h);
+
+  if (!project.elements.length) {
+    ctx.fillStyle="#263946";
+    ctx.font="16px Arial";
+    ctx.textAlign="center";
+    ctx.fillText("Create a room or walls in 2D to see your 3D preview.",w/2,h/2);
+    return;
+  }
+
+  const xs=project.elements.flatMap(e=>[e.x1,e.x2]);
+  const ys=project.elements.flatMap(e=>[e.y1,e.y2]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs);
+  const minY=Math.min(...ys), maxY=Math.max(...ys);
+
+  const span=Math.max(200,maxX-minX,maxY-minY);
+  const scale=clamp(Math.min((w-100)/(span*1.5),(h-130)/(span*0.95)),0.12,1.4);
+  const cx=w/2-(minX+maxX)*0.5*scale*1.0;
+  const cy=h*0.72-(minX+maxX+minY+maxY)*0.25*scale;
+
+  const wallHeight=(numeric(fields.height)||2.8)*100;
+  const thickness=numeric(fields.thickness)||15;
+
+  // Draw room floor surfaces first.
+  project.elements
+    .filter(e=>e.type==="room")
+    .forEach(e=>drawRoomFloor(e,cx,cy,scale));
+
+  // Build 3D wall surfaces from room outlines.
+  project.elements.filter(e=>e.type==="room").forEach(e=>{
+    const x1=Math.min(e.x1,e.x2);
+    const x2=Math.max(e.x1,e.x2);
+    const y1=Math.min(e.y1,e.y2);
+    const y2=Math.max(e.y1,e.y2);
+
+    prism(x1,y1,x2,y1,thickness,wallHeight,cx,cy,scale,"#9baab2");
+    prism(x2,y1,x2,y2,thickness,wallHeight,cx,cy,scale,"#8799a3");
+    prism(x2,y2,x1,y2,thickness,wallHeight,cx,cy,scale,"#9baab2");
+    prism(x1,y2,x1,y1,thickness,wallHeight,cx,cy,scale,"#8799a3");
+  });
+
+  // Draw individually created walls.
+  project.elements.filter(e=>e.type==="wall").forEach(e=>{
+    prism(e.x1,e.y1,e.x2,e.y2,thickness,wallHeight,cx,cy,scale,"#a5b2b9");
+  });
+
+  // Show door and window positions as visual markers.
+  project.elements.filter(e=>e.type==="door"||e.type==="window").forEach(e=>{
+    const a=project3D(e.x1,e.y1,0,cx,cy,scale);
+    const b=project3D(e.x2,e.y2,0,cx,cy,scale);
+    const color=e.type==="door"?"#b47d3b":"#168ac4";
+
+    ctx.save();
+    ctx.strokeStyle=color;
+    ctx.lineWidth=5;
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y-8);
+    ctx.lineTo(b.x,b.y-8);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  ctx.fillStyle="#263946";
+  ctx.font="12px Arial";
+  ctx.textAlign="left";
+  ctx.fillText("3D preview • Wall height "+wallHeight/100+" m • Thickness "+thickness+" cm",12,22);
 }
 
 function redraw() {
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    ctx.save();
-
-    ctx.translate(offsetX, offsetY);
-    ctx.scale(scale, scale);
-
-    const left = -offsetX / scale;
-    const top = -offsetY / scale;
-    const right = (rect.width - offsetX) / scale;
-    const bottom = (rect.height - offsetY) / scale;
-
-    ctx.strokeStyle = "#e9edf0";
-    ctx.lineWidth = 1 / scale;
-
-    for (
-        let x = Math.floor(left / 25) * 25;
-        x < right;
-        x += 25
-    ) {
-        for (
-            let y = Math.floor(top / 25) * 25;
-            y < bottom;
-            y += 25
-        ) {
-            ctx.strokeRect(x, y, 1, 1);
-        }
-    }
-
-    elements.forEach((item, index) => {
-        drawElement(item);
-
-        if (index === selectedIndex) {
-            ctx.save();
-            ctx.strokeStyle = "#D6B56D";
-            ctx.lineWidth = 2 / scale;
-            ctx.setLineDash([6 / scale, 4 / scale]);
-
-            ctx.strokeRect(
-                Math.min(item.x1, item.x2) - 8,
-                Math.min(item.y1, item.y2) - 8,
-                Math.abs(item.x2 - item.x1) + 16,
-                Math.abs(item.y2 - item.y1) + 16
-            );
-
-            ctx.restore();
-        }
-    });
-
-    if (drawing && start && current) {
-        ctx.save();
-
-        ctx.strokeStyle = tool === "window" ? "#268ac0" : "#D6B56D";
-        ctx.lineWidth = 4 / scale;
-        ctx.setLineDash([7 / scale, 5 / scale]);
-
-        if (tool === "room") {
-            ctx.strokeRect(
-                start.x,
-                start.y,
-                current.x - start.x,
-                current.y - start.y
-            );
-        } else {
-            ctx.beginPath();
-            ctx.moveTo(start.x, start.y);
-            ctx.lineTo(current.x, current.y);
-            ctx.stroke();
-        }
-
-        ctx.restore();
-    }
-
-    ctx.restore();
+  if (mode==="2d") redraw2D();
+  else draw3D();
 }
 
-function distanceToSegment(point, item) {
-    const dx = item.x2 - item.x1;
-    const dy = item.y2 - item.y1;
-
-    const lengthSquared = dx * dx + dy * dy;
-
-    if (lengthSquared === 0) {
-        return Math.hypot(point.x - item.x1, point.y - item.y1);
-    }
-
-    const t = Math.max(
-        0,
-        Math.min(
-            1,
-            ((point.x - item.x1) * dx +
-             (point.y - item.y1) * dy) / lengthSquared
-        )
-    );
-
-    const x = item.x1 + t * dx;
-    const y = item.y1 + t * dy;
-
-    return Math.hypot(point.x - x, point.y - y);
-}
-
-function hitTest(point) {
-    for (let i = elements.length - 1; i >= 0; i--) {
-        const item = elements[i];
-
-        if (item.type === "room") {
-            const left = Math.min(item.x1, item.x2);
-            const right = Math.max(item.x1, item.x2);
-            const top = Math.min(item.y1, item.y2);
-            const bottom = Math.max(item.y1, item.y2);
-
-            const nearEdge =
-                Math.abs(point.x - left) < 15 ||
-                Math.abs(point.x - right) < 15 ||
-                Math.abs(point.y - top) < 15 ||
-                Math.abs(point.y - bottom) < 15;
-
-            const inside =
-                point.x >= left - 10 &&
-                point.x <= right + 10 &&
-                point.y >= top - 10 &&
-                point.y <= bottom + 10;
-
-            if (inside && nearEdge) return i;
-        } else if (item.type === "door") {
-            if (Math.hypot(point.x - item.x1, point.y - item.y1) < 35) {
-                return i;
-            }
-        } else if (distanceToSegment(point, item) < 15) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-function moveItem(item, dx, dy) {
-    item.x1 += dx;
-    item.y1 += dy;
-    item.x2 += dx;
-    item.y2 += dy;
-}
+/* ---------- DRAWING AND EDITING ---------- */
 
 function setTool(newTool) {
-    tool = newTool;
-    selectedIndex = -1;
+  tool=newTool;
+  document.querySelectorAll("[data-tool]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tool===tool);
+  });
 
-    document.querySelectorAll(".tool[data-tool]").forEach(button => {
-        button.classList.toggle(
-            "active",
-            button.dataset.tool === tool
-        );
-    });
-
-    instructions.textContent = toolMessages[tool];
-    status.textContent = "Active tool: " +
-        tool.charAt(0).toUpperCase() + tool.slice(1);
-
-    canvas.style.cursor = tool === "pan" ? "grab" : "crosshair";
-
-    redraw();
+  document.getElementById("toolStatus").innerHTML =
+    "Tool: <strong>"+tool.charAt(0).toUpperCase()+tool.slice(1)+"</strong>";
+  canvas.style.cursor=tool==="pan"?"grab":tool==="select"?"pointer":"crosshair";
 }
 
-document.querySelectorAll(".tool[data-tool]").forEach(button => {
-    button.addEventListener("click", () => {
-        setTool(button.dataset.tool);
-    });
+document.querySelectorAll("[data-tool]").forEach(button=>{
+  button.addEventListener("click",()=>setTool(button.dataset.tool));
 });
 
-function getPointerPair() {
-    return Array.from(pointers.values()).slice(0, 2);
+function distanceToSegment(p,a,b) {
+  const dx=b.x-a.x, dy=b.y-a.y;
+  const len=dx*dx+dy*dy;
+  if (!len) return Math.hypot(p.x-a.x,p.y-a.y);
+  const t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/len,0,1);
+  return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);
 }
 
-function startGesture() {
-    const pair = getPointerPair();
+function findElement(p) {
+  const tolerance=12/camera.scale;
+  for (let i=project.elements.length-1;i>=0;i--) {
+    const e=project.elements[i];
 
-    if (pair.length < 2) return;
+    if (e.type==="room") {
+      const inside =
+        p.x>=Math.min(e.x1,e.x2)-tolerance &&
+        p.x<=Math.max(e.x1,e.x2)+tolerance &&
+        p.y>=Math.min(e.y1,e.y2)-tolerance &&
+        p.y<=Math.max(e.y1,e.y2)+tolerance;
+      if (inside) return e;
+    } else {
+      if (distanceToSegment(p,{x:e.x1,y:e.y1},{x:e.x2,y:e.y2})<=tolerance) return e;
+    }
+  }
+  return null;
+}
 
-    drawing = false;
-    start = null;
-    current = null;
-    movingElement = null;
+function createElement(a,b) {
+  let x1=a.x,y1=a.y,x2=b.x,y2=b.y;
 
-    gestureActive = true;
+  if (tool==="wall") {
+    const exact=numeric(fields.wall);
+    if (exact) {
+      let dx=x2-x1,dy=y2-y1;
+      let length=Math.hypot(dx,dy);
+      if (length<0.01) {dx=1;dy=0;length=1;}
+      x2=x1+dx/length*exact*100;
+      y2=y1+dy/length*exact*100;
+    } else {
+      x2=snap(x2); y2=snap(y2);
+    }
+  }
 
-    const midpoint = {
-        x: (pair[0].x + pair[1].x) / 2,
-        y: (pair[0].y + pair[1].y) / 2
-    };
+  if (tool==="room") {
+    const width=numeric(fields.width);
+    const depth=numeric(fields.depth);
+    x2=width ? x1+Math.sign(b.x-a.x||1)*width*100 : snap(x2);
+    y2=depth ? y1+Math.sign(b.y-a.y||1)*depth*100 : snap(y2);
+  }
 
-    const distance = Math.hypot(
-        pair[1].x - pair[0].x,
-        pair[1].y - pair[0].y
+  if (tool==="door"||tool==="window") {
+    const exact=numeric(fields.opening);
+    if (exact) {
+      let dx=x2-x1,dy=y2-y1;
+      let length=Math.hypot(dx,dy);
+      if (length<0.01) {dx=1;dy=0;length=1;}
+      x2=x1+dx/length*exact*100;
+      y2=y1+dy/length*exact*100;
+    } else {
+      x2=snap(x2); y2=snap(y2);
+    }
+  }
+
+  if (Math.hypot(x2-x1,y2-y1)<2) return;
+
+  historySave();
+  project.elements.push({
+    id:nextId(),
+    type:tool,
+    x1,y1,x2,y2
+  });
+
+  selectedId=null;
+  redraw();
+
+  if (tool==="room") {
+    const width=Math.abs(x2-x1);
+    const depth=Math.abs(y2-y1);
+    setStatus(
+      metres(width)+" × "+metres(depth)+
+      " | Area: "+(width*depth/10000).toFixed(2)+" m²"
     );
-
-    lastGesture = {
-        midpoint,
-        distance: Math.max(distance, 1)
-    };
-
-    redraw();
+  } else {
+    setStatus(tool+" length: "+metres(Math.hypot(x2-x1,y2-y1)));
+  }
 }
 
-canvas.addEventListener("pointerdown", event => {
+canvas.addEventListener("pointerdown",event=>{
+  if (mode!=="2d") return;
+  event.preventDefault();
+
+  const screen=pointerPosition(event);
+  const world=screenToWorld(screen);
+
+  if (tool==="pan") {
+    panning=true;
+    lastPointer=screen;
+    canvas.setPointerCapture(event.pointerId);
+    canvas.style.cursor="grabbing";
+    return;
+  }
+
+  if (tool==="select") {
+    const found=findElement(world);
+    selectedId=found?found.id:null;
+    redraw();
+    setStatus(found?"Selected: "+found.type:"Nothing selected");
+    return;
+  }
+
+  if (tool==="erase") {
+    const found=findElement(world);
+    if (found) {
+      historySave();
+      project.elements=project.elements.filter(e=>e.id!==found.id);
+      selectedId=null;
+      redraw();
+      setStatus("Element erased");
+    }
+    return;
+  }
+
+  drawing=true;
+  start=world;
+  current=world;
+  canvas.setPointerCapture(event.pointerId);
+  redraw();
+});
+
+canvas.addEventListener("pointermove",event=>{
+  if (mode!=="2d") return;
+  const screen=pointerPosition(event);
+
+  if (panning && lastPointer) {
+    camera.x+=screen.x-lastPointer.x;
+    camera.y+=screen.y-lastPointer.y;
+    lastPointer=screen;
+    redraw();
+    return;
+  }
+
+  if (!drawing) return;
+  current=screenToWorld(screen);
+  const length=Math.hypot(current.x-start.x,current.y-start.y);
+  setStatus("Current length: "+metres(length));
+  redraw();
+});
+
+function finishDrawing(event) {
+  if (panning) {
+    panning=false;
+    lastPointer=null;
+    canvas.style.cursor="grab";
+    return;
+  }
+  if (!drawing) return;
+
+  const end=screenToWorld(pointerPosition(event));
+  drawing=false;
+  current=null;
+  createElement(start,end);
+  start=null;
+}
+
+canvas.addEventListener("pointerup",finishDrawing);
+canvas.addEventListener("pointercancel",()=>{
+  drawing=false;
+  panning=false;
+  start=null;
+  current=null;
+  lastPointer=null;
+  redraw();
+});
+
+/* ---------- VIEW CONTROLS ---------- */
+
+function zoomAt(factor,p) {
+  const before=screenToWorld(p);
+  camera.scale=clamp(camera.scale*factor,0.25,5);
+  camera.x=p.x-before.x*camera.scale;
+  camera.y=p.y-before.y*camera.scale;
+  redraw();
+}
+
+document.getElementById("zoomIn").addEventListener("click",()=>{
+  zoomAt(1.2,{x:canvas.clientWidth/2,y:canvas.clientHeight/2});
+});
+document.getElementById("zoomOut").addEventListener("click",()=>{
+  zoomAt(1/1.2,{x:canvas.clientWidth/2,y:canvas.clientHeight/2});
+});
+
+canvas.addEventListener("wheel",event=>{
+  if (mode!=="2d") return;
+  event.preventDefault();
+  zoomAt(event.deltaY<0?1.1:1/1.1,pointerPosition(event));
+},{passive:false});
+
+function resetView() {
+  camera={scale:1.2,x:55,y:55};
+  redraw();
+}
+
+function fitDrawing() {
+  if (!project.elements.length) {
+    resetView();
+    return;
+  }
+
+  const xs=project.elements.flatMap(e=>[e.x1,e.x2]);
+  const ys=project.elements.flatMap(e=>[e.y1,e.y2]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs);
+  const minY=Math.min(...ys),maxY=Math.max(...ys);
+  const width=Math.max(100,maxX-minX);
+  const height=Math.max(100,maxY-minY);
+  const margin=65;
+
+  camera.scale=clamp(
+    Math.min(
+      (canvas.clientWidth-margin*2)/width,
+      (canvas.clientHeight-margin*2)/height
+    ),0.25,5
+  );
+  camera.x=(canvas.clientWidth-width*camera.scale)/2-minX*camera.scale;
+  camera.y=(canvas.clientHeight-height*camera.scale)/2-minY*camera.scale;
+  redraw();
+}
+
+document.getElementById("fitBtn").addEventListener("click",fitDrawing);
+document.getElementById("resetBtn").addEventListener("click",resetView);
+
+/* ---------- 2D / 3D MODE SWITCH ---------- */
+
+function setMode(nextMode) {
+  mode=nextMode;
+  const is2d=mode==="2d";
+
+  document.getElementById("mode2d").classList.toggle("active",is2d);
+  document.getElementById("mode3d").classList.toggle("active",!is2d);
+
+  document.getElementById("viewTitle").textContent =
+    is2d?"2D Floor Plan":"3D Architectural Preview";
+
+  document.getElementById("viewDescription").textContent =
+    is2d
+      ?"Create and edit your accurately measured floor plan."
+      :"Preview the same project as a simple isometric 3D model.";
+
+  document.getElementById("toolStatus").innerHTML =
+    is2d?"Tool: <strong>"+tool+"</strong>":"View: <strong>3D Preview</strong>";
+
+  redraw();
+}
+
+document.getElementById("mode2d").addEventListener("click",()=>setMode("2d"));
+document.getElementById("mode3d").addEventListener("click",()=>setMode("3d"));
+
+fields.height.addEventListener("input",()=>{if(mode==="3d") redraw();});
+fields.thickness.addEventListener("input",()=>{if(mode==="3d") redraw();});
+
+/* ---------- UNDO / REDO / DELETE ---------- */
+
+document.getElementById("undoBtn").addEventListener("click",()=>{
+  if (!undoStack.length) return;
+  redoStack.push(JSON.stringify(project));
+  restoreProject(undoStack.pop());
+  setStatus("Undo completed");
+});
+
+document.getElementById("redoBtn").addEventListener("click",()=>{
+  if (!redoStack.length) return;
+  undoStack.push(JSON.stringify(project));
+  restoreProject(redoStack.pop());
+  setStatus("Redo completed");
+});
+
+document.getElementById("deleteBtn").addEventListener("click",()=>{
+  if (selectedId===null) {
+    setStatus("Select an element first");
+    return;
+  }
+  historySave();
+  project.elements=project.elements.filter(e=>e.id!==selectedId);
+  selectedId=null;
+  redraw();
+  setStatus("Selected element deleted");
+});
+
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  if (!project.elements.length) return;
+  if (!confirm("Clear the entire floor plan?")) return;
+  historySave();
+  project.elements=[];
+  selectedId=null;
+  redraw();
+  setStatus("Plan cleared");
+});
+
+/* ---------- LOCAL SAVE / LOAD ---------- */
+
+document.getElementById("saveBtn").addEventListener("click",()=>{
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(project));
+    setStatus("Project saved in this browser");
+  } catch(error) {
+    alert("Unable to save. Check your browser storage settings.");
+  }
+});
+
+document.getElementById("loadBtn").addEventListener("click",()=>{
+  try {
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      alert("No saved MONCAD project found in this browser.");
+      return;
+    }
+
+    const data=JSON.parse(raw);
+    if (!data || !Array.isArray(data.elements)) {
+      throw new Error("Invalid project");
+    }
+
+    historySave();
+    project={
+      version:2,
+      units:"centimetres",
+      elements:data.elements,
+      nextId:data.nextId || Math.max(0,...data.elements.map(e=>e.id||0))+1
+    };
+
+    selectedId=null;
+    fitDrawing();
+    setStatus("Saved project loaded");
+  } catch(error) {
+    alert("Unable to load the saved project.");
+  }
+});
+
+/* ---------- PNG EXPORT ---------- */
+
+document.getElementById("exportBtn").addEventListener("click",()=>{
+  const link=document.createElement("a");
+  link.download=mode==="2d"?"MONCAD-Floor-Plan.png":"MONCAD-3D-Preview.png";
+  link.href=canvas.toDataURL("image/png");
+  link.click();
+  setStatus("PNG export requested");
+});
+
+/* ---------- KEYBOARD SHORTCUTS ---------- */
+
+document.addEventListener("keydown",event=>{
+  if (document.activeElement.tagName==="INPUT") return;
+
+  if ((event.ctrlKey||event.metaKey) && event.key.toLowerCase()==="z") {
     event.preventDefault();
-
-    const point = getPosition(event);
-
-    pointers.set(event.pointerId, {
-        x: point.x,
-        y: point.y,
-        type: event.pointerType
-    });
-
-    try {
-        canvas.setPointerCapture(event.pointerId);
-    } catch (error) {}
-
-    if (event.pointerType === "touch" && pointers.size >= 2) {
-        startGesture();
-        return;
-    }
-
-    if (gestureActive) return;
-
-    const world = screenToWorld(point);
-
-    if (tool === "pan") {
-        movingElement = {
-            type: "pan",
-            last: point
-        };
-        canvas.style.cursor = "grabbing";
-        return;
-    }
-
-    if (tool === "select") {
-        selectedIndex = hitTest(world);
-
-        if (selectedIndex !== -1) {
-            saveHistory();
-
-            movingElement = {
-                type: "object",
-                last: world
-            };
-        }
-
-        redraw();
-        return;
-    }
-
-    if (tool === "erase") {
-        const index = hitTest(world);
-
-        if (index !== -1) {
-            saveHistory();
-            elements.splice(index, 1);
-            selectedIndex = -1;
-            redraw();
-        }
-
-        return;
-    }
-
-    drawing = true;
-    start = world;
-    current = world;
-
-    redraw();
+    document.getElementById("undoBtn").click();
+  }
+  if ((event.ctrlKey||event.metaKey) && event.key.toLowerCase()==="y") {
+    event.preventDefault();
+    document.getElementById("redoBtn").click();
+  }
+  if (event.key==="Delete"||event.key==="Backspace") {
+    document.getElementById("deleteBtn").click();
+  }
 });
 
-canvas.addEventListener("pointermove", event => {
-    const point = getPosition(event);
+/* ---------- START EDITOR ---------- */
 
-    if (pointers.has(event.pointerId)) {
-        pointers.set(event.pointerId, {
-            x: point.x,
-            y: point.y,
-            type: event.pointerType
-        });
-    }
-
-    if (gestureActive) {
-        const pair = getPointerPair();
-
-        if (pair.length === 2 && lastGesture) {
-            const midpoint = {
-                x: (pair[0].x + pair[1].x) / 2,
-                y: (pair[0].y + pair[1].y) / 2
-            };
-
-            const distance = Math.max(
-                Math.hypot(
-                    pair[1].x - pair[0].x,
-                    pair[1].y - pair[0].y
-                ),
-                1
-            );
-
-            const ratio = distance / lastGesture.distance;
-            const newScale = Math.max(
-                0.4,
-                Math.min(3, scale * ratio)
-            );
-
-            const worldX = (lastGesture.midpoint.x - offsetX) / scale;
-            const worldY = (lastGesture.midpoint.y - offsetY) / scale;
-
-            offsetX = midpoint.x - worldX * newScale;
-            offsetY = midpoint.y - worldY * newScale;
-
-            scale = newScale;
-
-            offsetX += midpoint.x - lastGesture.midpoint.x;
-            offsetY += midpoint.y - lastGesture.midpoint.y;
-
-            lastGesture = {
-                midpoint,
-                distance
-            };
-
-            redraw();
-        }
-
-        return;
-    }
-
-    if (!pointers.has(event.pointerId)) return;
-
-    const world = screenToWorld(point);
-
-    if (drawing) {
-        current = world;
-        redraw();
-        return;
-    }
-
-    if (movingElement?.type === "pan") {
-        offsetX += point.x - movingElement.last.x;
-        offsetY += point.y - movingElement.last.y;
-
-        movingElement.last = point;
-        redraw();
-        return;
-    }
-
-    if (movingElement?.type === "object") {
-        const dx = world.x - movingElement.last.x;
-        const dy = world.y - movingElement.last.y;
-
-        moveItem(elements[selectedIndex], dx, dy);
-
-        movingElement.last = world;
-        redraw();
-    }
-});
-
-function finishPointer(event) {
-    if (!pointers.has(event.pointerId)) return;
-
-    if (gestureActive) {
-        pointers.delete(event.pointerId);
-
-        const remaining = getPointerPair();
-
-        if (remaining.length < 2) {
-            gestureActive = false;
-            lastGesture = null;
-        }
-
-        drawing = false;
-        movingElement = null;
-        redraw();
-        return;
-    }
-
-    if (drawing && start && current) {
-        const distance = Math.hypot(
-            current.x - start.x,
-            current.y - start.y
-        );
-
-        if (distance > 3) {
-            saveHistory();
-
-            elements.push({
-                type: tool,
-                x1: start.x,
-                y1: start.y,
-                x2: current.x,
-                y2: current.y
-            });
-        }
-
-        drawing = false;
-        start = null;
-        current = null;
-    }
-
-    movingElement = null;
-    pointers.delete(event.pointerId);
-
-    if (tool === "pan") {
-        canvas.style.cursor = "grab";
-    }
-
-    redraw();
-}
-
-canvas.addEventListener("pointerup", finishPointer);
-canvas.addEventListener("pointercancel", finishPointer);
-
-document.getElementById("undo").addEventListener("click", undo);
-document.getElementById("redo").addEventListener("click", redo);
-
-document.getElementById("clear").addEventListener("click", () => {
-    if (!elements.length) return;
-
-    saveHistory();
-    elements = [];
-    selectedIndex = -1;
-    redraw();
-});
-
-document.getElementById("zoomIn").addEventListener("click", () => {
-    zoomAt(1.2);
-});
-
-document.getElementById("zoomOut").addEventListener("click", () => {
-    zoomAt(1 / 1.2);
-});
-
-function zoomAt(factor) {
-    const rect = canvas.getBoundingClientRect();
-
-    const center = {
-        x: rect.width / 2,
-        y: rect.height / 2
-    };
-
-    const worldX = (center.x - offsetX) / scale;
-    const worldY = (center.y - offsetY) / scale;
-
-    scale = Math.max(0.4, Math.min(3, scale * factor));
-
-    offsetX = center.x - worldX * scale;
-    offsetY = center.y - worldY * scale;
-
-    redraw();
-}
-
-function fitToScreen() {
-    if (!elements.length) {
-        scale = 1;
-        offsetX = 0;
-        offsetY = 0;
-        redraw();
-        return;
-    }
-
-    const rect = canvas.getBoundingClientRect();
-
-    const minX = Math.min(...elements.map(item =>
-        Math.min(item.x1, item.x2)
-    ));
-
-    const maxX = Math.max(...elements.map(item =>
-        Math.max(item.x1, item.x2)
-    ));
-
-    const minY = Math.min(...elements.map(item =>
-        Math.min(item.y1, item.y2)
-    ));
-
-    const maxY = Math.max(...elements.map(item =>
-        Math.max(item.y1, item.y2)
-    ));
-
-    const width = Math.max(maxX - minX, 100);
-    const height = Math.max(maxY - minY, 100);
-
-    scale = Math.min(
-        (rect.width - 60) / width,
-        (rect.height - 60) / height,
-        2
-    );
-
-    scale = Math.max(scale, 0.4);
-
-    offsetX = (rect.width - width * scale) / 2 - minX * scale;
-    offsetY = (rect.height - height * scale) / 2 - minY * scale;
-
-    redraw();
-}
-
-document.getElementById("fitScreen").addEventListener("click", fitToScreen);
-
-document.getElementById("resetView").addEventListener("click", () => {
-    scale = 1;
-    offsetX = 0;
-    offsetY = 0;
-    redraw();
-});
-
-if ("ResizeObserver" in window) {
-    new ResizeObserver(resizeCanvas).observe(canvas);
-} else {
-    window.addEventListener("resize", resizeCanvas);
-}
-
+window.addEventListener("resize",resizeCanvas);
 resizeCanvas();
-updateHistoryButtons();
 setTool("wall");
-</script>
+setMode("2d");
 
+</script>
 </body>
 </html>
