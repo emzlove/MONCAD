@@ -20,10 +20,11 @@ body {
 
 header {
     background: #182630;
-    padding: 15px 25px;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 
 .logo {
@@ -34,62 +35,149 @@ header {
 
 .workspace {
     display: flex;
-    min-height: calc(100vh - 65px);
+    min-height: calc(100vh - 60px);
 }
 
 .toolbar {
-    width: 190px;
+    width: 205px;
+    flex-shrink: 0;
     background: #182630;
-    padding: 20px;
+    padding: 15px;
 }
 
 .toolbar h3 {
     color: #D6B56D;
+    margin-top: 10px;
 }
 
 .tool {
     width: 100%;
-    padding: 12px;
-    margin: 6px 0;
+    min-height: 44px;
+    padding: 10px;
+    margin: 4px 0;
     background: #263946;
     color: white;
     border: 1px solid #405462;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    touch-action: manipulation;
 }
 
 .tool.active {
     background: #D6B56D;
     color: #101820;
+    font-weight: bold;
+}
+
+.tool:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.toolbar-divider {
+    border: 0;
+    border-top: 1px solid #405462;
+    margin: 16px 0;
 }
 
 .canvas-area {
     flex: 1;
-    padding: 20px;
-    overflow: auto;
+    min-width: 0;
+    padding: 15px;
+}
+
+.canvas-area h2 {
+    margin: 5px 0;
+}
+
+.canvas-area p {
+    color: #bdc7ce;
+    font-size: 14px;
+}
+
+.canvas-wrapper {
+    width: 100%;
+    height: min(70vh, 700px);
+    min-height: 350px;
+    overflow: hidden;
+    background: white;
+    border: 2px solid #405462;
+    border-radius: 6px;
+    position: relative;
 }
 
 canvas {
-    background: white;
-    width: 100%;
-    max-width: 1100px;
-    height: 650px;
     display: block;
-    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    background: white;
     cursor: crosshair;
+    touch-action: none;
 }
 
-@media(max-width: 600px) {
+.navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.navigation button {
+    padding: 10px 14px;
+    background: #263946;
+    color: white;
+    border: 1px solid #405462;
+    border-radius: 6px;
+    min-height: 42px;
+    cursor: pointer;
+}
+
+.navigation button:disabled {
+    opacity: 0.4;
+}
+
+.status {
+    color: #D6B56D;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+@media (max-width: 700px) {
     .workspace {
         flex-direction: column;
     }
 
     .toolbar {
         width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+        padding: 10px;
     }
 
-    canvas {
-        height: 450px;
+    .toolbar h3 {
+        grid-column: 1 / -1;
+        margin: 5px 0;
+    }
+
+    .toolbar-divider {
+        display: none;
+    }
+
+    .tool {
+        margin: 0;
+        padding: 9px 4px;
+        font-size: 13px;
+    }
+
+    .canvas-area {
+        padding: 12px;
+    }
+
+    .canvas-wrapper {
+        height: 60vh;
+        min-height: 350px;
     }
 }
 </style>
@@ -105,6 +193,14 @@ canvas {
 <div class="workspace">
 
     <aside class="toolbar">
+
+        <h3>Navigation</h3>
+
+        <button class="tool" data-tool="select">Select</button>
+        <button class="tool" data-tool="pan">Pan / Move</button>
+
+        <hr class="toolbar-divider">
+
         <h3>Drawing Tools</h3>
 
         <button class="tool active" data-tool="wall">Wall</button>
@@ -112,13 +208,40 @@ canvas {
         <button class="tool" data-tool="door">Door</button>
         <button class="tool" data-tool="window">Window</button>
         <button class="tool" data-tool="erase">Erase</button>
+
+        <hr class="toolbar-divider">
+
+        <h3>Plan</h3>
+
+        <button class="tool" id="undo">Undo</button>
+        <button class="tool" id="redo">Redo</button>
         <button class="tool" id="clear">Clear Plan</button>
+
     </aside>
 
     <main class="canvas-area">
+
         <h2>Design Your Floor Plan</h2>
-        <p>Select a tool and draw on the workspace.</p>
-        <canvas id="floorCanvas"></canvas>
+
+        <p id="instructions">
+            Select a tool and draw on the workspace.
+        </p>
+
+        <div class="navigation">
+            <button id="zoomOut">− Zoom</button>
+            <button id="zoomIn">+ Zoom</button>
+            <button id="fitScreen">Fit to Screen</button>
+            <button id="resetView">Reset View</button>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="floorCanvas"></canvas>
+        </div>
+
+        <div class="status" id="status">
+            Active tool: Wall
+        </div>
+
     </main>
 
 </div>
@@ -128,44 +251,110 @@ const canvas = document.getElementById("floorCanvas");
 const ctx = canvas.getContext("2d");
 
 let tool = "wall";
+let elements = [];
+let undoStack = [];
+let redoStack = [];
+
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+
 let drawing = false;
 let start = null;
-let elements = [];
+let current = null;
+
+let selectedIndex = -1;
+let movingElement = null;
+
+let pointers = new Map();
+let gestureActive = false;
+let lastGesture = null;
+
+const instructions = document.getElementById("instructions");
+const status = document.getElementById("status");
+
+const toolMessages = {
+    select: "Tap an object and drag it to move it.",
+    pan: "Drag to move the canvas. Use two fingers to pan and zoom.",
+    wall: "Drag to draw a wall.",
+    room: "Drag to create a rectangular room.",
+    door: "Drag to place a door symbol.",
+    window: "Drag to draw a window.",
+    erase: "Tap an object to erase it."
+};
+
+function saveHistory() {
+    undoStack.push(JSON.stringify(elements));
+
+    if (undoStack.length > 50) {
+        undoStack.shift();
+    }
+
+    redoStack = [];
+    updateHistoryButtons();
+}
+
+function updateHistoryButtons() {
+    document.getElementById("undo").disabled = undoStack.length === 0;
+    document.getElementById("redo").disabled = redoStack.length === 0;
+}
+
+function undo() {
+    if (!undoStack.length) return;
+
+    redoStack.push(JSON.stringify(elements));
+    elements = JSON.parse(undoStack.pop());
+
+    selectedIndex = -1;
+    redraw();
+    updateHistoryButtons();
+}
+
+function redo() {
+    if (!redoStack.length) return;
+
+    undoStack.push(JSON.stringify(elements));
+    elements = JSON.parse(redoStack.pop());
+
+    selectedIndex = -1;
+    redraw();
+    updateHistoryButtons();
+}
 
 function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
-    const image = document.createElement("canvas");
-    image.width = canvas.width;
-    image.height = canvas.height;
-    image.getContext("2d").drawImage(canvas, 0, 0);
+    const dpr = window.devicePixelRatio || 1;
 
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
 
-    if (image.width && image.height) {
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    }
     redraw();
 }
 
-function redraw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function screenToWorld(point) {
+    return {
+        x: (point.x - offsetX) / scale,
+        y: (point.y - offsetY) / scale
+    };
+}
 
-    ctx.strokeStyle = "#e5e5e5";
-    ctx.lineWidth = 1;
+function getPosition(event) {
+    const rect = canvas.getBoundingClientRect();
 
-    for (let x = 0; x < canvas.width; x += 25) {
-        for (let y = 0; y < canvas.height; y += 25) {
-            ctx.strokeRect(x, y, 1, 1);
-        }
-    }
-
-    elements.forEach(drawElement);
+    return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
 }
 
 function drawElement(item) {
-    ctx.lineWidth = 5;
+    ctx.save();
+
+    ctx.lineCap = "square";
+    ctx.lineJoin = "round";
     ctx.strokeStyle = "#182630";
+    ctx.fillStyle = "#182630";
+    ctx.lineWidth = 5;
 
     if (item.type === "wall") {
         ctx.beginPath();
@@ -176,7 +365,8 @@ function drawElement(item) {
 
     if (item.type === "room") {
         ctx.strokeRect(
-            item.x1, item.y1,
+            item.x1,
+            item.y1,
             item.x2 - item.x1,
             item.y2 - item.y1
         );
@@ -184,76 +374,566 @@ function drawElement(item) {
 
     if (item.type === "door") {
         ctx.lineWidth = 3;
+
+        const radius = Math.max(
+            10,
+            Math.hypot(item.x2 - item.x1, item.y2 - item.y1)
+        );
+
         ctx.beginPath();
-        ctx.arc(item.x1, item.y1, 25, 0, Math.PI / 2);
+        ctx.moveTo(item.x1, item.y1);
+        ctx.lineTo(item.x1 + radius, item.y1);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(
+            item.x1,
+            item.y1,
+            radius,
+            0,
+            Math.PI / 2
+        );
         ctx.stroke();
     }
 
     if (item.type === "window") {
         ctx.lineWidth = 7;
         ctx.strokeStyle = "#268ac0";
+
         ctx.beginPath();
         ctx.moveTo(item.x1, item.y1);
         ctx.lineTo(item.x2, item.y2);
         ctx.stroke();
     }
+
+    ctx.restore();
 }
 
-function position(event) {
+function redraw() {
+    const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    return {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top
-    };
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    ctx.save();
+
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
+
+    const left = -offsetX / scale;
+    const top = -offsetY / scale;
+    const right = (rect.width - offsetX) / scale;
+    const bottom = (rect.height - offsetY) / scale;
+
+    ctx.strokeStyle = "#e9edf0";
+    ctx.lineWidth = 1 / scale;
+
+    for (
+        let x = Math.floor(left / 25) * 25;
+        x < right;
+        x += 25
+    ) {
+        for (
+            let y = Math.floor(top / 25) * 25;
+            y < bottom;
+            y += 25
+        ) {
+            ctx.strokeRect(x, y, 1, 1);
+        }
+    }
+
+    elements.forEach((item, index) => {
+        drawElement(item);
+
+        if (index === selectedIndex) {
+            ctx.save();
+            ctx.strokeStyle = "#D6B56D";
+            ctx.lineWidth = 2 / scale;
+            ctx.setLineDash([6 / scale, 4 / scale]);
+
+            ctx.strokeRect(
+                Math.min(item.x1, item.x2) - 8,
+                Math.min(item.y1, item.y2) - 8,
+                Math.abs(item.x2 - item.x1) + 16,
+                Math.abs(item.y2 - item.y1) + 16
+            );
+
+            ctx.restore();
+        }
+    });
+
+    if (drawing && start && current) {
+        ctx.save();
+
+        ctx.strokeStyle = tool === "window" ? "#268ac0" : "#D6B56D";
+        ctx.lineWidth = 4 / scale;
+        ctx.setLineDash([7 / scale, 5 / scale]);
+
+        if (tool === "room") {
+            ctx.strokeRect(
+                start.x,
+                start.y,
+                current.x - start.x,
+                current.y - start.y
+            );
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(current.x, current.y);
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+
+    ctx.restore();
+}
+
+function distanceToSegment(point, item) {
+    const dx = item.x2 - item.x1;
+    const dy = item.y2 - item.y1;
+
+    const lengthSquared = dx * dx + dy * dy;
+
+    if (lengthSquared === 0) {
+        return Math.hypot(point.x - item.x1, point.y - item.y1);
+    }
+
+    const t = Math.max(
+        0,
+        Math.min(
+            1,
+            ((point.x - item.x1) * dx +
+             (point.y - item.y1) * dy) / lengthSquared
+        )
+    );
+
+    const x = item.x1 + t * dx;
+    const y = item.y1 + t * dy;
+
+    return Math.hypot(point.x - x, point.y - y);
+}
+
+function hitTest(point) {
+    for (let i = elements.length - 1; i >= 0; i--) {
+        const item = elements[i];
+
+        if (item.type === "room") {
+            const left = Math.min(item.x1, item.x2);
+            const right = Math.max(item.x1, item.x2);
+            const top = Math.min(item.y1, item.y2);
+            const bottom = Math.max(item.y1, item.y2);
+
+            const nearEdge =
+                Math.abs(point.x - left) < 15 ||
+                Math.abs(point.x - right) < 15 ||
+                Math.abs(point.y - top) < 15 ||
+                Math.abs(point.y - bottom) < 15;
+
+            const inside =
+                point.x >= left - 10 &&
+                point.x <= right + 10 &&
+                point.y >= top - 10 &&
+                point.y <= bottom + 10;
+
+            if (inside && nearEdge) return i;
+        } else if (item.type === "door") {
+            if (Math.hypot(point.x - item.x1, point.y - item.y1) < 35) {
+                return i;
+            }
+        } else if (distanceToSegment(point, item) < 15) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+function moveItem(item, dx, dy) {
+    item.x1 += dx;
+    item.y1 += dy;
+    item.x2 += dx;
+    item.y2 += dy;
+}
+
+function setTool(newTool) {
+    tool = newTool;
+    selectedIndex = -1;
+
+    document.querySelectorAll(".tool[data-tool]").forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.tool === tool
+        );
+    });
+
+    instructions.textContent = toolMessages[tool];
+    status.textContent = "Active tool: " +
+        tool.charAt(0).toUpperCase() + tool.slice(1);
+
+    canvas.style.cursor = tool === "pan" ? "grab" : "crosshair";
+
+    redraw();
 }
 
 document.querySelectorAll(".tool[data-tool]").forEach(button => {
     button.addEventListener("click", () => {
-        tool = button.dataset.tool;
-
-        document.querySelectorAll(".tool[data-tool]")
-            .forEach(b => b.classList.remove("active"));
-
-        button.classList.add("active");
+        setTool(button.dataset.tool);
     });
 });
 
+function getPointerPair() {
+    return Array.from(pointers.values()).slice(0, 2);
+}
+
+function startGesture() {
+    const pair = getPointerPair();
+
+    if (pair.length < 2) return;
+
+    drawing = false;
+    start = null;
+    current = null;
+    movingElement = null;
+
+    gestureActive = true;
+
+    const midpoint = {
+        x: (pair[0].x + pair[1].x) / 2,
+        y: (pair[0].y + pair[1].y) / 2
+    };
+
+    const distance = Math.hypot(
+        pair[1].x - pair[0].x,
+        pair[1].y - pair[0].y
+    );
+
+    lastGesture = {
+        midpoint,
+        distance: Math.max(distance, 1)
+    };
+
+    redraw();
+}
+
 canvas.addEventListener("pointerdown", event => {
-    drawing = true;
-    start = position(event);
-    canvas.setPointerCapture(event.pointerId);
-});
+    event.preventDefault();
 
-canvas.addEventListener("pointerup", event => {
-    if (!drawing) return;
+    const point = getPosition(event);
 
-    const end = position(event);
+    pointers.set(event.pointerId, {
+        x: point.x,
+        y: point.y,
+        type: event.pointerType
+    });
+
+    try {
+        canvas.setPointerCapture(event.pointerId);
+    } catch (error) {}
+
+    if (event.pointerType === "touch" && pointers.size >= 2) {
+        startGesture();
+        return;
+    }
+
+    if (gestureActive) return;
+
+    const world = screenToWorld(point);
+
+    if (tool === "pan") {
+        movingElement = {
+            type: "pan",
+            last: point
+        };
+        canvas.style.cursor = "grabbing";
+        return;
+    }
+
+    if (tool === "select") {
+        selectedIndex = hitTest(world);
+
+        if (selectedIndex !== -1) {
+            saveHistory();
+
+            movingElement = {
+                type: "object",
+                last: world
+            };
+        }
+
+        redraw();
+        return;
+    }
 
     if (tool === "erase") {
-        elements.pop();
-    } else {
-        elements.push({
-            type: tool,
-            x1: start.x,
-            y1: start.y,
-            x2: end.x,
-            y2: end.y
+        const index = hitTest(world);
+
+        if (index !== -1) {
+            saveHistory();
+            elements.splice(index, 1);
+            selectedIndex = -1;
+            redraw();
+        }
+
+        return;
+    }
+
+    drawing = true;
+    start = world;
+    current = world;
+
+    redraw();
+});
+
+canvas.addEventListener("pointermove", event => {
+    const point = getPosition(event);
+
+    if (pointers.has(event.pointerId)) {
+        pointers.set(event.pointerId, {
+            x: point.x,
+            y: point.y,
+            type: event.pointerType
         });
     }
 
-    drawing = false;
-    redraw();
+    if (gestureActive) {
+        const pair = getPointerPair();
+
+        if (pair.length === 2 && lastGesture) {
+            const midpoint = {
+                x: (pair[0].x + pair[1].x) / 2,
+                y: (pair[0].y + pair[1].y) / 2
+            };
+
+            const distance = Math.max(
+                Math.hypot(
+                    pair[1].x - pair[0].x,
+                    pair[1].y - pair[0].y
+                ),
+                1
+            );
+
+            const ratio = distance / lastGesture.distance;
+            const newScale = Math.max(
+                0.4,
+                Math.min(3, scale * ratio)
+            );
+
+            const worldX = (lastGesture.midpoint.x - offsetX) / scale;
+            const worldY = (lastGesture.midpoint.y - offsetY) / scale;
+
+            offsetX = midpoint.x - worldX * newScale;
+            offsetY = midpoint.y - worldY * newScale;
+
+            scale = newScale;
+
+            offsetX += midpoint.x - lastGesture.midpoint.x;
+            offsetY += midpoint.y - lastGesture.midpoint.y;
+
+            lastGesture = {
+                midpoint,
+                distance
+            };
+
+            redraw();
+        }
+
+        return;
+    }
+
+    if (!pointers.has(event.pointerId)) return;
+
+    const world = screenToWorld(point);
+
+    if (drawing) {
+        current = world;
+        redraw();
+        return;
+    }
+
+    if (movingElement?.type === "pan") {
+        offsetX += point.x - movingElement.last.x;
+        offsetY += point.y - movingElement.last.y;
+
+        movingElement.last = point;
+        redraw();
+        return;
+    }
+
+    if (movingElement?.type === "object") {
+        const dx = world.x - movingElement.last.x;
+        const dy = world.y - movingElement.last.y;
+
+        moveItem(elements[selectedIndex], dx, dy);
+
+        movingElement.last = world;
+        redraw();
+    }
 });
+
+function finishPointer(event) {
+    if (!pointers.has(event.pointerId)) return;
+
+    if (gestureActive) {
+        pointers.delete(event.pointerId);
+
+        const remaining = getPointerPair();
+
+        if (remaining.length < 2) {
+            gestureActive = false;
+            lastGesture = null;
+        }
+
+        drawing = false;
+        movingElement = null;
+        redraw();
+        return;
+    }
+
+    if (drawing && start && current) {
+        const distance = Math.hypot(
+            current.x - start.x,
+            current.y - start.y
+        );
+
+        if (distance > 3) {
+            saveHistory();
+
+            elements.push({
+                type: tool,
+                x1: start.x,
+                y1: start.y,
+                x2: current.x,
+                y2: current.y
+            });
+        }
+
+        drawing = false;
+        start = null;
+        current = null;
+    }
+
+    movingElement = null;
+    pointers.delete(event.pointerId);
+
+    if (tool === "pan") {
+        canvas.style.cursor = "grab";
+    }
+
+    redraw();
+}
+
+canvas.addEventListener("pointerup", finishPointer);
+canvas.addEventListener("pointercancel", finishPointer);
+
+document.getElementById("undo").addEventListener("click", undo);
+document.getElementById("redo").addEventListener("click", redo);
 
 document.getElementById("clear").addEventListener("click", () => {
+    if (!elements.length) return;
+
+    saveHistory();
     elements = [];
+    selectedIndex = -1;
     redraw();
 });
 
-window.addEventListener("resize", resizeCanvas);
+document.getElementById("zoomIn").addEventListener("click", () => {
+    zoomAt(1.2);
+});
+
+document.getElementById("zoomOut").addEventListener("click", () => {
+    zoomAt(1 / 1.2);
+});
+
+function zoomAt(factor) {
+    const rect = canvas.getBoundingClientRect();
+
+    const center = {
+        x: rect.width / 2,
+        y: rect.height / 2
+    };
+
+    const worldX = (center.x - offsetX) / scale;
+    const worldY = (center.y - offsetY) / scale;
+
+    scale = Math.max(0.4, Math.min(3, scale * factor));
+
+    offsetX = center.x - worldX * scale;
+    offsetY = center.y - worldY * scale;
+
+    redraw();
+}
+
+function fitToScreen() {
+    if (!elements.length) {
+        scale = 1;
+        offsetX = 0;
+        offsetY = 0;
+        redraw();
+        return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+
+    const minX = Math.min(...elements.map(item =>
+        Math.min(item.x1, item.x2)
+    ));
+
+    const maxX = Math.max(...elements.map(item =>
+        Math.max(item.x1, item.x2)
+    ));
+
+    const minY = Math.min(...elements.map(item =>
+        Math.min(item.y1, item.y2)
+    ));
+
+    const maxY = Math.max(...elements.map(item =>
+        Math.max(item.y1, item.y2)
+    ));
+
+    const width = Math.max(maxX - minX, 100);
+    const height = Math.max(maxY - minY, 100);
+
+    scale = Math.min(
+        (rect.width - 60) / width,
+        (rect.height - 60) / height,
+        2
+    );
+
+    scale = Math.max(scale, 0.4);
+
+    offsetX = (rect.width - width * scale) / 2 - minX * scale;
+    offsetY = (rect.height - height * scale) / 2 - minY * scale;
+
+    redraw();
+}
+
+document.getElementById("fitScreen").addEventListener("click", fitToScreen);
+
+document.getElementById("resetView").addEventListener("click", () => {
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    redraw();
+});
+
+if ("ResizeObserver" in window) {
+    new ResizeObserver(resizeCanvas).observe(canvas);
+} else {
+    window.addEventListener("resize", resizeCanvas);
+}
+
 resizeCanvas();
+updateHistoryButtons();
+setTool("wall");
 </script>
 
 </body>
 </html>
-
