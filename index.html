@@ -4,8 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MONCAD | Architectural Design</title>
+
+    <title>MONCAD | Architectural Design Platform</title>
+
+    <meta name="description" content="MONCAD is an architectural design platform for creating 2D floor plans and exploring 3D building designs.">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -15,39 +23,117 @@
         }
 
         header {
-            padding: 25px;
+            padding: 30px 20px;
             background: #182630;
+            border-bottom: 1px solid #34434d;
         }
 
-        h1 {
+        header h1 {
             color: #D6B56D;
-            font-size: 42px;
+            font-size: 44px;
+            letter-spacing: 4px;
+            margin: 0;
+        }
+
+        header p {
+            color: #c5cbd0;
+            margin-top: 10px;
         }
 
         .hero {
-            padding: 80px 20px;
+            padding: 100px 20px 90px;
+            max-width: 900px;
+            margin: auto;
         }
 
         .hero h2 {
-            font-size: 32px;
+            font-size: 38px;
+            margin-bottom: 20px;
         }
 
         .hero p {
             color: #c5cbd0;
-            font-size: 17px;
+            font-size: 18px;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto 35px;
         }
 
-        button {
+        .start-button {
+            display: inline-block;
             background: #D6B56D;
             color: #101820;
-            padding: 14px 28px;
-            border: none;
+            padding: 16px 35px;
             border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .start-button:hover {
+            background: #f0d28c;
+            transform: translateY(-2px);
+        }
+
+        .features {
+            padding: 55px 20px;
+            background: #182630;
+        }
+
+        .features h2 {
+            color: #D6B56D;
+            margin-bottom: 35px;
+        }
+
+        .feature-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .feature {
+            background: #22333e;
+            border: 1px solid #34434d;
+            border-radius: 10px;
+            padding: 25px;
+            width: 260px;
+        }
+
+        .feature h3 {
+            color: #D6B56D;
+        }
+
+        .feature p {
+            color: #c5cbd0;
+            line-height: 1.6;
+        }
+
+        footer {
+            padding: 25px;
+            color: #aab4bb;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 70px 20px;
+            }
+
+            .hero h2 {
+                font-size: 29px;
+            }
+
+            header h1 {
+                font-size: 36px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -56,18 +142,61 @@
     </header>
 
     <section class="hero">
+
         <h2>Design Your Vision. Build Your Future.</h2>
+
         <p>
-            Create advanced 2D floor plans,
-            3D architectural models, and
-            collaborative building designs.
+            Explore architectural design with MONCAD.
+            Create 2D floor plans, develop building concepts,
+            and bring your design ideas to life.
         </p>
 
-        <button onclick="alert('Welcome to MONCAD!')">
+        <a class="start-button" href="editor.html">
             Start Designing
-        </button>
+        </a>
+
     </section>
+
+    <section class="features">
+
+        <h2>Discover MONCAD</h2>
+
+        <div class="feature-grid">
+
+            <div class="feature">
+                <h3>2D Floor Plans</h3>
+                <p>
+                    Create and edit architectural floor plans
+                    using drawing tools.
+                </p>
+            </div>
+
+            <div class="feature">
+                <h3>3D Visualization</h3>
+                <p>
+                    Explore building designs and visualize
+                    your architectural ideas.
+                </p>
+            </div>
+
+            <div class="feature">
+                <h3>Easy to Use</h3>
+                <p>
+                    Discover an accessible design experience
+                    for students and professionals.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+        <p>MONCAD &copy; 2026. All Rights Reserved.</p>
+        <p>Design Your Vision. Build Your Future.</p>
+    </footer>
 
 </body>
 </html>
+
 
