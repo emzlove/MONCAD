@@ -4,1072 +4,909 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MONCAD | Architectural Design Studio</title>
+<title>MONCAD | Design Studio</title>
 <style>
 :root {
   --navy:#101820;
   --panel:#182630;
-  --panel2:#263946;
+  --panel2:#21313c;
   --gold:#d6b56d;
-  --line:#405462;
-  --text:#f5f7f8;
+  --gold-light:#f2d995;
+  --white:#f4f3ef;
+  --muted:#aeb8bf;
+  --line:#344650;
 }
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:var(--navy);
-  color:var(--text);
-  font-family:Arial,sans-serif;
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--navy);color:var(--white);
+  font-family:Arial,Helvetica,sans-serif;min-height:100vh;
 }
-header {
-  min-height:65px;
-  padding:13px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  background:var(--panel);
-  border-bottom:1px solid var(--line);
+button,input{font:inherit}
+button{
+  cursor:pointer;border:1px solid var(--line);border-radius:7px;
+  padding:9px 12px;background:var(--panel2);color:var(--white);
 }
-.logo {
-  font-size:25px;
-  font-weight:bold;
-  letter-spacing:2px;
-  color:var(--gold);
-}
-.header-note { color:#b9c7cf; font-size:13px; }
-.layout { display:flex; min-height:calc(100vh - 65px); }
-.sidebar {
-  width:250px;
-  flex-shrink:0;
-  padding:16px;
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  overflow-y:auto;
-}
-.sidebar h3 {
-  color:var(--gold);
-  font-size:14px;
-  margin:5px 0 12px;
-}
-.tool-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-}
-button {
-  font:inherit;
-  cursor:pointer;
-}
-.tool,.action,.mode-button {
-  color:white;
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:6px;
-  padding:10px 7px;
-  min-height:40px;
-}
-.tool.active,.mode-button.active {
-  color:var(--navy);
-  background:var(--gold);
-  border-color:var(--gold);
+button:hover{border-color:var(--gold);color:var(--gold-light)}
+button:disabled{opacity:.35;cursor:not-allowed}
+button.active,.primary{
+  background:var(--gold);color:var(--navy);border-color:var(--gold);
   font-weight:bold;
 }
-.action {
-  width:100%;
-  margin-top:7px;
+header{
+  min-height:68px;padding:12px 20px;display:flex;align-items:center;
+  justify-content:space-between;gap:15px;border-bottom:1px solid var(--line);
+  background:#121e27;
 }
-button:hover { border-color:var(--gold); }
-.section {
-  border-top:1px solid var(--line);
-  margin-top:16px;
-  padding-top:13px;
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:40px;height:40px;border:1px solid var(--gold);border-radius:8px;
+  display:grid;place-items:center;color:var(--gold);font-weight:bold;
+  font-size:20px;
 }
-.field-label {
-  display:block;
-  font-size:12px;
-  color:#cbd5db;
-  margin:10px 0 5px;
+.brand-name{font-size:22px;letter-spacing:3px;color:var(--gold);font-weight:bold}
+.brand-tag{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px}
+.header-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.status{font-size:12px;color:var(--muted)}
+main{max-width:1600px;margin:auto;padding:16px}
+.studio-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.studio-tabs button{min-width:145px}
+.workspace{
+  display:grid;grid-template-columns:190px minmax(250px,1fr) 245px;
+  gap:12px;min-height:calc(100vh - 150px);
 }
-input {
-  width:100%;
-  padding:10px;
-  color:white;
-  background:#0e1820;
-  border:1px solid var(--line);
-  border-radius:5px;
-  font-size:15px;
+.panel{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:13px;min-width:0;
 }
-input:focus { outline:1px solid var(--gold); }
-.help {
-  color:#aebdc6;
-  font-size:11px;
-  line-height:1.5;
+.panel h3{
+  color:var(--gold);font-size:13px;letter-spacing:1px;
+  text-transform:uppercase;margin:2px 0 13px;
 }
-.main {
-  flex:1;
-  min-width:0;
-  padding:17px;
+.tool-list{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tool-list button{font-size:12px;min-height:42px}
+.tool-list button.active{background:var(--gold);color:var(--navy)}
+.section{border-top:1px solid var(--line);margin-top:15px;padding-top:13px}
+.field{display:grid;gap:5px;margin:10px 0}
+.field label,.small-label{font-size:11px;color:var(--muted)}
+.field input{
+  width:100%;background:#101820;color:white;border:1px solid var(--line);
+  padding:8px;border-radius:6px;min-width:0;
 }
-.topline {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:13px;
+.check-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.check-row input{accent-color:var(--gold)}
+.center{display:flex;flex-direction:column;min-width:0;gap:10px}
+.canvas-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;background:var(--panel);
+  border:1px solid var(--line);border-radius:9px;padding:9px;
 }
-.main h2 { margin:0 0 5px; font-size:21px; }
-.subtitle { color:#aebdc6; font-size:12px; margin:0; }
-.mode-switch { display:flex; gap:7px; }
-.mode-button { min-width:105px; }
-.canvas-shell {
-  height:min(75vh,800px);
-  min-height:420px;
-  border:2px solid var(--line);
-  border-radius:7px;
-  background:white;
-  overflow:hidden;
+.toolbar-group{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.toolbar-group button{font-size:12px}
+.canvas-wrap{
+  position:relative;flex:1;min-height:480px;overflow:hidden;
+  border:1px solid var(--line);border-radius:10px;background:#101820;
 }
-canvas {
-  display:block;
-  width:100%;
-  height:100%;
-  touch-action:none;
+#designCanvas{display:block;width:100%;height:100%;min-height:480px;touch-action:none}
+.canvas-label{
+  position:absolute;left:14px;top:12px;pointer-events:none;
+  color:var(--gold);font-size:12px;letter-spacing:1px;
+  background:#101820cc;padding:6px 8px;border-radius:5px;
 }
-.status {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:space-between;
-  gap:8px;
-  color:#c4d0d7;
-  font-size:12px;
-  padding:10px 2px;
+.info-text{font-size:11px;color:var(--muted);line-height:1.6}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.action-grid button{font-size:11px}
+.property-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.property-grid .field{margin:4px 0}
+.measure-box{
+  padding:9px;background:#101820;border:1px solid var(--line);
+  border-radius:7px;margin-top:8px;font-size:12px;
 }
-.status strong { color:var(--gold); }
-@media(max-width:760px) {
-  .layout { flex-direction:column; }
-  .sidebar {
-    width:100%;
-    border-right:0;
-    border-bottom:1px solid var(--line);
-  }
-  .main { padding:12px; }
-  .canvas-shell { height:62vh; min-height:380px; }
-  header { padding:12px 14px; }
+.measure-box strong{color:var(--gold)}
+.empty-note{color:var(--muted);font-size:12px;line-height:1.6}
+#fashionPanel{display:none}
+.fashion-card{
+  border:1px solid var(--line);border-radius:9px;padding:18px;
+  background:#182630;margin-top:12px;
+}
+.fashion-card h3{color:var(--gold)}
+.fashion-card p{color:var(--muted);line-height:1.6;font-size:13px}
+footer{
+  text-align:center;color:#81909a;font-size:11px;
+  padding:16px;border-top:1px solid var(--line);margin-top:16px;
+}
+@media(max-width:950px){
+  .workspace{grid-template-columns:160px minmax(0,1fr)}
+  .right-panel{grid-column:1/-1}
+}
+@media(max-width:620px){
+  header{align-items:flex-start;flex-direction:column}
+  main{padding:9px}
+  .workspace{display:flex;flex-direction:column}
+  .left-panel{order:2}
+  .center{order:1}
+  .right-panel{order:3}
+  .canvas-wrap,#designCanvas{min-height:420px}
+  .tool-list{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">MONCAD</div>
-  <div class="header-note">Architectural Design Studio</div>
+  <div class="brand">
+    <div class="brand-mark">M</div>
+    <div>
+      <div class="brand-name">MONCAD</div>
+      <div class="brand-tag">IMAGINE. DESIGN. BUILD.</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="status" id="saveStatus">Ready to design</span>
+    <button id="saveBtn" class="primary">Save Project</button>
+  </div>
 </header>
 
-<div class="layout">
-<aside class="sidebar">
+<main>
+  <nav class="studio-tabs">
+    <button id="architectureTab" class="active">Architecture Studio</button>
+    <button id="fashionTab">Fashion Studio</button>
+  </nav>
 
-  <h3>Drawing Tools</h3>
-  <div class="tool-grid">
-    <button class="tool active" data-tool="wall">Wall</button>
-    <button class="tool" data-tool="room">Room</button>
-    <button class="tool" data-tool="door">Door</button>
-    <button class="tool" data-tool="window">Window</button>
-    <button class="tool" data-tool="select">Select</button>
-    <button class="tool" data-tool="pan">Pan</button>
-    <button class="tool" data-tool="erase">Erase</button>
-  </div>
+  <section id="architecturePanel" class="workspace">
+    <aside class="panel left-panel">
+      <h3>Design tools</h3>
+      <div class="tool-list">
+        <button class="active" data-tool="wall">Wall</button>
+        <button data-tool="room">Room</button>
+        <button data-tool="door">Door</button>
+        <button data-tool="window">Window</button>
+        <button data-tool="select">Select</button>
+        <button data-tool="erase">Erase</button>
+        <button data-tool="pan">Pan</button>
+      </div>
 
-  <div class="section">
-    <h3>Measurements</h3>
+      <div class="section">
+        <h3>Drawing settings</h3>
+        <label class="check-row">
+          <input type="checkbox" id="snapToggle" checked>
+          Snap to 10 cm grid
+        </label>
+        <div class="field">
+          <label for="wallThickness">Wall thickness (cm)</label>
+          <input id="wallThickness" type="number" min="5" max="100" value="15">
+        </div>
+        <div class="field">
+          <label for="wallHeight">Wall height (cm)</label>
+          <input id="wallHeight" type="number" min="100" max="1000" value="280">
+        </div>
+      </div>
 
-    <label class="field-label" for="wallLength">Wall length (metres)</label>
-    <input id="wallLength" type="number" min="0" step="0.01" placeholder="Example: 4.50">
+      <div class="section">
+        <h3>Editing</h3>
+        <div class="action-grid">
+          <button id="undoBtn" disabled>Undo</button>
+          <button id="redoBtn" disabled>Redo</button>
+          <button id="duplicateBtn">Duplicate</button>
+          <button id="deleteBtn">Delete</button>
+        </div>
+        <button id="clearBtn" style="width:100%;margin-top:8px">Clear plan</button>
+      </div>
 
-    <label class="field-label" for="roomWidth">Room width (metres)</label>
-    <input id="roomWidth" type="number" min="0" step="0.01" placeholder="Example: 4.00">
+      <div class="section">
+        <p class="info-text">
+          Select a tool, then draw on the grid. Choose Select to move
+          an existing element. Measurements are in centimetres.
+        </p>
+      </div>
+    </aside>
 
-    <label class="field-label" for="roomDepth">Room depth (metres)</label>
-    <input id="roomDepth" type="number" min="0" step="0.01" placeholder="Example: 3.00">
+    <section class="center">
+      <div class="canvas-toolbar">
+        <div class="toolbar-group">
+          <button id="mode2d" class="active">2D Plan</button>
+          <button id="mode3d">3D Preview</button>
+        </div>
+        <div class="toolbar-group">
+          <button id="zoomOut">−</button>
+          <span class="status" id="zoomStatus">100%</span>
+          <button id="zoomIn">+</button>
+          <button id="fitBtn">Fit</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+      </div>
 
-    <label class="field-label" for="openingWidth">Door / window width (metres)</label>
-    <input id="openingWidth" type="number" min="0" step="0.01" placeholder="Example: 0.90">
+      <div class="canvas-wrap">
+        <div class="canvas-label" id="viewTitle">MONCAD ARCHITECTURE STUDIO</div>
+        <canvas id="designCanvas"></canvas>
+      </div>
 
-    <p class="help">
-      Enter a dimension before drawing to use that exact measurement.
-      Leave it blank for freehand drawing, snapped to 10 cm.
+      <div class="canvas-toolbar">
+        <div class="toolbar-group">
+          <button id="exportBtn">Export PNG</button>
+          <button id="exportProjectBtn">Export Project JSON</button>
+          <button id="importProjectBtn">Import Project JSON</button>
+          <input id="projectFileInput" type="file" accept=".json,application/json" hidden>
+        </div>
+        <span class="status" id="toolStatus">Wall tool</span>
+      </div>
+    </section>
+
+    <aside class="panel right-panel">
+      <h3>Properties inspector</h3>
+      <p class="empty-note" id="selectionHint">
+        Select an element to inspect and edit its coordinates.
+      </p>
+
+      <div class="section">
+        <h3>Coordinates (cm)</h3>
+        <div class="property-grid">
+          <div class="field">
+            <label for="propX1">Start X</label>
+            <input id="propX1" type="number" value="0">
+          </div>
+          <div class="field">
+            <label for="propY1">Start Y</label>
+            <input id="propY1" type="number" value="0">
+          </div>
+          <div class="field">
+            <label for="propX2">End X</label>
+            <input id="propX2" type="number" value="0">
+          </div>
+          <div class="field">
+            <label for="propY2">End Y</label>
+            <input id="propY2" type="number" value="0">
+          </div>
+        </div>
+        <button id="applyPropertiesBtn" style="width:100%;margin-top:8px">
+          Apply coordinates
+        </button>
+      </div>
+
+      <div class="section">
+        <h3>Measurements</h3>
+        <div class="measure-box">Length: <strong id="wallLength">—</strong></div>
+        <div class="measure-box">Width: <strong id="roomWidth">—</strong></div>
+        <div class="measure-box">Depth: <strong id="roomDepth">—</strong></div>
+      </div>
+
+      <div class="section">
+        <h3>Project information</h3>
+        <p class="info-text">
+          Project saving is currently stored in this browser on this device.
+          Export a JSON backup to transfer your work to another device.
+        </p>
+      </div>
+    </aside>
+  </section>
+
+  <section id="fashionPanel" class="panel" style="display:none">
+    <h2 style="color:var(--gold)">MONCAD Fashion Studio</h2>
+    <p class="empty-note">
+      A dedicated creative workspace for fashion illustration, garment
+      measurements, pattern development and design drafts.
     </p>
-  </div>
-
-  <div class="section">
-    <h3>3D Settings</h3>
-    <label class="field-label" for="wallHeight">Wall height (metres)</label>
-    <input id="wallHeight" type="number" min="0.1" step="0.1" value="2.80">
-
-    <label class="field-label" for="wallThickness">Wall thickness (cm)</label>
-    <input id="wallThickness" type="number" min="1" step="1" value="15">
-
-    <p class="help">These settings control the 3D preview. They do not change the 2D floor-plan dimensions.</p>
-  </div>
-
-  <div class="section">
-    <h3>Edit Plan</h3>
-    <button class="action" id="undoBtn">↶ Undo</button>
-    <button class="action" id="redoBtn">↷ Redo</button>
-    <button class="action" id="deleteBtn">Delete Selected</button>
-    <button class="action" id="clearBtn">Clear Plan</button>
-  </div>
-
-  <div class="section">
-    <h3>View Controls</h3>
-    <button class="action" id="zoomIn">＋ Zoom In</button>
-    <button class="action" id="zoomOut">－ Zoom Out</button>
-    <button class="action" id="fitBtn">Fit Drawing</button>
-    <button class="action" id="resetBtn">Reset View</button>
-  </div>
-
-  <div class="section">
-    <h3>Project</h3>
-    <button class="action" id="saveBtn">Save Plan</button>
-    <button class="action" id="loadBtn">Load Saved Plan</button>
-    <button class="action" id="exportBtn">Export PNG</button>
-    <p class="help">Local browser saving is for this device and browser only. It is not cloud storage.</p>
-  </div>
-</aside>
-
-<main class="main">
-  <div class="topline">
-    <div>
-      <h2 id="viewTitle">2D Floor Plan</h2>
-      <p class="subtitle" id="viewDescription">Create an accurately measured floor plan.</p>
+    <div class="fashion-card">
+      <h3>Fashion Studio — Development foundation</h3>
+      <p>
+        The next development stage will add a fashion design canvas,
+        measurement tools, pattern pieces, garment previews and a
+        versioned Save Draft system.
+      </p>
+      <p>
+        Draft history is intended to record dates and design changes as
+        supporting documentation of creative development. It cannot
+        guarantee legal ownership or prevent plagiarism.
+      </p>
+      <span class="status">Fashion tools are still under development.</span>
     </div>
-    <div class="mode-switch">
-      <button class="mode-button active" id="mode2d">2D PLAN</button>
-      <button class="mode-button" id="mode3d">3D VIEW</button>
-    </div>
-  </div>
-
-  <div class="canvas-shell">
-    <canvas id="designCanvas"></canvas>
-  </div>
-
-  <div class="status">
-    <span id="toolStatus">Tool: <strong>Wall</strong></span>
-    <span id="measureStatus">Ready to draw</span>
-    <span id="zoomStatus">Zoom: 100%</span>
-  </div>
+  </section>
 </main>
-</div>
+
+<footer>
+  MONCAD DESIGN · IMAGINE. DESIGN. BUILD.
+</footer>
 
 <script>
+(() => {
 "use strict";
 
-/*
-  MONCAD SHARED DESIGN MODEL
-  All plan coordinates are stored in centimetres.
-  100 cm = 1 metre.
-  2D and 3D views use the same project data.
-*/
-
-const canvas = document.getElementById("designCanvas");
+const $ = id => document.getElementById(id);
+const canvas = $("designCanvas");
 const ctx = canvas.getContext("2d");
 
-const STORAGE_KEY = "moncad_architectural_project_v2";
+const STORAGE_KEY = "moncad_architecture_v2";
+const SCALE = 2;
 
-const fields = {
-  wall: document.getElementById("wallLength"),
-  width: document.getElementById("roomWidth"),
-  depth: document.getElementById("roomDepth"),
-  opening: document.getElementById("openingWidth"),
-  height: document.getElementById("wallHeight"),
-  thickness: document.getElementById("wallThickness")
-};
-
-let project = {
-  version: 2,
-  units: "centimetres",
+const state = {
   elements: [],
-  nextId: 1
+  selected: null,
+  tool: "wall",
+  view: "2d",
+  zoom: 1,
+  offsetX: 70,
+  offsetY: 70,
+  snap: true,
+  drawing: false,
+  dragging: false,
+  panning: false,
+  start: null,
+  lastPointer: null,
+  dragStart: null,
+  originalElement: null,
+  history: [],
+  historyIndex: -1
 };
 
-let mode = "2d";
-let tool = "wall";
-let selectedId = null;
-let drawing = false;
-let panning = false;
-let start = null;
-let current = null;
-let lastPointer = null;
-let undoStack = [];
-let redoStack = [];
-
-let camera = {
-  scale: 1.2,
-  x: 55,
-  y: 55
-};
-
-const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
-const snap = n => Math.round(n/10)*10;
-const metres = cm => (cm/100).toFixed(2) + " m";
-
-function numeric(field) {
-  const raw = field.value.trim();
-  const n = Number(raw);
-  return raw !== "" && Number.isFinite(n) && n > 0 ? n : null;
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
-function historySave() {
-  undoStack.push(JSON.stringify(project));
-  if (undoStack.length > 70) undoStack.shift();
-  redoStack = [];
+function snapValue(value) {
+  return state.snap ? Math.round(value / 10) * 10 : value;
 }
 
-function restoreProject(json) {
-  project = JSON.parse(json);
-  selectedId = null;
+function saveHistory() {
+  state.history = state.history.slice(0, state.historyIndex + 1);
+  state.history.push(clone(state.elements));
+  if (state.history.length > 50) state.history.shift();
+  state.historyIndex = state.history.length - 1;
+  updateHistoryButtons();
+}
+
+function updateHistoryButtons() {
+  $("undoBtn").disabled = state.historyIndex <= 0;
+  $("redoBtn").disabled = state.historyIndex >= state.history.length - 1;
+}
+
+function undo() {
+  if (state.historyIndex <= 0) return;
+  state.historyIndex--;
+  state.elements = clone(state.history[state.historyIndex]);
+  state.selected = null;
+  updateInspector();
+  updateHistoryButtons();
   redraw();
 }
 
-function nextId() {
-  return project.nextId++;
-}
-
-function pointerPosition(event) {
-  const r = canvas.getBoundingClientRect();
-  return { x:event.clientX-r.left, y:event.clientY-r.top };
-}
-
-function screenToWorld(p) {
-  return {
-    x:(p.x-camera.x)/camera.scale,
-    y:(p.y-camera.y)/camera.scale
-  };
-}
-
-function worldToScreen(p) {
-  return {
-    x:p.x*camera.scale+camera.x,
-    y:p.y*camera.scale+camera.y
-  };
+function redo() {
+  if (state.historyIndex >= state.history.length - 1) return;
+  state.historyIndex++;
+  state.elements = clone(state.history[state.historyIndex]);
+  state.selected = null;
+  updateInspector();
+  updateHistoryButtons();
+  redraw();
 }
 
 function resizeCanvas() {
-  const r = canvas.getBoundingClientRect();
-  const dpr = Math.max(1,window.devicePixelRatio || 1);
-  canvas.width = Math.round(r.width*dpr);
-  canvas.height = Math.round(r.height*dpr);
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.round(rect.width * dpr));
+  canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   redraw();
 }
 
-function setStatus(message) {
-  document.getElementById("measureStatus").textContent = message;
-}
-
-function drawGrid(width,height) {
-  const step = 50*camera.scale;
-  if (step < 8) return;
-
-  const ox = ((camera.x%step)+step)%step;
-  const oy = ((camera.y%step)+step)%step;
-
-  ctx.save();
-  ctx.strokeStyle = "#edf0f2";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-
-  for (let x=ox;x<width;x+=step) {
-    ctx.moveTo(x,0);
-    ctx.lineTo(x,height);
-  }
-  for (let y=oy;y<height;y+=step) {
-    ctx.moveTo(0,y);
-    ctx.lineTo(width,y);
-  }
-
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawLabel(x,y,text) {
-  ctx.save();
-  ctx.font = "12px Arial";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  const w = ctx.measureText(text).width+10;
-  ctx.fillStyle = "rgba(255,255,255,0.94)";
-  ctx.fillRect(x-w/2,y-10,w,20);
-  ctx.fillStyle = "#172630";
-  ctx.fillText(text,x,y);
-  ctx.restore();
-}
-
-function drawDimension(a,b,label,offsetX=0,offsetY=0) {
-  drawLabel(
-    (a.x+b.x)/2+offsetX,
-    (a.y+b.y)/2+offsetY,
-    label
-  );
-}
-
-function draw2DElement(item) {
-  const a = worldToScreen({x:item.x1,y:item.y1});
-  const b = worldToScreen({x:item.x2,y:item.y2});
-  const selected = item.id === selectedId;
-
-  ctx.save();
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  if (item.type === "room") {
-    const left = Math.min(a.x,b.x);
-    const top = Math.min(a.y,b.y);
-    const width = Math.abs(b.x-a.x);
-    const height = Math.abs(b.y-a.y);
-    const realWidth = Math.abs(item.x2-item.x1);
-    const realDepth = Math.abs(item.y2-item.y1);
-
-    ctx.strokeStyle = selected ? "#d28b22" : "#182630";
-    ctx.lineWidth = selected ? 5 : 3;
-    ctx.strokeRect(left,top,width,height);
-
-    drawDimension(
-      {x:left,y:top-16},
-      {x:left+width,y:top-16},
-      metres(realWidth)
-    );
-    drawDimension(
-      {x:left-17,y:top},
-      {x:left-17,y:top+height},
-      metres(realDepth)
-    );
-
-    drawLabel(
-      left+width/2,
-      top+height/2,
-      (realWidth*realDepth/10000).toFixed(2)+" m²"
-    );
-  }
-
-  if (item.type === "wall") {
-    ctx.strokeStyle = selected ? "#d28b22" : "#182630";
-    ctx.lineWidth = selected ? 5 : 3;
-    ctx.beginPath();
-    ctx.moveTo(a.x,a.y);
-    ctx.lineTo(b.x,b.y);
-    ctx.stroke();
-
-    drawDimension(
-      {x:a.x,y:a.y-15},
-      {x:b.x,y:b.y-15},
-      metres(Math.hypot(item.x2-item.x1,item.y2-item.y1))
-    );
-  }
-
-  if (item.type === "door" || item.type === "window") {
-    ctx.strokeStyle = item.type === "door" ? "#b17c38" : "#168ac4";
-    ctx.lineWidth = selected ? 7 : 5;
-    ctx.beginPath();
-    ctx.moveTo(a.x,a.y);
-    ctx.lineTo(b.x,b.y);
-    ctx.stroke();
-
-    if (item.type === "door") {
-      const length = Math.hypot(b.x-a.x,b.y-a.y);
-      if (length > 2) {
-        const angle = Math.atan2(b.y-a.y,b.x-a.x);
-        ctx.beginPath();
-        ctx.arc(a.x,a.y,length,angle,angle+Math.PI/2);
-        ctx.strokeStyle = "#647783";
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-      }
-    } else {
-      const dx=b.x-a.x, dy=b.y-a.y;
-      const len=Math.hypot(dx,dy)||1;
-      const ox=-dy/len*4, oy=dx/len*4;
-      ctx.strokeStyle="#168ac4";
-      ctx.lineWidth=1.5;
-      ctx.beginPath();
-      ctx.moveTo(a.x+ox,a.y+oy);
-      ctx.lineTo(b.x+ox,b.y+oy);
-      ctx.stroke();
-    }
-
-    drawDimension(
-      {x:a.x,y:a.y-15},
-      {x:b.x,y:b.y-15},
-      metres(Math.hypot(item.x2-item.x1,item.y2-item.y1))
-    );
-  }
-
-  ctx.restore();
-}
-
-function redraw2D() {
-  const w=canvas.clientWidth, h=canvas.clientHeight;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle="#fff";
-  ctx.fillRect(0,0,w,h);
-  drawGrid(w,h);
-
-  project.elements.forEach(draw2DElement);
-
-  if (drawing && start && current) {
-    const a=worldToScreen(start);
-    const b=worldToScreen(current);
-    ctx.save();
-    ctx.strokeStyle="#d6a94f";
-    ctx.lineWidth=2;
-    ctx.setLineDash([6,4]);
-
-    if (tool==="room") {
-      ctx.strokeRect(a.x,a.y,b.x-a.x,b.y-a.y);
-    } else {
-      ctx.beginPath();
-      ctx.moveTo(a.x,a.y);
-      ctx.lineTo(b.x,b.y);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  document.getElementById("zoomStatus").textContent =
-    "Zoom: "+Math.round(camera.scale/1.2*100)+"%";
-}
-
-/* ---------- 3D ISOMETRIC PREVIEW ---------- */
-
-function project3D(x,y,z,centerX,centerY,scale) {
-  const angle=Math.PI/6;
+function screenToWorld(point) {
   return {
-    x:centerX+(x-y)*Math.cos(angle)*scale,
-    y:centerY+(x+y)*Math.sin(angle)*scale-z*scale
+    x: (point.x - state.offsetX) / (SCALE * state.zoom),
+    y: (point.y - state.offsetY) / (SCALE * state.zoom)
   };
 }
 
-function polygon(points,fill,stroke="#667985") {
-  ctx.beginPath();
-  points.forEach((p,i)=>{
-    if (i===0) ctx.moveTo(p.x,p.y);
-    else ctx.lineTo(p.x,p.y);
-  });
-  ctx.closePath();
-  ctx.fillStyle=fill;
-  ctx.fill();
-  ctx.strokeStyle=stroke;
-  ctx.lineWidth=1;
-  ctx.stroke();
+function worldToScreen(point) {
+  return {
+    x: point.x * SCALE * state.zoom + state.offsetX,
+    y: point.y * SCALE * state.zoom + state.offsetY
+  };
 }
 
-function prism(x1,y1,x2,y2,thickness,height,cx,cy,scale,color) {
-  const dx=x2-x1, dy=y2-y1;
-  const length=Math.hypot(dx,dy);
-  if (length<1) return;
-
-  const nx=-dy/length*thickness/2;
-  const ny=dx/length*thickness/2;
-
-  const A=[x1+nx,y1+ny];
-  const B=[x2+nx,y2+ny];
-  const C=[x2-nx,y2-ny];
-  const D=[x1-nx,y1-ny];
-
-  const p=(v,z)=>project3D(v[0],v[1],z,cx,cy,scale);
-
-  const a=p(A,0), b=p(B,0), c=p(C,0), d=p(D,0);
-  const at=p(A,height), bt=p(B,height);
-  const ct=p(C,height), dt=p(D,height);
-
-  polygon([a,b,bt,at],color);
-  polygon([b,c,ct,bt],"#c0cbd1");
-  polygon([at,bt,ct,dt],"#e3e9ec");
+function pointerPosition(event) {
+  const rect = canvas.getBoundingClientRect();
+  return {x:event.clientX-rect.left,y:event.clientY-rect.top};
 }
 
-function drawRoomFloor(item,cx,cy,scale) {
-  const x1=Math.min(item.x1,item.x2);
-  const x2=Math.max(item.x1,item.x2);
-  const y1=Math.min(item.y1,item.y2);
-  const y2=Math.max(item.y1,item.y2);
+function drawGrid(width,height) {
+  const step = SCALE * state.zoom * 10;
+  if (step < 5) return;
 
-  const pts=[
-    project3D(x1,y1,0,cx,cy,scale),
-    project3D(x2,y1,0,cx,cy,scale),
-    project3D(x2,y2,0,cx,cy,scale),
-    project3D(x1,y2,0,cx,cy,scale)
-  ];
+  const sx = ((state.offsetX % step) + step) % step;
+  const sy = ((state.offsetY % step) + step) % step;
 
-  polygon(pts,"#e7e2d8","#8999a2");
+  ctx.save();
+  ctx.strokeStyle = "rgba(214,181,109,.13)";
+  ctx.lineWidth = 1;
+
+  for(let x=sx;x<width;x+=step) {
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke();
+  }
+  for(let y=sy;y<height;y+=step) {
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();
+  }
+  ctx.restore();
 }
 
-function draw3D() {
-  const w=canvas.clientWidth, h=canvas.clientHeight;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle="#f1f4f6";
-  ctx.fillRect(0,0,w,h);
+function bounds(element) {
+  return {
+    left:Math.min(element.x1,element.x2),
+    right:Math.max(element.x1,element.x2),
+    top:Math.min(element.y1,element.y2),
+    bottom:Math.max(element.y1,element.y2)
+  };
+}
 
-  if (!project.elements.length) {
-    ctx.fillStyle="#263946";
-    ctx.font="16px Arial";
-    ctx.textAlign="center";
-    ctx.fillText("Create a room or walls in 2D to see your 3D preview.",w/2,h/2);
-    return;
+function drawElement(element,selected=false) {
+  const a=worldToScreen({x:element.x1,y:element.y1});
+  const b=worldToScreen({x:element.x2,y:element.y2});
+
+  ctx.save();
+  ctx.lineCap="round";
+
+  if(element.type==="wall") {
+    ctx.strokeStyle=selected?"#fff0bd":"#d6b56d";
+    ctx.lineWidth=Math.max(3,(element.thickness||15)*.18*state.zoom);
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
   }
 
-  const xs=project.elements.flatMap(e=>[e.x1,e.x2]);
-  const ys=project.elements.flatMap(e=>[e.y1,e.y2]);
-  const minX=Math.min(...xs), maxX=Math.max(...xs);
-  const minY=Math.min(...ys), maxY=Math.max(...ys);
+  if(element.type==="room") {
+    const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);
+    const w=Math.abs(b.x-a.x),h=Math.abs(b.y-a.y);
+    ctx.fillStyle=selected?"rgba(214,181,109,.22)":"rgba(214,181,109,.09)";
+    ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle=selected?"#fff0bd":"#d6b56d";
+    ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
+    ctx.fillStyle="#f3e6c5";ctx.font="12px Arial";
+    ctx.fillText("ROOM",x+7,y+17);
+  }
 
-  const span=Math.max(200,maxX-minX,maxY-minY);
-  const scale=clamp(Math.min((w-100)/(span*1.5),(h-130)/(span*0.95)),0.12,1.4);
-  const cx=w/2-(minX+maxX)*0.5*scale*1.0;
-  const cy=h*0.72-(minX+maxX+minY+maxY)*0.25*scale;
+  if(element.type==="door"||element.type==="window") {
+    ctx.strokeStyle=element.type==="door"?"#8ec5b0":"#83c7e8";
+    if(selected)ctx.strokeStyle="#fff0bd";
+    ctx.lineWidth=element.type==="door"?4:6;
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+  }
 
-  const wallHeight=(numeric(fields.height)||2.8)*100;
-  const thickness=numeric(fields.thickness)||15;
+  if(selected) {
+    const r=bounds(element);
+    const p1=worldToScreen({x:r.left,y:r.top});
+    const p2=worldToScreen({x:r.right,y:r.bottom});
+    ctx.setLineDash([5,4]);
+    ctx.strokeStyle="#ffffff";ctx.lineWidth=1;
+    ctx.strokeRect(p1.x-7,p1.y-7,p2.x-p1.x+14,p2.y-p1.y+14);
+  }
+  ctx.restore();
+}
 
-  // Draw room floor surfaces first.
-  project.elements
-    .filter(e=>e.type==="room")
-    .forEach(e=>drawRoomFloor(e,cx,cy,scale));
+function draw3D(width,height) {
+  ctx.fillStyle="#101820";ctx.fillRect(0,0,width,height);
+  ctx.fillStyle="#d6b56d";ctx.font="bold 15px Arial";
+  ctx.fillText("MONCAD · ISOMETRIC CONCEPT PREVIEW",18,26);
 
-  // Build 3D wall surfaces from room outlines.
-  project.elements.filter(e=>e.type==="room").forEach(e=>{
-    const x1=Math.min(e.x1,e.x2);
-    const x2=Math.max(e.x1,e.x2);
-    const y1=Math.min(e.y1,e.y2);
-    const y2=Math.max(e.y1,e.y2);
-
-    prism(x1,y1,x2,y1,thickness,wallHeight,cx,cy,scale,"#9baab2");
-    prism(x2,y1,x2,y2,thickness,wallHeight,cx,cy,scale,"#8799a3");
-    prism(x2,y2,x1,y2,thickness,wallHeight,cx,cy,scale,"#9baab2");
-    prism(x1,y2,x1,y1,thickness,wallHeight,cx,cy,scale,"#8799a3");
+  const originX=width/2,originY=height/2+50;
+  const factor=Math.min(width,height)/650;
+  const iso=(x,y,z=0)=>({
+    x:originX+(x-y)*factor*.7,
+    y:originY+(x+y)*factor*.35-z*factor*.7
   });
 
-  // Draw individually created walls.
-  project.elements.filter(e=>e.type==="wall").forEach(e=>{
-    prism(e.x1,e.y1,e.x2,e.y2,thickness,wallHeight,cx,cy,scale,"#a5b2b9");
+  state.elements.filter(e=>e.type==="room").forEach(e=>{
+    const l=Math.min(e.x1,e.x2),r=Math.max(e.x1,e.x2);
+    const t=Math.min(e.y1,e.y2),b=Math.max(e.y1,e.y2);
+    const p=[iso(l,t),iso(r,t),iso(r,b),iso(l,b)];
+    ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);
+    p.slice(1).forEach(v=>ctx.lineTo(v.x,v.y));
+    ctx.closePath();ctx.fillStyle="rgba(214,181,109,.12)";
+    ctx.fill();ctx.strokeStyle="#d6b56d";ctx.stroke();
   });
 
-  // Show door and window positions as visual markers.
-  project.elements.filter(e=>e.type==="door"||e.type==="window").forEach(e=>{
-    const a=project3D(e.x1,e.y1,0,cx,cy,scale);
-    const b=project3D(e.x2,e.y2,0,cx,cy,scale);
-    const color=e.type==="door"?"#b47d3b":"#168ac4";
-
-    ctx.save();
-    ctx.strokeStyle=color;
-    ctx.lineWidth=5;
-    ctx.beginPath();
-    ctx.moveTo(a.x,a.y-8);
-    ctx.lineTo(b.x,b.y-8);
-    ctx.stroke();
-    ctx.restore();
+  const h=Number($("wallHeight").value)||280;
+  state.elements.filter(e=>e.type==="wall").forEach(e=>{
+    const a=iso(e.x1,e.y1),b=iso(e.x2,e.y2);
+    const ah=iso(e.x1,e.y1,h),bh=iso(e.x2,e.y2,h);
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    ctx.lineTo(bh.x,bh.y);ctx.lineTo(ah.x,ah.y);ctx.closePath();
+    ctx.fillStyle="rgba(214,181,109,.25)";ctx.fill();
+    ctx.strokeStyle="#d6b56d";ctx.stroke();
   });
 
-  ctx.fillStyle="#263946";
-  ctx.font="12px Arial";
-  ctx.textAlign="left";
-  ctx.fillText("3D preview • Wall height "+wallHeight/100+" m • Thickness "+thickness+" cm",12,22);
+  ctx.fillStyle="#aeb8bf";ctx.font="11px Arial";
+  ctx.fillText("Concept preview only — not a construction-ready 3D model.",18,height-16);
 }
 
 function redraw() {
-  if (mode==="2d") redraw2D();
-  else draw3D();
+  const width=canvas.clientWidth,height=canvas.clientHeight;
+  ctx.clearRect(0,0,width,height);
+  ctx.fillStyle="#101820";ctx.fillRect(0,0,width,height);
+
+  if(state.view==="3d"){draw3D(width,height);return;}
+
+  drawGrid(width,height);
+  state.elements.forEach(e=>drawElement(e,e===state.selected));
+
+  if(state.drawing&&state.start&&state.lastPointer) {
+    const end=screenToWorld(state.lastPointer);
+    drawElement({
+      type:state.tool,
+      x1:state.start.x,y1:state.start.y,
+      x2:snapValue(end.x),y2:snapValue(end.y)
+    },true);
+  }
 }
-
-/* ---------- DRAWING AND EDITING ---------- */
-
-function setTool(newTool) {
-  tool=newTool;
-  document.querySelectorAll("[data-tool]").forEach(b=>{
-    b.classList.toggle("active",b.dataset.tool===tool);
-  });
-
-  document.getElementById("toolStatus").innerHTML =
-    "Tool: <strong>"+tool.charAt(0).toUpperCase()+tool.slice(1)+"</strong>";
-  canvas.style.cursor=tool==="pan"?"grab":tool==="select"?"pointer":"crosshair";
-}
-
-document.querySelectorAll("[data-tool]").forEach(button=>{
-  button.addEventListener("click",()=>setTool(button.dataset.tool));
-});
 
 function distanceToSegment(p,a,b) {
-  const dx=b.x-a.x, dy=b.y-a.y;
-  const len=dx*dx+dy*dy;
-  if (!len) return Math.hypot(p.x-a.x,p.y-a.y);
-  const t=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/len,0,1);
+  const dx=b.x-a.x,dy=b.y-a.y;
+  const length=dx*dx+dy*dy;
+  if(!length)return Math.hypot(p.x-a.x,p.y-a.y);
+  const t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/length));
   return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy);
 }
 
-function findElement(p) {
-  const tolerance=12/camera.scale;
-  for (let i=project.elements.length-1;i>=0;i--) {
-    const e=project.elements[i];
-
-    if (e.type==="room") {
-      const inside =
-        p.x>=Math.min(e.x1,e.x2)-tolerance &&
-        p.x<=Math.max(e.x1,e.x2)+tolerance &&
-        p.y>=Math.min(e.y1,e.y2)-tolerance &&
-        p.y<=Math.max(e.y1,e.y2)+tolerance;
-      if (inside) return e;
+function hitTest(point) {
+  const tolerance=12/(SCALE*state.zoom);
+  for(let i=state.elements.length-1;i>=0;i--) {
+    const e=state.elements[i];
+    if(e.type==="room") {
+      const r=bounds(e);
+      if(point.x>=r.left-tolerance&&point.x<=r.right+tolerance&&
+         point.y>=r.top-tolerance&&point.y<=r.bottom+tolerance)return e;
     } else {
-      if (distanceToSegment(p,{x:e.x1,y:e.y1},{x:e.x2,y:e.y2})<=tolerance) return e;
+      if(distanceToSegment(point,{x:e.x1,y:e.y1},{x:e.x2,y:e.y2})<=tolerance)return e;
     }
   }
   return null;
 }
 
-function createElement(a,b) {
-  let x1=a.x,y1=a.y,x2=b.x,y2=b.y;
-
-  if (tool==="wall") {
-    const exact=numeric(fields.wall);
-    if (exact) {
-      let dx=x2-x1,dy=y2-y1;
-      let length=Math.hypot(dx,dy);
-      if (length<0.01) {dx=1;dy=0;length=1;}
-      x2=x1+dx/length*exact*100;
-      y2=y1+dy/length*exact*100;
-    } else {
-      x2=snap(x2); y2=snap(y2);
-    }
-  }
-
-  if (tool==="room") {
-    const width=numeric(fields.width);
-    const depth=numeric(fields.depth);
-    x2=width ? x1+Math.sign(b.x-a.x||1)*width*100 : snap(x2);
-    y2=depth ? y1+Math.sign(b.y-a.y||1)*depth*100 : snap(y2);
-  }
-
-  if (tool==="door"||tool==="window") {
-    const exact=numeric(fields.opening);
-    if (exact) {
-      let dx=x2-x1,dy=y2-y1;
-      let length=Math.hypot(dx,dy);
-      if (length<0.01) {dx=1;dy=0;length=1;}
-      x2=x1+dx/length*exact*100;
-      y2=y1+dy/length*exact*100;
-    } else {
-      x2=snap(x2); y2=snap(y2);
-    }
-  }
-
-  if (Math.hypot(x2-x1,y2-y1)<2) return;
-
-  historySave();
-  project.elements.push({
-    id:nextId(),
-    type:tool,
-    x1,y1,x2,y2
+function setTool(tool) {
+  state.tool=tool;
+  document.querySelectorAll("[data-tool]").forEach(button=>{
+    button.classList.toggle("active",button.dataset.tool===tool);
   });
-
-  selectedId=null;
-  redraw();
-
-  if (tool==="room") {
-    const width=Math.abs(x2-x1);
-    const depth=Math.abs(y2-y1);
-    setStatus(
-      metres(width)+" × "+metres(depth)+
-      " | Area: "+(width*depth/10000).toFixed(2)+" m²"
-    );
-  } else {
-    setStatus(tool+" length: "+metres(Math.hypot(x2-x1,y2-y1)));
-  }
+  $("toolStatus").textContent=tool.charAt(0).toUpperCase()+tool.slice(1)+" tool";
 }
 
-canvas.addEventListener("pointerdown",event=>{
-  if (mode!=="2d") return;
-  event.preventDefault();
+function updateInspector() {
+  const e=state.selected;
+  $("selectionHint").textContent=e
+    ?"Selected element: "+e.type
+    :"Select an element to inspect and edit its coordinates.";
 
-  const screen=pointerPosition(event);
-  const world=screenToWorld(screen);
+  ["propX1","propY1","propX2","propY2"].forEach(id=>{
+    $(id).disabled=!e;
+  });
+  $("applyPropertiesBtn").disabled=!e;
+  $("duplicateBtn").disabled=!e;
+  $("deleteBtn").disabled=!e;
 
-  if (tool==="pan") {
-    panning=true;
-    lastPointer=screen;
+  if(!e) {
+    $("wallLength").textContent="—";
+    $("roomWidth").textContent="—";
+    $("roomDepth").textContent="—";
+    return;
+  }
+
+  $("propX1").value=Math.round(e.x1);
+  $("propY1").value=Math.round(e.y1);
+  $("propX2").value=Math.round(e.x2);
+  $("propY2").value=Math.round(e.y2);
+  $("wallLength").textContent=Math.round(Math.hypot(e.x2-e.x1,e.y2-e.y1))+" cm";
+  $("roomWidth").textContent=Math.round(Math.abs(e.x2-e.x1))+" cm";
+  $("roomDepth").textContent=Math.round(Math.abs(e.y2-e.y1))+" cm";
+}
+
+function pointerDown(event) {
+  if(state.view!=="2d")return;
+  const p=pointerPosition(event),world=screenToWorld(p);
+  state.lastPointer=p;
+
+  if(state.tool==="pan"||event.button===1) {
+    state.panning=true;
     canvas.setPointerCapture(event.pointerId);
-    canvas.style.cursor="grabbing";
     return;
   }
 
-  if (tool==="select") {
-    const found=findElement(world);
-    selectedId=found?found.id:null;
-    redraw();
-    setStatus(found?"Selected: "+found.type:"Nothing selected");
+  if(state.tool==="select") {
+    state.selected=hitTest(world);
+    state.dragging=Boolean(state.selected);
+    state.dragStart=world;
+    state.originalElement=state.selected?clone(state.selected):null;
+    updateInspector();redraw();
     return;
   }
 
-  if (tool==="erase") {
-    const found=findElement(world);
-    if (found) {
-      historySave();
-      project.elements=project.elements.filter(e=>e.id!==found.id);
-      selectedId=null;
-      redraw();
-      setStatus("Element erased");
+  if(state.tool==="erase") {
+    const target=hitTest(world);
+    if(target) {
+      state.elements=state.elements.filter(e=>e!==target);
+      state.selected=null;saveHistory();updateInspector();redraw();
     }
     return;
   }
 
-  drawing=true;
-  start=world;
-  current=world;
+  state.drawing=true;
+  state.start={x:snapValue(world.x),y:snapValue(world.y)};
   canvas.setPointerCapture(event.pointerId);
   redraw();
-});
+}
 
-canvas.addEventListener("pointermove",event=>{
-  if (mode!=="2d") return;
-  const screen=pointerPosition(event);
+function pointerMove(event) {
+  const p=pointerPosition(event);
 
-  if (panning && lastPointer) {
-    camera.x+=screen.x-lastPointer.x;
-    camera.y+=screen.y-lastPointer.y;
-    lastPointer=screen;
-    redraw();
-    return;
+  if(state.panning) {
+    const previous=state.lastPointer||p;
+    state.offsetX+=p.x-previous.x;
+    state.offsetY+=p.y-previous.y;
+    state.lastPointer=p;redraw();return;
   }
 
-  if (!drawing) return;
-  current=screenToWorld(screen);
-  const length=Math.hypot(current.x-start.x,current.y-start.y);
-  setStatus("Current length: "+metres(length));
-  redraw();
-});
-
-function finishDrawing(event) {
-  if (panning) {
-    panning=false;
-    lastPointer=null;
-    canvas.style.cursor="grab";
-    return;
-  }
-  if (!drawing) return;
-
-  const end=screenToWorld(pointerPosition(event));
-  drawing=false;
-  current=null;
-  createElement(start,end);
-  start=null;
-}
-
-canvas.addEventListener("pointerup",finishDrawing);
-canvas.addEventListener("pointercancel",()=>{
-  drawing=false;
-  panning=false;
-  start=null;
-  current=null;
-  lastPointer=null;
-  redraw();
-});
-
-/* ---------- VIEW CONTROLS ---------- */
-
-function zoomAt(factor,p) {
-  const before=screenToWorld(p);
-  camera.scale=clamp(camera.scale*factor,0.25,5);
-  camera.x=p.x-before.x*camera.scale;
-  camera.y=p.y-before.y*camera.scale;
-  redraw();
-}
-
-document.getElementById("zoomIn").addEventListener("click",()=>{
-  zoomAt(1.2,{x:canvas.clientWidth/2,y:canvas.clientHeight/2});
-});
-document.getElementById("zoomOut").addEventListener("click",()=>{
-  zoomAt(1/1.2,{x:canvas.clientWidth/2,y:canvas.clientHeight/2});
-});
-
-canvas.addEventListener("wheel",event=>{
-  if (mode!=="2d") return;
-  event.preventDefault();
-  zoomAt(event.deltaY<0?1.1:1/1.1,pointerPosition(event));
-},{passive:false});
-
-function resetView() {
-  camera={scale:1.2,x:55,y:55};
-  redraw();
-}
-
-function fitDrawing() {
-  if (!project.elements.length) {
-    resetView();
-    return;
+  if(state.dragging&&state.selected&&state.originalElement) {
+    const world=screenToWorld(p);
+    const dx=world.x-state.dragStart.x,dy=world.y-state.dragStart.y;
+    const original=state.originalElement;
+    let values={
+      x1:original.x1+dx,y1:original.y1+dy,
+      x2:original.x2+dx,y2:original.y2+dy
+    };
+    if(state.snap) {
+      Object.keys(values).forEach(k=>values[k]=snapValue(values[k]));
+    }
+    Object.assign(state.selected,values);
+    updateInspector();redraw();return;
   }
 
-  const xs=project.elements.flatMap(e=>[e.x1,e.x2]);
-  const ys=project.elements.flatMap(e=>[e.y1,e.y2]);
-  const minX=Math.min(...xs),maxX=Math.max(...xs);
-  const minY=Math.min(...ys),maxY=Math.max(...ys);
-  const width=Math.max(100,maxX-minX);
-  const height=Math.max(100,maxY-minY);
-  const margin=65;
-
-  camera.scale=clamp(
-    Math.min(
-      (canvas.clientWidth-margin*2)/width,
-      (canvas.clientHeight-margin*2)/height
-    ),0.25,5
-  );
-  camera.x=(canvas.clientWidth-width*camera.scale)/2-minX*camera.scale;
-  camera.y=(canvas.clientHeight-height*camera.scale)/2-minY*camera.scale;
-  redraw();
-}
-
-document.getElementById("fitBtn").addEventListener("click",fitDrawing);
-document.getElementById("resetBtn").addEventListener("click",resetView);
-
-/* ---------- 2D / 3D MODE SWITCH ---------- */
-
-function setMode(nextMode) {
-  mode=nextMode;
-  const is2d=mode==="2d";
-
-  document.getElementById("mode2d").classList.toggle("active",is2d);
-  document.getElementById("mode3d").classList.toggle("active",!is2d);
-
-  document.getElementById("viewTitle").textContent =
-    is2d?"2D Floor Plan":"3D Architectural Preview";
-
-  document.getElementById("viewDescription").textContent =
-    is2d
-      ?"Create and edit your accurately measured floor plan."
-      :"Preview the same project as a simple isometric 3D model.";
-
-  document.getElementById("toolStatus").innerHTML =
-    is2d?"Tool: <strong>"+tool+"</strong>":"View: <strong>3D Preview</strong>";
-
-  redraw();
-}
-
-document.getElementById("mode2d").addEventListener("click",()=>setMode("2d"));
-document.getElementById("mode3d").addEventListener("click",()=>setMode("3d"));
-
-fields.height.addEventListener("input",()=>{if(mode==="3d") redraw();});
-fields.thickness.addEventListener("input",()=>{if(mode==="3d") redraw();});
-
-/* ---------- UNDO / REDO / DELETE ---------- */
-
-document.getElementById("undoBtn").addEventListener("click",()=>{
-  if (!undoStack.length) return;
-  redoStack.push(JSON.stringify(project));
-  restoreProject(undoStack.pop());
-  setStatus("Undo completed");
-});
-
-document.getElementById("redoBtn").addEventListener("click",()=>{
-  if (!redoStack.length) return;
-  undoStack.push(JSON.stringify(project));
-  restoreProject(redoStack.pop());
-  setStatus("Redo completed");
-});
-
-document.getElementById("deleteBtn").addEventListener("click",()=>{
-  if (selectedId===null) {
-    setStatus("Select an element first");
-    return;
+  if(state.drawing) {
+    state.lastPointer=p;redraw();
   }
-  historySave();
-  project.elements=project.elements.filter(e=>e.id!==selectedId);
-  selectedId=null;
-  redraw();
-  setStatus("Selected element deleted");
-});
+}
 
-document.getElementById("clearBtn").addEventListener("click",()=>{
-  if (!project.elements.length) return;
-  if (!confirm("Clear the entire floor plan?")) return;
-  historySave();
-  project.elements=[];
-  selectedId=null;
-  redraw();
-  setStatus("Plan cleared");
-});
+function pointerUp() {
+  if(state.panning){state.panning=false;return;}
 
-/* ---------- LOCAL SAVE / LOAD ---------- */
+  if(state.dragging) {
+    state.dragging=false;state.originalElement=null;
+    saveHistory();updateInspector();return;
+  }
 
-document.getElementById("saveBtn").addEventListener("click",()=>{
+  if(!state.drawing||!state.start)return;
+
+  const end=screenToWorld(state.lastPointer||{x:0,y:0});
+  const element={
+    type:state.tool,
+    x1:state.start.x,y1:state.start.y,
+    x2:snapValue(end.x),y2:snapValue(end.y),
+    thickness:Number($("wallThickness").value)||15,
+    id:"moncad-"+Date.now()+"-"+Math.floor(Math.random()*10000)
+  };
+
+  if(Math.hypot(element.x2-element.x1,element.y2-element.y1)>=2) {
+    state.elements.push(element);
+    state.selected=element;
+    saveHistory();updateInspector();
+  }
+
+  state.drawing=false;state.start=null;state.lastPointer=null;redraw();
+}
+
+function applyProperties() {
+  if(!state.selected)return;
+  const e=state.selected;
+  e.x1=Number($("propX1").value)||0;
+  e.y1=Number($("propY1").value)||0;
+  e.x2=Number($("propX2").value)||0;
+  e.y2=Number($("propY2").value)||0;
+  saveHistory();updateInspector();redraw();
+}
+
+function duplicateSelected() {
+  if(!state.selected)return;
+  const copy=clone(state.selected);
+  copy.id="moncad-"+Date.now();
+  copy.x1+=30;copy.x2+=30;copy.y1+=30;copy.y2+=30;
+  state.elements.push(copy);state.selected=copy;
+  saveHistory();updateInspector();redraw();
+}
+
+function deleteSelected() {
+  if(!state.selected)return;
+  state.elements=state.elements.filter(e=>e!==state.selected);
+  state.selected=null;saveHistory();updateInspector();redraw();
+}
+
+function clearProject() {
+  if(!state.elements.length)return;
+  if(!confirm("Clear the entire current design?"))return;
+  state.elements=[];state.selected=null;
+  saveHistory();updateInspector();redraw();
+}
+
+function projectData() {
+  return {
+    app:"MONCAD",
+    version:2,
+    savedAt:new Date().toISOString(),
+    elements:state.elements
+  };
+}
+
+function saveProject() {
   try {
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(project));
-    setStatus("Project saved in this browser");
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(projectData()));
+    $("saveStatus").textContent="Saved in this browser";
   } catch(error) {
-    alert("Unable to save. Check your browser storage settings.");
+    alert("The project could not be saved in this browser.");
   }
-});
+}
 
-document.getElementById("loadBtn").addEventListener("click",()=>{
+function loadProject() {
   try {
     const raw=localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      alert("No saved MONCAD project found in this browser.");
-      return;
-    }
-
-    const data=JSON.parse(raw);
-    if (!data || !Array.isArray(data.elements)) {
-      throw new Error("Invalid project");
-    }
-
-    historySave();
-    project={
-      version:2,
-      units:"centimetres",
-      elements:data.elements,
-      nextId:data.nextId || Math.max(0,...data.elements.map(e=>e.id||0))+1
-    };
-
-    selectedId=null;
-    fitDrawing();
-    setStatus("Saved project loaded");
+    if(!raw)return;
+    const project=JSON.parse(raw);
+    if(project.app!=="MONCAD"||!Array.isArray(project.elements))return;
+    state.elements=project.elements;
+    saveHistory();
   } catch(error) {
-    alert("Unable to load the saved project.");
+    console.warn("Could not load the saved MONCAD project.",error);
   }
-});
+}
 
-/* ---------- PNG EXPORT ---------- */
-
-document.getElementById("exportBtn").addEventListener("click",()=>{
+function downloadFile(name,content,type) {
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
   const link=document.createElement("a");
-  link.download=mode==="2d"?"MONCAD-Floor-Plan.png":"MONCAD-3D-Preview.png";
+  link.href=url;link.download=name;
+  document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function exportProject() {
+  downloadFile("moncad-project.json",JSON.stringify(projectData(),null,2),"application/json");
+}
+
+function importProject(file) {
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try {
+      const project=JSON.parse(reader.result);
+      if(project.app!=="MONCAD"||!Array.isArray(project.elements)) {
+        throw new Error("Invalid MONCAD project");
+      }
+      const validTypes=["wall","room","door","window"];
+      state.elements=project.elements.filter(e=>
+        validTypes.includes(e.type)&&
+        ["x1","y1","x2","y2"].every(k=>Number.isFinite(Number(e[k])))
+      ).map(e=>({
+        ...e,x1:Number(e.x1),y1:Number(e.y1),
+        x2:Number(e.x2),y2:Number(e.y2)
+      }));
+      state.selected=null;saveHistory();updateInspector();redraw();
+      alert("MONCAD project imported.");
+    } catch(error) {
+      alert("This file is not a valid MONCAD project backup.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportPNG() {
+  if(state.view!=="2d") {
+    alert("Switch to 2D Plan before exporting the floor plan.");
+    return;
+  }
+  const link=document.createElement("a");
+  link.download="moncad-floor-plan.png";
   link.href=canvas.toDataURL("image/png");
   link.click();
-  setStatus("PNG export requested");
+}
+
+function setView(view) {
+  state.view=view;
+  $("mode2d").classList.toggle("active",view==="2d");
+  $("mode3d").classList.toggle("active",view==="3d");
+  $("viewTitle").textContent=view==="2d"
+    ?"MONCAD ARCHITECTURE STUDIO":"MONCAD 3D CONCEPT PREVIEW";
+  redraw();
+}
+
+function zoomBy(amount) {
+  state.zoom=Math.max(.25,Math.min(3,state.zoom+amount));
+  $("zoomStatus").textContent=Math.round(state.zoom*100)+"%";
+  redraw();
+}
+
+function fitView() {
+  if(!state.elements.length) {
+    state.zoom=1;state.offsetX=70;state.offsetY=70;redraw();return;
+  }
+  const xs=state.elements.flatMap(e=>[e.x1,e.x2]);
+  const ys=state.elements.flatMap(e=>[e.y1,e.y2]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs);
+  const minY=Math.min(...ys),maxY=Math.max(...ys);
+  const w=Math.max(100,(maxX-minX)*SCALE);
+  const h=Math.max(100,(maxY-minY)*SCALE);
+  state.zoom=Math.max(.25,Math.min(2,
+    (canvas.clientWidth-80)/w,(canvas.clientHeight-80)/h
+  ));
+  state.offsetX=canvas.clientWidth/2-((minX+maxX)/2)*SCALE*state.zoom;
+  state.offsetY=canvas.clientHeight/2-((minY+maxY)/2)*SCALE*state.zoom;
+  $("zoomStatus").textContent=Math.round(state.zoom*100)+"%";
+  redraw();
+}
+
+/* Studio navigation */
+$("architectureTab").addEventListener("click",()=>{
+  $("architecturePanel").style.display="grid";
+  $("fashionPanel").style.display="none";
+  $("architectureTab").classList.add("active");
+  $("fashionTab").classList.remove("active");
+  resizeCanvas();
 });
 
-/* ---------- KEYBOARD SHORTCUTS ---------- */
-
-document.addEventListener("keydown",event=>{
-  if (document.activeElement.tagName==="INPUT") return;
-
-  if ((event.ctrlKey||event.metaKey) && event.key.toLowerCase()==="z") {
-    event.preventDefault();
-    document.getElementById("undoBtn").click();
-  }
-  if ((event.ctrlKey||event.metaKey) && event.key.toLowerCase()==="y") {
-    event.preventDefault();
-    document.getElementById("redoBtn").click();
-  }
-  if (event.key==="Delete"||event.key==="Backspace") {
-    document.getElementById("deleteBtn").click();
-  }
+$("fashionTab").addEventListener("click",()=>{
+  $("architecturePanel").style.display="none";
+  $("fashionPanel").style.display="block";
+  $("fashionTab").classList.add("active");
+  $("architectureTab").classList.remove("active");
 });
 
-/* ---------- START EDITOR ---------- */
+/* Tool buttons */
+document.querySelectorAll("[data-tool]").forEach(button=>{
+  button.addEventListener("click",()=>setTool(button.dataset.tool));
+});
+
+/* Main controls */
+$("undoBtn").addEventListener("click",undo);
+$("redoBtn").addEventListener("click",redo);
+$("duplicateBtn").addEventListener("click",duplicateSelected);
+$("deleteBtn").addEventListener("click",deleteSelected);
+$("clearBtn").addEventListener("click",clearProject);
+$("saveBtn").addEventListener("click",saveProject);
+$("applyPropertiesBtn").addEventListener("click",applyProperties);
+$("mode2d").addEventListener("click",()=>setView("2d"));
+$("mode3d").addEventListener("click",()=>setView("3d"));
+$("zoomIn").addEventListener("click",()=>zoomBy(.1));
+$("zoomOut").addEventListener("click",()=>zoomBy(-.1));
+$("fitBtn").addEventListener("click",fitView);
+
+$("resetBtn").addEventListener("click",()=>{
+  state.zoom=1;state.offsetX=70;state.offsetY=70;
+  $("zoomStatus").textContent="100%";redraw();
+});
+
+$("snapToggle").addEventListener("change",event=>{
+  state.snap=event.target.checked;
+});
+
+$("exportBtn").addEventListener("click",exportPNG);
+$("exportProjectBtn").addEventListener("click",exportProject);
+$("importProjectBtn").addEventListener("click",()=>$("projectFileInput").click());
+
+$("projectFileInput").addEventListener("change",event=>{
+  importProject(event.target.files[0]);
+  event.target.value="";
+});
+
+/* Canvas interaction */
+canvas.addEventListener("pointerdown",pointerDown);
+canvas.addEventListener("pointermove",pointerMove);
+canvas.addEventListener("pointerup",pointerUp);
+canvas.addEventListener("pointercancel",pointerUp);
+
+canvas.addEventListener("wheel",event=>{
+  event.preventDefault();
+  zoomBy(event.deltaY<0?.05:-.05);
+},{passive:false});
 
 window.addEventListener("resize",resizeCanvas);
+
+/* Start application */
+saveHistory();
+loadProject();
 resizeCanvas();
 setTool("wall");
-setMode("2d");
+updateInspector();
 
+})();
 </script>
 </body>
 </html>
