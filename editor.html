@@ -2135,6 +2135,17 @@ console.log("MONCAD prototype initialised.");
   opacity: 0;
   animation: moncad-reveal 1s ease forwards;
   animation-delay: 4.8s;
+  position: relative;
+  z-index: 100000;
+  pointer-events: auto;
+}
+#moncad-enter {
+  position: relative;
+  z-index: 100001;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
 }
 #moncad-intro button {
   border: 0;
