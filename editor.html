@@ -3,44 +3,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101c32">
 <title>MONCAD | Imagine. Design. Build.</title>
-
 <style>
 :root {
   --navy:#101c32;
   --navy2:#182944;
   --gold:#c9a45c;
-  --bg:#e9edf2;
+  --paper:#f5f7fa;
   --ink:#172337;
-  --muted:#758196;
   --line:#cbd3df;
-  --panel:#f8fafc;
+  --muted:#718096;
 }
-* { box-sizing:border-box; }
+* { box-sizing:border-box }
 body {
   margin:0;
-  height:100vh;
   height:100dvh;
   display:flex;
   flex-direction:column;
   overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);
+  background:#e9edf2;
   color:var(--ink);
 }
-button,input,select,textarea { font:inherit; }
-button { cursor:pointer; }
-
+button,input,select,textarea { font:inherit }
+button { cursor:pointer }
+button:focus-visible,input:focus-visible,select:focus-visible {
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
 .brand {
-  flex-shrink:0;
   height:48px;
+  flex-shrink:0;
   display:flex;
   align-items:center;
   gap:14px;
   padding:0 16px;
-  background:var(--navy);
   color:white;
+  background:var(--navy);
   border-bottom:2px solid var(--gold);
 }
 .brand strong {
@@ -48,60 +49,49 @@ button { cursor:pointer; }
   font-size:20px;
   letter-spacing:2px;
 }
-.brand span {
-  color:#d9e0ea;
-  font-size:12px;
-  letter-spacing:1.3px;
-}
-.brand .right {
-  margin-left:auto;
-  color:#d7dee8;
-  font-size:12px;
-}
-
+.brand span { color:#d9e0ea;font-size:12px;letter-spacing:1.3px }
+.brand .right { margin-left:auto;color:#d7dee8;font-size:12px }
 .menus {
-  flex-shrink:0;
   display:flex;
+  flex-shrink:0;
+  overflow-x:auto;
   background:#172944;
   color:white;
-  overflow-x:auto;
 }
-.menu { position:relative; }
+.menu { position:relative }
 .menu>button {
-  padding:11px 12px;
   border:0;
+  padding:11px 12px;
   background:transparent;
-  color:#eaf0f7;
+  color:white;
   font-size:13px;
 }
-.menu>button:hover { background:#294364; }
+.menu>button:hover,.menu>button[aria-expanded="true"] { background:#294364 }
 .menu-items {
   display:none;
   position:absolute;
   top:100%;
   left:0;
+  z-index:40;
   min-width:190px;
-  z-index:30;
   background:white;
-  color:var(--ink);
   border:1px solid var(--line);
   box-shadow:0 6px 18px #0003;
 }
-.menu-items.open { display:block; }
+.menu-items.open { display:block }
 .menu-items button {
   display:block;
   width:100%;
-  padding:9px 12px;
-  text-align:left;
+  padding:10px 12px;
   border:0;
+  text-align:left;
   background:white;
   color:var(--ink);
 }
-.menu-items button:hover { background:#e9f0f7; }
-
+.menu-items button:hover { background:#e9f0f7 }
 .ribbon {
-  flex-shrink:0;
   display:flex;
+  flex-shrink:0;
   gap:4px;
   min-height:76px;
   padding:6px;
@@ -116,11 +106,11 @@ button { cursor:pointer; }
   padding:0 8px;
   border-right:1px solid #bcc8d7;
 }
-.rtools { display:flex; gap:3px; align-items:center; }
+.rtools { display:flex;gap:3px;align-items:center }
 .rtool {
-  min-width:46px;
+  min-width:48px;
   height:44px;
-  padding:4px 5px;
+  padding:4px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -132,26 +122,13 @@ button { cursor:pointer; }
   color:#263a53;
   font-size:10px;
 }
-.rtool .ico { font-size:18px; }
-.rtool:hover,.rtool.active {
-  border-color:#7c9cbb;
-  background:white;
-}
-.rlabel {
-  margin-top:3px;
-  text-align:center;
-  color:#637286;
-  font-size:10px;
-}
-
-.app {
-  flex:1;
-  min-height:0;
-  display:flex;
-}
+.rtool .ico { font-size:18px }
+.rtool:hover,.rtool.active { border-color:#7c9cbb;background:white }
+.rlabel { margin-top:3px;text-align:center;color:#637286;font-size:10px }
+.app { flex:1;min-height:0;display:flex }
 .leftbar {
-  flex-shrink:0;
   width:52px;
+  flex-shrink:0;
   padding:5px;
   display:flex;
   flex-direction:column;
@@ -170,22 +147,11 @@ button { cursor:pointer; }
   background:var(--gold);
   color:#172337;
 }
-.leftbar small {
-  text-align:center;
-  color:#aab9cc;
-  font-size:9px;
-}
-
-.workspace {
-  flex:1;
-  min-width:0;
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-}
+.leftbar small { text-align:center;color:#aab9cc;font-size:9px }
+.workspace { flex:1;min-width:0;min-height:0;display:flex;flex-direction:column }
 .studio-tabs {
-  flex-shrink:0;
   height:36px;
+  flex-shrink:0;
   display:flex;
   background:#f7f9fc;
   border-bottom:1px solid var(--line);
@@ -203,33 +169,17 @@ button { cursor:pointer; }
   border-top:2px solid var(--gold);
   font-weight:bold;
 }
-.canvas-area {
-  position:relative;
-  flex:1;
-  min-height:0;
-  overflow:hidden;
-  background:#cdd6e2;
-}
-.canvas-wrap {
-  position:absolute;
-  inset:0;
-  display:none;
-}
-.canvas-wrap.active { display:block; }
-.canvas-wrap canvas {
-  display:block;
-  width:100%;
-  height:100%;
-  touch-action:none;
-}
-
+.canvas-area { position:relative;flex:1;min-height:0;overflow:hidden;background:#cdd6e2 }
+.canvas-wrap { position:absolute;inset:0;display:none }
+.canvas-wrap.active { display:block }
+.canvas-wrap canvas { display:block;width:100%;height:100%;touch-action:none }
 .rightpanel {
+  width:270px;
   flex-shrink:0;
-  width:260px;
   display:flex;
   flex-direction:column;
   overflow:auto;
-  background:var(--panel);
+  background:#f8fafc;
   border-left:1px solid var(--line);
 }
 .panel-head {
@@ -239,27 +189,20 @@ button { cursor:pointer; }
   font-size:12px;
   font-weight:bold;
 }
-.panel-section {
-  padding:10px;
-  border-bottom:1px solid #e0e6ee;
-}
-.panel-section h3 {
-  margin:0 0 8px;
-  color:#41536b;
-  font-size:12px;
-}
+.panel-section { padding:10px;border-bottom:1px solid #e0e6ee }
+.panel-section h3 { margin:0 0 8px;color:#41536b;font-size:12px }
 .field {
   display:grid;
-  grid-template-columns:1fr 100px;
+  grid-template-columns:1fr 105px;
   align-items:center;
   gap:8px;
-  margin:6px 0;
+  margin:7px 0;
   font-size:11px;
 }
 .field input,.field select {
   width:100%;
   min-width:0;
-  padding:6px;
+  padding:7px;
   border:1px solid #c8d3df;
   border-radius:4px;
   background:white;
@@ -267,27 +210,22 @@ button { cursor:pointer; }
 .fullbtn {
   width:100%;
   margin:4px 0;
-  padding:8px;
+  padding:9px;
   border:1px solid #bdc9d7;
   border-radius:4px;
   background:white;
   color:#26384e;
   font-size:12px;
 }
-.fullbtn.primary {
-  background:var(--navy);
-  color:white;
-  border-color:var(--navy);
-}
-.fullbtn:hover { border-color:var(--gold); }
-.small { color:var(--muted); font-size:11px; line-height:1.5; }
-
+.fullbtn.primary { background:var(--navy);color:white;border-color:var(--navy) }
+.fullbtn:hover { border-color:var(--gold) }
+.small { color:var(--muted);font-size:11px;line-height:1.5 }
 .bottom {
+  height:32px;
   flex-shrink:0;
-  height:31px;
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   padding:0 10px;
   background:#142540;
   color:#d8e1ec;
@@ -295,7 +233,7 @@ button { cursor:pointer; }
 }
 .bottom input {
   width:180px;
-  min-width:80px;
+  min-width:60px;
   padding:4px;
   border:1px solid #465c78;
   border-radius:3px;
@@ -308,13 +246,8 @@ button { cursor:pointer; }
   background:#263c5b;
   color:white;
 }
-.bottom .status {
-  margin-left:auto;
-  white-space:nowrap;
-}
-
-.hidden { display:none!important; }
-
+.bottom .status { margin-left:auto;white-space:nowrap }
+.hidden { display:none!important }
 .overlay,.modal {
   position:fixed;
   inset:0;
@@ -323,75 +256,100 @@ button { cursor:pointer; }
   justify-content:center;
   padding:18px;
 }
-.overlay {
-  z-index:50;
-  background:#071327dd;
-}
+.overlay { z-index:60;background:#071327ed }
 .welcome {
   width:100%;
-  max-width:650px;
-  padding:38px;
+  max-width:900px;
+  max-height:94dvh;
+  overflow:auto;
+  padding:22px;
   border:1px solid var(--gold);
-  border-radius:10px;
-  background:#132542;
+  border-radius:12px;
+  background:linear-gradient(145deg,#172c4a,#091426);
   color:white;
   text-align:center;
-  box-shadow:0 15px 50px #0006;
+  box-shadow:0 15px 50px #0008;
 }
 .welcome h1 {
-  margin:5px;
+  margin:8px 0 3px;
   color:var(--gold);
   font-size:34px;
-  letter-spacing:4px;
+  letter-spacing:5px;
 }
-.welcome .tag {
-  font-size:13px;
-  letter-spacing:3px;
+.welcome .tag { font-size:12px;letter-spacing:3px }
+.welcome h2 { margin:12px 0 4px;font-weight:normal }
+.house-scene {
+  width:100%;
+  max-width:720px;
+  height:auto;
+  margin:12px auto;
+  display:block;
+  overflow:visible;
 }
-.welcome h2 {
-  margin:30px 0;
-  font-weight:normal;
+.house-scene .blueprint {
+  fill:none;
+  stroke:#86b7df;
+  stroke-width:1.5;
+  stroke-dasharray:1000;
+  stroke-dashoffset:1000;
+  animation:draw 3.5s ease forwards;
 }
+.house-scene .structure {
+  fill:#c9a45c;
+  fill-opacity:.08;
+  stroke:#e3c47d;
+  stroke-width:2;
+  opacity:0;
+  animation:reveal 1.5s ease 2.7s forwards;
+}
+.house-scene .interior {
+  fill:#6bb7d8;
+  fill-opacity:.08;
+  stroke:#80d4f0;
+  stroke-width:1.5;
+  opacity:0;
+  animation:reveal 1.4s ease 3.3s forwards;
+}
+.house-scene .roof {
+  fill:#c9a45c;
+  fill-opacity:.13;
+  stroke:#e5c77f;
+  stroke-width:2;
+  opacity:0;
+  animation:reveal 1.2s ease 4s forwards;
+}
+@keyframes draw { to { stroke-dashoffset:0 } }
+@keyframes reveal { to { opacity:1 } }
+.welcome-actions { display:flex;justify-content:center;gap:10px;flex-wrap:wrap }
 .welcome button {
   padding:11px 25px;
-  border:0;
+  border:1px solid var(--gold);
   border-radius:5px;
   background:var(--gold);
+  color:#142540;
   font-weight:bold;
 }
-.modal {
-  z-index:45;
-  background:#071327bb;
-}
+.welcome button.secondary { background:transparent;color:white }
+.modal { z-index:55;background:#071327bb }
 .modal-card {
   width:100%;
-  max-width:520px;
-  padding:20px;
+  max-width:460px;
+  padding:22px;
   border-radius:8px;
   background:white;
   box-shadow:0 10px 30px #0004;
 }
-.modal-card h2 { margin-top:0; font-size:18px; }
-
-.fashion-layout,.academy-layout {
-  height:100%;
-  display:flex;
-  overflow:auto;
-  background:#f1f4f8;
-}
+.modal-card h2 { margin-top:0;font-size:19px }
+.modal-card input { width:100%;padding:9px;margin:5px 0 12px;border:1px solid var(--line);border-radius:4px }
+.fashion-layout,.academy-layout { height:100%;display:flex;overflow:auto;background:#f1f4f8 }
 .fashion-tools,.academy-tools {
-  flex-shrink:0;
   width:250px;
+  flex-shrink:0;
   padding:15px;
   border-right:1px solid var(--line);
   background:#f8fafc;
 }
-.fashion-main,.academy-main {
-  flex:1;
-  min-width:0;
-  padding:18px;
-  overflow:auto;
-}
+.fashion-main,.academy-main { flex:1;min-width:0;padding:18px;overflow:auto }
 .fashion-canvas-wrap {
   min-height:400px;
   display:flex;
@@ -401,16 +359,7 @@ button { cursor:pointer; }
   border:1px solid #ccd6e2;
   background:white;
 }
-.fashion-canvas-wrap canvas {
-  width:100%;
-  max-width:650px;
-  height:auto;
-  touch-action:none;
-}
-.fashion-history {
-  margin-top:12px;
-  font-size:12px;
-}
+.fashion-canvas-wrap canvas { width:100%;max-width:650px;height:auto;touch-action:none }
 .history-item {
   display:block;
   width:100%;
@@ -429,27 +378,25 @@ button { cursor:pointer; }
   border-radius:7px;
   background:white;
 }
-.academy-card h3 { margin:0 0 8px; }
-.academy-card p { font-size:13px; line-height:1.5; }
-
+.academy-card h3 { margin:0 0 8px }
+.academy-card p { font-size:13px;line-height:1.5 }
 @media(max-width:850px) {
-  .rightpanel { width:210px; }
-  .leftbar { width:46px; }
-  .rtool { min-width:42px; }
-  .brand span { display:none; }
+  .rightpanel { width:220px }
+  .leftbar { width:46px }
+  .brand span { display:none }
 }
 @media(max-width:650px) {
-  .rightpanel { width:175px; }
-  .menu>button { padding:9px 8px; }
-  .field { grid-template-columns:1fr 85px; }
-  .ribbon { min-height:66px; }
-  .fashion-tools,.academy-tools { width:170px; }
-  .bottom { gap:6px; }
-  .bottom input { width:100px; }
+  .rightpanel { width:180px }
+  .menu>button { padding:9px 8px }
+  .field { grid-template-columns:1fr 80px }
+  .ribbon { min-height:66px }
+  .fashion-tools,.academy-tools { width:160px }
+  .bottom { gap:5px }
+  .bottom input { width:90px }
+  .welcome { padding:12px }
 }
 </style>
 </head>
-
 <body>
 
 <header class="brand">
@@ -462,11 +409,9 @@ button { cursor:pointer; }
 <div class="ribbon" id="ribbon"></div>
 
 <div class="app">
-
   <aside class="leftbar" id="leftbar"></aside>
 
   <main class="workspace">
-
     <div class="studio-tabs">
       <button class="active" data-studio="architecture">Architecture Studio</button>
       <button data-studio="fashion">Fashion Studio</button>
@@ -474,160 +419,115 @@ button { cursor:pointer; }
     </div>
 
     <div class="canvas-area">
-
       <div class="canvas-wrap active" id="architecture">
         <canvas id="designCanvas"></canvas>
       </div>
 
       <div class="canvas-wrap" id="fashion">
         <div class="fashion-layout">
-
           <div class="fashion-tools">
             <h3>Fashion Studio</h3>
-
-            <div class="field">
-              Design name
-              <input id="fashionProjectName" placeholder="Example: Evening Dress">
+            <div class="field">Design name
+              <input id="fashionProjectName" placeholder="Evening Dress">
             </div>
-
             <button class="fullbtn" id="fashionSketch">Add Sketch Guide</button>
             <button class="fullbtn" id="clearFashion">Clear Sketch</button>
             <button class="fullbtn primary" id="saveFashion">Save Draft</button>
-
-            <div class="fashion-history" id="fashionHistory"></div>
+            <div id="fashionHistory" class="small"></div>
           </div>
-
           <div class="fashion-main">
             <h2>Fashion Design Workspace</h2>
-            <p class="small">
-              Develop original fashion concepts, sketches, measurements and garment notes.
-              Drafts are stored locally in this browser.
-            </p>
-
+            <p class="small">Create original sketches, measurements and garment notes. Drafts are stored locally in this browser.</p>
             <div class="fashion-canvas-wrap">
               <canvas id="fashionCanvas" width="650" height="520"></canvas>
             </div>
-
             <div class="panel-section">
               <h3>Measurements & Notes</h3>
-              <textarea id="fashionNotes"
-                style="width:100%;min-height:90px"
-                placeholder="Measurements, materials, pattern notes..."></textarea>
+              <textarea id="fashionNotes" style="width:100%;min-height:90px" placeholder="Measurements, materials, pattern notes..."></textarea>
             </div>
           </div>
-
         </div>
       </div>
 
       <div class="canvas-wrap" id="academy">
         <div class="academy-layout">
-
           <div class="academy-tools">
             <h2>Learning Academy</h2>
             <p class="small">Guided learning inside MONCAD.</p>
           </div>
-
           <div class="academy-main">
             <h2>Learning Academy</h2>
-
             <div class="academy-card">
               <h3>Architecture Workspace Basics</h3>
-              <p>Start with room dimensions, draw walls, add openings and place objects. Save your project regularly.</p>
-              <button class="fullbtn" onclick="switchStudio('architecture')">
-                Return to Architecture Studio
-              </button>
+              <p>Create rooms, draw walls, add openings and place furniture. Save your work regularly.</p>
+              <button class="fullbtn" onclick="switchStudio('architecture')">Return to Architecture Studio</button>
             </div>
-
             <div class="academy-card">
               <h3>Drawing Tools</h3>
-              <p>Select a tool from the ribbon or left toolbar. Use the canvas to draw. Grid and snap help align objects.</p>
+              <p>Select a tool from the ribbon or left toolbar. Draw on the canvas. Grid and snap help align objects.</p>
             </div>
-
             <div class="academy-card">
               <h3>Projects and Drafts</h3>
               <p>Save a local draft or export a JSON project backup. Local drafts are not cloud backups.</p>
             </div>
-
             <div class="academy-card">
               <h3>Materials and Estimates</h3>
-              <p>MONCAD estimates are conceptual. Construction quantities and specifications must be reviewed by qualified professionals.</p>
+              <p>Estimates are conceptual. Construction specifications must be checked by qualified professionals.</p>
             </div>
-
             <div class="academy-card">
               <h3>Fashion Drafts</h3>
-              <p>Develop sketches and design notes, then save timestamped local drafts. Keep separate backups of important work.</p>
+              <p>Save timestamped local fashion drafts and keep separate backups of important work.</p>
             </div>
           </div>
-
         </div>
       </div>
-
     </div>
   </main>
 
   <aside class="rightpanel">
-
     <div class="panel-head">Properties & Tools</div>
 
     <div class="panel-section">
       <h3>Room Generator</h3>
-
-      <div class="field">Length (m)
-        <input id="roomLength" type="number" value="5" min="0.1" step="0.1">
-      </div>
-
-      <div class="field">Width (m)
-        <input id="roomWidth" type="number" value="4" min="0.1" step="0.1">
-      </div>
-
-      <div class="field">Wall Height (m)
-        <input id="wallHeight" type="number" value="3" min="0.1" step="0.1">
-      </div>
-
-      <div class="field">Wall Thickness (cm)
-        <input id="wallThickness" type="number" value="15" min="1" step="1">
-      </div>
-
+      <div class="field">Length (m)<input id="roomLength" type="number" value="5" min=".1" step=".1"></div>
+      <div class="field">Width (m)<input id="roomWidth" type="number" value="4" min=".1" step=".1"></div>
+      <div class="field">Wall Height (m)<input id="wallHeight" type="number" value="3" min=".1" step=".1"></div>
+      <div class="field">Wall Thickness (cm)<input id="wallThickness" type="number" value="15" min="1" step="1"></div>
       <button class="fullbtn primary" id="createRoom">Create Drawing</button>
       <button class="fullbtn" id="addRoom">Add Room</button>
     </div>
 
     <div class="panel-section">
-      <h3>Selected Object</h3>
-      <div id="inspector" class="small">Select an object to view its properties.</div>
-      <button class="fullbtn" id="duplicateSelected">Duplicate</button>
-      <button class="fullbtn" id="deleteSelected">Delete</button>
-    </div>
-
-    <div class="panel-section">
       <h3>Object Library</h3>
-
       <div class="field">Category
         <select id="objectType">
-          <option value="furniture">Furniture</option>
+          <option value="living">Living Room</option>
+          <option value="bedroom">Bedroom</option>
+          <option value="dining">Dining</option>
+          <option value="kitchen">Kitchen</option>
+          <option value="bathroom">Bathroom</option>
+          <option value="office">Office</option>
+          <option value="outdoor">Outdoor</option>
+          <option value="lighting">Lighting</option>
           <option value="fixture">Fixtures</option>
           <option value="architectural">Architectural</option>
         </select>
       </div>
-
       <div class="field">Object
-        <select id="objectPreset">
-          <option>Sofa</option>
-          <option>Bed</option>
-          <option>Dining Table</option>
-          <option>Kitchen Cabinet</option>
-          <option>Wardrobe</option>
-          <option>Desk</option>
-          <option>Toilet</option>
-          <option>Wash Basin</option>
-          <option>Window</option>
-          <option>Door</option>
-          <option>Column</option>
-          <option>Stairs</option>
-        </select>
+        <select id="objectPreset"></select>
       </div>
-
       <button class="fullbtn primary" id="insertObject">Insert Object</button>
+    </div>
+
+    <div class="panel-section">
+      <h3>Selected Object</h3>
+      <div id="inspector" class="small">Select an object to view its properties.</div>
+      <div class="field">Width (m)<input id="objectWidth" type="number" min=".05" step=".05"></div>
+      <div class="field">Height (m)<input id="objectHeight" type="number" min=".05" step=".05"></div>
+      <div class="field">Rotation (°)<input id="objectRotation" type="number" step="15"></div>
+      <button class="fullbtn" id="applyProperties">Apply Properties</button>
+      <button class="fullbtn" id="duplicateSelected">Duplicate</button>
+      <button class="fullbtn" id="deleteSelected">Delete</button>
     </div>
 
     <div class="panel-section">
@@ -647,59 +547,117 @@ button { cursor:pointer; }
       <button class="fullbtn" id="snapToggle">Snap ON</button>
       <button class="fullbtn" id="zoomReset">Reset View</button>
     </div>
-
   </aside>
 </div>
 
 <div class="bottom">
   <span>MODEL SPACE</span>
   <span id="coord">X: 0.00 · Y: 0.00</span>
-  <input id="command" placeholder="Command: ROOM, WALL, SAVE...">
+  <input id="command" placeholder="ROOM, WALL, SAVE...">
   <button id="runCommand">Run</button>
   <span class="status" id="status">Ready</span>
 </div>
 
+<!-- Animated welcome -->
 <div class="overlay" id="welcome">
   <div class="welcome">
+    <div class="small" style="color:#d8c18b;letter-spacing:3px">ARCHITECTURE · FASHION · CREATIVITY</div>
+    <svg class="house-scene" viewBox="0 0 720 390" role="img" aria-label="Animated architectural X-ray house illustration">
+      <g class="blueprint">
+        <path d="M100 180 L355 40 L610 180 L355 320 Z"/>
+        <path d="M100 180 L100 270 L355 390 L355 320"/>
+        <path d="M610 180 L610 270 L355 390"/>
+        <path d="M355 40 L355 130 L610 270"/>
+        <path d="M100 180 L355 270 L610 180"/>
+        <path d="M355 130 L355 320"/>
+        <path d="M210 120 L210 220 L355 300 L500 220 L500 120"/>
+        <path d="M210 120 L355 40 L500 120"/>
+        <path d="M210 220 L355 140 L500 220"/>
+        <path d="M275 84 L275 164 L355 210 L435 164 L435 84"/>
+        <path d="M275 164 L355 210 L435 164"/>
+        <path d="M160 205 L160 290 M550 205 L550 290"/>
+      </g>
+      <g class="structure">
+        <path d="M100 180 L355 40 L610 180 L355 320 Z"/>
+        <path d="M100 180 L100 270 L355 390 L355 320"/>
+        <path d="M610 180 L610 270 L355 390"/>
+        <path d="M355 40 L355 130 L610 270"/>
+      </g>
+      <g class="interior">
+        <path d="M210 120 L210 220 L355 300 L500 220 L500 120"/>
+        <path d="M210 120 L355 40 L500 120"/>
+        <path d="M355 130 L355 320"/>
+        <path d="M210 220 L355 140 L500 220"/>
+        <path d="M275 164 L275 245 L355 290 L435 245 L435 164"/>
+        <path d="M275 164 L355 210 L435 164"/>
+        <path d="M355 210 L355 300"/>
+        <path d="M305 245 L305 285 M405 245 L405 285"/>
+        <path d="M160 205 L160 290 M550 205 L550 290"/>
+        <path d="M130 250 L355 375 L580 250"/>
+      </g>
+      <g class="roof">
+        <path d="M100 180 L355 40 L610 180 L355 320 Z"/>
+        <path d="M210 120 L355 40 L500 120"/>
+      </g>
+      <g class="interior">
+        <path d="M245 195 L290 170 L325 190 L280 215 Z"/>
+        <path d="M390 220 L430 198 L465 218 L425 242 Z"/>
+        <path d="M330 270 L365 250 L395 267 L360 287 Z"/>
+      </g>
+    </svg>
     <h1>MONCAD</h1>
     <div class="tag">IMAGINE. DESIGN. BUILD.</div>
     <h2>Welcome to MONCAD</h2>
     <p>Your creative workspace for architecture and fashion design.</p>
-    <button id="skipWelcome">Enter Workspace</button>
+    <div class="welcome-actions">
+      <button id="skipWelcome">Enter Workspace</button>
+      <button class="secondary" id="skipAnimation">Skip Animation</button>
+    </div>
   </div>
 </div>
 
+<!-- Account information -->
 <div class="modal hidden" id="accountModal">
   <div class="modal-card">
     <h2>MONCAD Account</h2>
-    <p>This prototype does not yet include secure online registration or login. Account services require a secure backend.</p>
-    <button id="closeModal">Close</button>
+    <p>Online registration and secure login are not connected yet. This prototype does not collect or transmit account passwords.</p>
+    <p class="small">A secure account system requires a backend, encrypted authentication, account recovery and privacy controls.</p>
+    <button class="fullbtn primary" id="closeModal">Close</button>
   </div>
 </div>
 
 <script>
 "use strict";
 
-/* --------------------------------
-   MENUS, RIBBON AND TOOLBAR
--------------------------------- */
+/* ---------- COMMON HELPERS ---------- */
+const $ = id => document.getElementById(id);
+let activeTool = "Select";
+let project = {name:"MONCAD Project",elements:[]};
+let selected = null;
+let gridOn = true;
+let snapOn = true;
+let scale = 45;
+let offset = {x:0,y:0};
+let undoStack = [];
+let redoStack = [];
+let drag = null;
+let pan = null;
 
+function status(message) { $("status").textContent = message; }
+
+/* ---------- MENUS AND TOOLBARS ---------- */
 const menuData = {
-  File: [
-    "New Project","Open Project","Save","Save Draft",
-    "Import","Export Project Backup","Export Image","Print"
-  ],
-  Edit: ["Undo","Redo","Delete"],
-  View: ["2D","3D Preview","Zoom In","Zoom Out","Grid"],
-  Draw: ["Select","Wall","Room","Line","Rectangle","Curve","Door","Window"],
-  Architecture: ["Room Generator","Materials","BOQ","Cost Estimate"],
-  Insert: ["Furniture","Accessories","Lighting","Fixtures"],
-  Modify: ["Move","Duplicate","Delete"],
-  Tools: ["Measurements","Materials","BOQ","Cost Estimate"],
-  Window: ["Architecture Studio","Fashion Studio","Learning Academy"],
-  Help: ["Learning Academy","Account"]
+  File:["New Project","Open Project","Save","Save Draft","Import","Export Project Backup","Export Image","Print"],
+  Edit:["Undo","Redo","Duplicate","Delete"],
+  View:["2D","3D Preview","Zoom In","Zoom Out","Grid","Snap","Reset View"],
+  Draw:["Select","Wall","Room","Line","Rectangle","Curve","Door","Window"],
+  Architecture:["Room Generator","Materials","BOQ","Cost Estimate"],
+  Insert:["Furniture","Accessories","Lighting","Fixtures"],
+  Modify:["Move","Duplicate","Rotate","Delete"],
+  Tools:["Measurements","Materials","BOQ","Cost Estimate"],
+  Window:["Architecture Studio","Fashion Studio","Learning Academy"],
+  Help:["Learning Academy","Account"]
 };
-
 const ribbonData = [
   ["Draw",["Select","Wall","Room","Line","Rectangle"]],
   ["Architecture",["Door","Window","Curve","Room Generator"]],
@@ -708,1104 +666,773 @@ const ribbonData = [
   ["View",["Grid","Zoom In","Zoom Out","2D","3D Preview"]],
   ["Project",["Save","Import","Export Project Backup"]]
 ];
-
-function actionButton(label,icon="•") {
-  return `<button class="rtool" data-action="${label}">
-    <span class="ico">${icon}</span><span>${label}</span>
-  </button>`;
-}
+const icons = ["⌖","／","▱","╱","□","⌁","▯","▭","✥"];
 
 function buildMenus() {
-  const root = document.getElementById("menus");
-
+  const root = $("menus");
   Object.entries(menuData).forEach(([name,items]) => {
     const wrap = document.createElement("div");
     wrap.className = "menu";
-
     const button = document.createElement("button");
     button.textContent = name;
-
+    button.setAttribute("aria-expanded","false");
     const list = document.createElement("div");
     list.className = "menu-items";
-
     items.forEach(item => {
       const option = document.createElement("button");
       option.textContent = item;
       option.addEventListener("click",() => {
         list.classList.remove("open");
+        button.setAttribute("aria-expanded","false");
         menuAction(item);
       });
       list.appendChild(option);
     });
-
     button.addEventListener("click",() => {
-      document.querySelectorAll(".menu-items").forEach(other => {
-        if(other !== list) other.classList.remove("open");
-      });
-      list.classList.toggle("open");
+      const willOpen = !list.classList.contains("open");
+      document.querySelectorAll(".menu-items").forEach(m => m.classList.remove("open"));
+      document.querySelectorAll(".menu>button").forEach(b => b.setAttribute("aria-expanded","false"));
+      list.classList.toggle("open",willOpen);
+      button.setAttribute("aria-expanded",String(willOpen));
     });
-
     wrap.append(button,list);
     root.appendChild(wrap);
   });
-
-  document.addEventListener("click",event => {
-    if(!event.target.closest(".menu")) {
-      document.querySelectorAll(".menu-items").forEach(menu => menu.classList.remove("open"));
-    }
-  });
 }
-
+function makeActionButton(label,index) {
+  const button = document.createElement("button");
+  button.className = "rtool";
+  button.dataset.action = label;
+  button.innerHTML = `<span class="ico">${icons[index%icons.length]}</span><span>${label}</span>`;
+  return button;
+}
 function buildRibbon() {
-  const root = document.getElementById("ribbon");
-  const icons = ["⌖","／","▱","╱","□","⌁","▯","▭"];
-
   ribbonData.forEach(([group,items]) => {
     const box = document.createElement("div");
     box.className = "rgroup";
-
     const tools = document.createElement("div");
     tools.className = "rtools";
-
-    items.forEach((item,index) => {
-      tools.insertAdjacentHTML("beforeend",actionButton(item,icons[index % icons.length]));
-    });
-
+    items.forEach((item,index) => tools.appendChild(makeActionButton(item,index)));
     const label = document.createElement("div");
     label.className = "rlabel";
     label.textContent = group;
-
     box.append(tools,label);
-    root.appendChild(box);
+    $("ribbon").appendChild(box);
   });
 }
-
 function buildLeftbar() {
-  const items = [
-    ["Select","⌖"],["Wall","／"],["Room","▱"],["Line","╱"],
-    ["Rectangle","□"],["Door","▯"],["Window","▭"],
-    ["Move","✥"],["Delete","×"]
-  ];
-
-  const root = document.getElementById("leftbar");
-
+  const items = [["Select","⌖"],["Wall","／"],["Room","▱"],["Line","╱"],["Rectangle","□"],["Door","▯"],["Window","▭"],["Move","✥"],["Delete","×"]];
   items.forEach(([name,icon]) => {
-    const button = document.createElement("button");
-    button.title = name;
-    button.textContent = icon;
-    button.dataset.action = name;
-    root.appendChild(button);
+    const b = document.createElement("button");
+    b.title = name;
+    b.textContent = icon;
+    b.dataset.action = name;
+    $("leftbar").appendChild(b);
   });
-
-  root.insertAdjacentHTML("beforeend","<small>TOOLS</small>");
+  const small = document.createElement("small");
+  small.textContent = "TOOLS";
+  $("leftbar").appendChild(small);
 }
-
 buildMenus();
 buildRibbon();
 buildLeftbar();
 
 document.addEventListener("click",event => {
-  const button = event.target.closest("[data-action]");
-  if(button) menuAction(button.dataset.action);
+  const actionButton = event.target.closest("[data-action]");
+  if(actionButton) menuAction(actionButton.dataset.action);
+  if(!event.target.closest(".menu")) {
+    document.querySelectorAll(".menu-items").forEach(m => m.classList.remove("open"));
+    document.querySelectorAll(".menu>button").forEach(b => b.setAttribute("aria-expanded","false"));
+  }
 });
-
 document.querySelectorAll("[data-studio]").forEach(button => {
   button.addEventListener("click",() => switchStudio(button.dataset.studio));
 });
-
 function switchStudio(name) {
-  document.querySelectorAll(".canvas-wrap").forEach(element => element.classList.remove("active"));
-  document.querySelectorAll(".studio-tabs button").forEach(button => {
-    button.classList.toggle("active",button.dataset.studio === name);
-  });
-
-  const target = document.getElementById(name);
-  if(target) target.classList.add("active");
-
-  if(name === "architecture") resizeCanvas();
-  if(name === "fashion") resizeFashionDisplay();
+  document.querySelectorAll(".canvas-wrap").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".studio-tabs button").forEach(b => b.classList.toggle("active",b.dataset.studio===name));
+  $(name)?.classList.add("active");
+  if(name==="architecture") resizeCanvas();
+  if(name==="fashion") showFashionHistory();
 }
 
-/* --------------------------------
-   ARCHITECTURE PROJECT AND CANVAS
--------------------------------- */
+/* ---------- FURNITURE LIBRARY ---------- */
+const library = {
+  living:["Sofa","Armchair","Coffee Table","TV Cabinet","Bookshelf","Rug","Side Table"],
+  bedroom:["Bed","Wardrobe","Bedside Table","Dresser","Mirror","Chest of Drawers"],
+  dining:["Dining Table","Dining Chair","Bar Stool","Sideboard"],
+  kitchen:["Kitchen Cabinet","Kitchen Island","Sink","Refrigerator","Cooker","Dishwasher"],
+  bathroom:["Toilet","Wash Basin","Bathtub","Shower","Bathroom Cabinet"],
+  office:["Desk","Office Chair","Bookcase","Filing Cabinet"],
+  outdoor:["Garden Chair","Outdoor Table","Sun Lounger","Plant Pot","Bench"],
+  lighting:["Ceiling Light","Pendant Light","Floor Lamp","Table Lamp","Wall Light"],
+  fixture:["Door","Window","Column","Stairs","Radiator"],
+  architectural:["Door","Window","Column","Stairs","Partition Wall"]
+};
+const categorySelect = $("objectType");
+const presetSelect = $("objectPreset");
+function updateLibrary() {
+  const items = library[categorySelect.value] || [];
+  presetSelect.replaceChildren();
+  items.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+    presetSelect.appendChild(option);
+  });
+  status("Library: "+categorySelect.options[categorySelect.selectedIndex].text);
+}
+categorySelect.addEventListener("change",updateLibrary);
+updateLibrary();
 
-let activeTool = "Select";
-let project = {name:"MONCAD Project",elements:[]};
-let selected = null;
-let gridOn = true;
-let snapOn = true;
-let scale = 45;
-let undoStack = [];
-let redoStack = [];
-let drag = null;
-let pan = null;
-let offset = {x:0,y:0};
-
-const canvas = document.getElementById("designCanvas");
+/* ---------- CANVAS AND COORDINATES ---------- */
+const canvas = $("designCanvas");
 const ctx = canvas.getContext("2d");
-
-function setStatus(message) {
-  document.getElementById("status").textContent = message;
-}
-
-function selectTool(name) {
-  activeTool = name;
-
-  document.querySelectorAll(".leftbar button").forEach(button => {
-    button.classList.toggle("active",button.title === name);
-  });
-
-  setStatus("Tool: " + name);
-}
-
-function dims() {
-  return {w:canvas.clientWidth,h:canvas.clientHeight};
-}
-
+function dims() { return {w:canvas.clientWidth,h:canvas.clientHeight}; }
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
   if(!rect.width || !rect.height) return;
-
   const dpr = window.devicePixelRatio || 1;
-  canvas.width = Math.max(1,Math.round(rect.width*dpr));
-  canvas.height = Math.max(1,Math.round(rect.height*dpr));
-
+  canvas.width = Math.round(rect.width*dpr);
+  canvas.height = Math.round(rect.height*dpr);
   ctx.setTransform(dpr,0,0,dpr,0,0);
   redraw();
 }
-
 window.addEventListener("resize",resizeCanvas);
 
 function toWorld(point) {
   const d = dims();
-  return {
-    x:(point.x-d.w/2-offset.x)/scale,
-    y:(d.h/2+offset.y-point.y)/scale
-  };
+  return {x:(point.x-d.w/2-offset.x)/scale,y:(d.h/2+offset.y-point.y)/scale};
 }
-
 function toScreen(point) {
   const d = dims();
-  return {
-    x:d.w/2+offset.x+point.x*scale,
-    y:d.h/2+offset.y-point.y*scale
-  };
+  return {x:d.w/2+offset.x+point.x*scale,y:d.h/2+offset.y-point.y*scale};
 }
-
-function snapshot() {
-  undoStack.push(JSON.stringify(project));
-  if(undoStack.length > 60) undoStack.shift();
-  redoStack = [];
-}
-
-function addElement(element) {
-  snapshot();
-
-  element.id = "el-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-  project.elements.push(element);
-  selected = element.id;
-
-  redraw();
-  updateInspector();
-  calculate();
-}
-
-function validRoomDimensions() {
-  const length = Number(document.getElementById("roomLength").value);
-  const width = Number(document.getElementById("roomWidth").value);
-  const height = Number(document.getElementById("wallHeight").value);
-  const thickness = Number(document.getElementById("wallThickness").value);
-
-  if(!(length > 0 && width > 0 && height > 0 && thickness > 0)) {
-    alert("Please enter valid positive room dimensions.");
-    return null;
-  }
-
-  return {length,width,height,thickness};
-}
-
-function createRoom(x,y,w,h) {
-  const values = validRoomDimensions();
-  if(!values) return;
-
-  addElement({
-    type:"room",
-    label:"Room",
-    x,y,w,h,
-    wallHeight:values.height,
-    wallThickness:values.thickness
-  });
-
-  setStatus("Room created");
-}
-
-function createRoomCentered() {
-  const values = validRoomDimensions();
-  if(!values) return;
-
-  const d = dims();
-  const center = toWorld({x:d.w/2,y:d.h/2});
-
-  createRoom(
-    center.x-values.length/2,
-    center.y-values.width/2,
-    values.length,
-    values.width
-  );
-}
-
-function drawGrid() {
-  if(!gridOn) return;
-
-  const d = dims();
-  const step = scale;
-
-  ctx.save();
-  ctx.strokeStyle = "#e5eaf0";
-  ctx.lineWidth = 1;
-
-  const startX = ((d.w/2+offset.x)%step+step)%step;
-  const startY = ((d.h/2+offset.y)%step+step)%step;
-
-  for(let x=startX;x<d.w;x+=step) {
-    ctx.beginPath();
-    ctx.moveTo(x,0);
-    ctx.lineTo(x,d.h);
-    ctx.stroke();
-  }
-
-  for(let y=startY;y<d.h;y+=step) {
-    ctx.beginPath();
-    ctx.moveTo(0,y);
-    ctx.lineTo(d.w,y);
-    ctx.stroke();
-  }
-
-  ctx.restore();
-}
-
-function drawElement(element) {
-  const a = toScreen({x:element.x,y:element.y});
-  const b = toScreen({x:element.x+element.w,y:element.y+element.h});
-
-  const x = Math.min(a.x,b.x);
-  const y = Math.min(a.y,b.y);
-  const w = Math.abs(b.x-a.x);
-  const h = Math.abs(b.y-a.y);
-
-  ctx.save();
-  ctx.lineWidth = element.id === selected ? 3 : 2;
-  ctx.strokeStyle = element.id === selected ? "#c28d36" : "#182944";
-  ctx.fillStyle = element.type === "room" ? "#dce7f2" : "#e9edf2";
-
-  if(element.type === "room") {
-    ctx.fillRect(x,y,w,h);
-    ctx.strokeRect(x,y,w,h);
-
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "#62758c";
-    ctx.strokeRect(x+5,y+5,Math.max(0,w-10),Math.max(0,h-10));
-
-    ctx.fillStyle = "#26384e";
-    ctx.font = "12px Arial";
-    ctx.fillText(
-      `${Math.abs(element.w).toFixed(2)} m × ${Math.abs(element.h).toFixed(2)} m`,
-      x+8,y+20
-    );
-  } else if(element.type === "line" || element.type === "wall") {
-    ctx.beginPath();
-    ctx.moveTo(a.x,a.y);
-    ctx.lineTo(b.x,b.y);
-    ctx.stroke();
-  } else if(element.type === "door") {
-    ctx.strokeRect(x,y,w,h);
-    ctx.beginPath();
-    ctx.arc(x,y,Math.max(w,h),0,Math.PI/2);
-    ctx.stroke();
-  } else if(element.type === "window") {
-    ctx.strokeRect(x,y,w,h);
-    ctx.beginPath();
-    ctx.moveTo(x,y+h/2);
-    ctx.lineTo(x+w,y+h/2);
-    ctx.stroke();
-  } else if(element.type === "curve") {
-    ctx.beginPath();
-    ctx.moveTo(x,y+h);
-    ctx.quadraticCurveTo(x+w,y-h/2,x+w,y+h);
-    ctx.stroke();
-  } else {
-    ctx.fillRect(x,y,w,h);
-    ctx.strokeRect(x,y,w,h);
-    ctx.fillStyle = "#26384e";
-    ctx.font = "11px Arial";
-    ctx.fillText(element.label || element.type,x+4,y+14);
-  }
-
-  ctx.restore();
-}
-
-function redraw() {
-  const d = dims();
-  ctx.clearRect(0,0,d.w,d.h);
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0,0,d.w,d.h);
-
-  drawGrid();
-  project.elements.forEach(drawElement);
-}
-
 function pointerPos(event) {
   const rect = canvas.getBoundingClientRect();
   return {x:event.clientX-rect.left,y:event.clientY-rect.top};
 }
+function snapPoint(point) {
+  if(!snapOn) return point;
+  return {x:Math.round(point.x*0.5)/2,y:Math.round(point.y*0.5)/2};
+}
+function snapshot() {
+  undoStack.push(JSON.stringify(project));
+  if(undoStack.length>80) undoStack.shift();
+  redoStack=[];
+}
+function addElement(element) {
+  snapshot();
+  element.id = "el-"+Date.now()+"-"+Math.random().toString(16).slice(2);
+  project.elements.push(element);
+  selected=element.id;
+  redraw();
+  updateInspector();
+  calculate();
+}
+function validRoomDimensions() {
+  const values = {
+    length:Number($("roomLength").value),
+    width:Number($("roomWidth").value),
+    height:Number($("wallHeight").value),
+    thickness:Number($("wallThickness").value)
+  };
+  if(!Object.values(values).every(v=>Number.isFinite(v)&&v>0)) {
+    alert("Please enter positive room dimensions.");
+    return null;
+  }
+  return values;
+}
+function createRoom(x,y,w,h) {
+  const values=validRoomDimensions();
+  if(!values) return;
+  addElement({type:"room",label:"Room",x,y,w,h,wallHeight:values.height,wallThickness:values.thickness});
+  status("Room created");
+}
+function createRoomCentered() {
+  const values=validRoomDimensions();
+  if(!values) return;
+  const d=dims();
+  const center=toWorld({x:d.w/2,y:d.h/2});
+  createRoom(center.x-values.length/2,center.y-values.width/2,values.length,values.width);
+}
+function drawGrid() {
+  if(!gridOn) return;
+  const d=dims(),step=scale;
+  ctx.save();
+  ctx.strokeStyle="#e5eaf0";
+  ctx.lineWidth=1;
+  const sx=((d.w/2+offset.x)%step+step)%step;
+  const sy=((d.h/2+offset.y)%step+step)%step;
+  for(let x=sx;x<d.w;x+=step) { ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,d.h);ctx.stroke(); }
+  for(let y=sy;y<d.h;y+=step) { ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(d.w,y);ctx.stroke(); }
+  ctx.restore();
+}
+function drawDimension(x1,y1,x2,y2,label,vertical=false) {
+  ctx.save();
+  ctx.strokeStyle="#b27b22";
+  ctx.fillStyle="#7b5519";
+  ctx.lineWidth=1;
+  ctx.font="12px Arial";
+  ctx.beginPath();
+  if(!vertical) {
+    const y=y1-24;
+    ctx.moveTo(x1,y1);ctx.lineTo(x1,y-5);
+    ctx.moveTo(x2,y2);ctx.lineTo(x2,y-5);
+    ctx.moveTo(x1,y);ctx.lineTo(x2,y);
+    ctx.moveTo(x1-4,y-3);ctx.lineTo(x1+4,y+3);
+    ctx.moveTo(x2-4,y-3);ctx.lineTo(x2+4,y+3);
+    ctx.stroke();
+    const tw=ctx.measureText(label).width;
+    ctx.fillStyle="#fff";
+    ctx.fillRect((x1+x2-tw)/2-5,y-16,tw+10,16);
+    ctx.fillStyle="#7b5519";
+    ctx.fillText(label,(x1+x2-tw)/2,y-4);
+  } else {
+    const x=x1-28;
+    ctx.moveTo(x1,y1);ctx.lineTo(x-5,y1);
+    ctx.moveTo(x2,y2);ctx.lineTo(x-5,y2);
+    ctx.moveTo(x,y1);ctx.lineTo(x,y2);
+    ctx.moveTo(x-3,y1-4);ctx.lineTo(x+3,y1+4);
+    ctx.moveTo(x-3,y2-4);ctx.lineTo(x+3,y2+4);
+    ctx.stroke();
+    ctx.translate(x-7,(y1+y2)/2);
+    ctx.rotate(-Math.PI/2);
+    const tw=ctx.measureText(label).width;
+    ctx.fillStyle="#fff";ctx.fillRect(-tw/2-4,-13,tw+8,16);
+    ctx.fillStyle="#7b5519";ctx.fillText(label,-tw/2,-1);
+  }
+  ctx.restore();
+}
+function drawRoom(element,x,y,w,h) {
+  ctx.save();
+  ctx.fillStyle="#e7eff7";
+  ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle=element.id===selected?"#c28d36":"#182944";
+  ctx.lineWidth=element.id===selected?3:2;
+  ctx.strokeRect(x,y,w,h);
+  ctx.strokeStyle="#8798ab";
+  ctx.lineWidth=1;
+  ctx.strokeRect(x+5,y+5,Math.max(0,w-10),Math.max(0,h-10));
+  ctx.fillStyle="#26384e";
+  ctx.font="12px Arial";
+  ctx.fillText("ROOM",x+10,y+18);
+  ctx.restore();
+  // Dimension strings are deliberately outside the room.
+  drawDimension(x,y,x+w,y,Math.abs(element.w).toFixed(2)+" m",false);
+  drawDimension(x,y,x,y+h,Math.abs(element.h).toFixed(2)+" m",true);
+}
+function drawElement(element) {
+  const a=toScreen({x:element.x,y:element.y});
+  const b=toScreen({x:element.x+element.w,y:element.y+element.h});
+  const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);
+  const w=Math.max(2,Math.abs(b.x-a.x)),h=Math.max(2,Math.abs(b.y-a.y));
+  ctx.save();
+  ctx.translate(x+w/2,y+h/2);
+  ctx.rotate((element.rotation||0)*Math.PI/180);
+  ctx.translate(-w/2,-h/2);
+  ctx.lineWidth=element.id===selected?3:1.7;
+  ctx.strokeStyle=element.id===selected?"#c28d36":"#182944";
+  ctx.fillStyle="#edf2f7";
 
+  if(element.type==="room") {
+    drawRoom(element,x,y,w,h);
+  } else if(element.type==="line"||element.type==="wall") {
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(w,h);ctx.stroke();
+  } else if(element.type==="door") {
+    ctx.strokeRect(0,0,w,h);
+    ctx.beginPath();ctx.arc(0,h,Math.max(w,h),-Math.PI/2,0);ctx.stroke();
+  } else if(element.type==="window") {
+    ctx.strokeRect(0,0,w,h);
+    ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+  } else if(element.type==="curve") {
+    ctx.beginPath();ctx.moveTo(0,h);ctx.quadraticCurveTo(w/2,-h/2,w,h);ctx.stroke();
+  } else {
+    ctx.fillRect(0,0,w,h);ctx.strokeRect(0,0,w,h);
+    ctx.fillStyle="#26384e";
+    ctx.font="11px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(element.label||element.type,w/2,Math.max(12,h/2));
+  }
+  ctx.restore();
+}
+function redraw() {
+  const d=dims();
+  ctx.clearRect(0,0,d.w,d.h);
+  ctx.fillStyle="#fff";
+  ctx.fillRect(0,0,d.w,d.h);
+  drawGrid();
+  project.elements.forEach(drawElement);
+}
 function findHit(point) {
   for(let i=project.elements.length-1;i>=0;i--) {
-    const element = project.elements[i];
-
-    if(
-      point.x >= Math.min(element.x,element.x+element.w)-0.12 &&
-      point.x <= Math.max(element.x,element.x+element.w)+0.12 &&
-      point.y >= Math.min(element.y,element.y+element.h)-0.12 &&
-      point.y <= Math.max(element.y,element.y+element.h)+0.12
-    ) {
-      return element.id;
-    }
+    const e=project.elements[i];
+    if(point.x>=Math.min(e.x,e.x+e.w)-.15 &&
+       point.x<=Math.max(e.x,e.x+e.w)+.15 &&
+       point.y>=Math.min(e.y,e.y+e.h)-.15 &&
+       point.y<=Math.max(e.y,e.y+e.h)+.15) return e.id;
   }
-
   return null;
 }
+function selectTool(name) {
+  activeTool=name;
+  document.querySelectorAll(".leftbar button,.rtool").forEach(b=>b.classList.toggle("active",b.dataset.action===name));
+  status("Tool: "+name);
+}
 
-canvas.addEventListener("pointerdown",event => {
+/* ---------- CANVAS POINTER CONTROLS ---------- */
+canvas.addEventListener("pointerdown",event=>{
   canvas.setPointerCapture(event.pointerId);
-
-  const point = pointerPos(event);
-
-  if(activeTool === "Pan" || event.button === 1) {
-    pan = {x:point.x,y:point.y,ox:offset.x,oy:offset.y};
+  const point=pointerPos(event);
+  if(activeTool==="Pan"||event.button===1) {
+    pan={x:point.x,y:point.y,ox:offset.x,oy:offset.y};
     return;
   }
-
-  let world = toWorld(point);
-
-  if(snapOn) {
-    world.x = Math.round(world.x*2)/2;
-    world.y = Math.round(world.y*2)/2;
-  }
-
-  if(activeTool === "Select" || activeTool === "Move") {
-    selected = findHit(world);
-
-    const hit = project.elements.find(element => element.id === selected);
-
-    if(hit) {
-      drag = {
-        id:hit.id,
-        start:world,
-        ox:hit.x,
-        oy:hit.y,
-        before:JSON.stringify(project),
-        moved:false
-      };
-    } else {
-      drag = null;
-    }
-
-    redraw();
-    updateInspector();
+  const world=snapPoint(toWorld(point));
+  if(activeTool==="Select"||activeTool==="Move") {
+    selected=findHit(world);
+    const hit=project.elements.find(e=>e.id===selected);
+    drag=hit?{id:hit.id,start:world,ox:hit.x,oy:hit.y,before:JSON.stringify(project),moved:false}:null;
+    redraw();updateInspector();
     return;
   }
-
-  drag = {start:world,tool:activeTool};
+  if(activeTool==="Delete") {
+    selected=findHit(world);
+    if(selected) deleteSelected();
+    return;
+  }
+  drag={start:world,tool:activeTool};
 });
-
-canvas.addEventListener("pointermove",event => {
-  const point = pointerPos(event);
-  const world = toWorld(point);
-
-  document.getElementById("coord").textContent =
-    `X: ${world.x.toFixed(2)} · Y: ${world.y.toFixed(2)}`;
-
+canvas.addEventListener("pointermove",event=>{
+  const point=pointerPos(event),world=toWorld(point);
+  $("coord").textContent=`X: ${world.x.toFixed(2)} · Y: ${world.y.toFixed(2)}`;
   if(pan) {
-    offset.x = pan.ox+(point.x-pan.x);
-    offset.y = pan.oy+(point.y-pan.y);
-    redraw();
-    return;
+    offset.x=pan.ox+(point.x-pan.x);
+    offset.y=pan.oy+(point.y-pan.y);
+    redraw();return;
   }
-
-  if(drag && drag.id) {
-    const object = project.elements.find(element => element.id === drag.id);
-
+  if(drag?.id) {
+    const object=project.elements.find(e=>e.id===drag.id);
     if(object) {
-      object.x = drag.ox+(world.x-drag.start.x);
-      object.y = drag.oy+(world.y-drag.start.y);
-      drag.moved = true;
-      redraw();
+      object.x=drag.ox+(world.x-drag.start.x);
+      object.y=drag.oy+(world.y-drag.start.y);
+      drag.moved=true;redraw();
     }
   }
 });
-
-canvas.addEventListener("pointerup",event => {
-  const point = pointerPos(event);
-  let world = toWorld(point);
-
-  if(pan) {
-    pan = null;
-    return;
-  }
-
+canvas.addEventListener("pointerup",event=>{
+  if(pan) { pan=null;return; }
   if(!drag) return;
-
   if(drag.id) {
     if(drag.moved) {
       undoStack.push(drag.before);
-      if(undoStack.length > 60) undoStack.shift();
-      redoStack = [];
-      updateInspector();
-      calculate();
-      setStatus("Object moved");
+      if(undoStack.length>80) undoStack.shift();
+      redoStack=[];
+      updateInspector();calculate();status("Object moved");
     }
-
-    drag = null;
-    return;
+    drag=null;return;
   }
-
-  const drawing = drag;
-  drag = null;
-
-  if(snapOn) {
-    world.x = Math.round(world.x*2)/2;
-    world.y = Math.round(world.y*2)/2;
-  }
-
-  const x = Math.min(drawing.start.x,world.x);
-  const y = Math.min(drawing.start.y,world.y);
-  let w = Math.abs(world.x-drawing.start.x);
-  let h = Math.abs(world.y-drawing.start.y);
-
-  if(w < 0.05 && h < 0.05) {
-    w = 0.5;
-    h = 0.5;
-  }
-
-  if(drawing.tool === "Room") {
-    createRoom(x,y,w,h);
-  } else if(drawing.tool === "Wall" || drawing.tool === "Line") {
-    addElement({
-      type:"line",
-      label:drawing.tool,
-      x:drawing.start.x,
-      y:drawing.start.y,
-      w:world.x-drawing.start.x,
-      h:world.y-drawing.start.y
-    });
+  const drawing=drag;drag=null;
+  const end=snapPoint(toWorld(pointerPos(event)));
+  const x=Math.min(drawing.start.x,end.x);
+  const y=Math.min(drawing.start.y,end.y);
+  let w=Math.abs(end.x-drawing.start.x);
+  let h=Math.abs(end.y-drawing.start.y);
+  if(w<.05&&h<.05) { w=.5;h=.5; }
+  if(drawing.tool==="Room") createRoom(x,y,w,h);
+  else if(["Wall","Line"].includes(drawing.tool)) {
+    addElement({type:"line",label:drawing.tool,x:drawing.start.x,y:drawing.start.y,w:end.x-drawing.start.x,h:end.y-drawing.start.y});
   } else if(["Rectangle","Door","Window","Curve"].includes(drawing.tool)) {
-    addElement({
-      type:drawing.tool.toLowerCase(),
-      label:drawing.tool,
-      x,y,w,h
-    });
-  } else {
-    redraw();
+    addElement({type:drawing.tool.toLowerCase(),label:drawing.tool,x,y,w,h});
   }
 });
-
-canvas.addEventListener("pointercancel",() => {
-  if(drag && drag.id && drag.before) {
-    project = JSON.parse(drag.before);
-  }
-
-  drag = null;
-  pan = null;
-  redraw();
-  updateInspector();
+canvas.addEventListener("pointercancel",()=>{
+  if(drag?.id&&drag.before) project=JSON.parse(drag.before);
+  drag=null;pan=null;redraw();updateInspector();
 });
-
-canvas.addEventListener("wheel",event => {
+canvas.addEventListener("wheel",event=>{
   event.preventDefault();
-  scale = Math.max(15,Math.min(200,scale*(event.deltaY<0 ? 1.1 : 0.9)));
+  scale=Math.max(15,Math.min(200,scale*(event.deltaY<0?1.1:.9)));
   redraw();
 },{passive:false});
 
+/* ---------- INSPECTOR / OBJECT ACTIONS ---------- */
+function getSelected() { return project.elements.find(e=>e.id===selected); }
 function updateInspector() {
-  const element = project.elements.find(item => item.id === selected);
-  const inspector = document.getElementById("inspector");
-
-  if(!element) {
-    inspector.textContent = "Select an object to view its properties.";
+  const e=getSelected();
+  if(!e) {
+    $("inspector").textContent="Select an object to view its properties.";
+    $("objectWidth").value="";
+    $("objectHeight").value="";
+    $("objectRotation").value="";
     return;
   }
-
-  inspector.innerHTML =
-    `<b>${element.label || element.type}</b><br>`+
-    `Type: ${element.type}<br>`+
-    `Position: ${element.x.toFixed(2)}, ${element.y.toFixed(2)} m<br>`+
-    `Size: ${Math.abs(element.w).toFixed(2)} × ${Math.abs(element.h).toFixed(2)} m`;
+  $("inspector").textContent=`${e.label||e.type} · ${e.type} · Position ${e.x.toFixed(2)}, ${e.y.toFixed(2)} m`;
+  $("objectWidth").value=Math.abs(e.w).toFixed(2);
+  $("objectHeight").value=Math.abs(e.h).toFixed(2);
+  $("objectRotation").value=e.rotation||0;
 }
-
-function calculate() {
-  const rooms = project.elements.filter(element => element.type === "room");
-  const estimate = document.getElementById("estimate");
-
-  if(!rooms.length) {
-    estimate.textContent = "Create a room to calculate a basic conceptual estimate.";
-    return;
-  }
-
-  const area = rooms.reduce((sum,room) =>
-    sum+Math.abs(room.w*room.h),0);
-
-  const wallArea = rooms.reduce((sum,room) =>
-    sum+2*(Math.abs(room.w)+Math.abs(room.h))*(room.wallHeight || 3),0);
-
-  estimate.innerHTML =
-    `Floor area: <b>${area.toFixed(2)} m²</b><br>`+
-    `Approx. gross perimeter wall area: <b>${wallArea.toFixed(2)} m²</b><br>`+
-    `<span class="small">Opening deductions, block quantities, structural steel and pricing are not yet calculated. Validate quantities and specifications with professionals.</span>`;
-}
-
 function deleteSelected() {
-  if(!selected) return;
-
+  if(!selected) { status("Select an object first");return; }
   snapshot();
-  project.elements = project.elements.filter(element => element.id !== selected);
-  selected = null;
-
-  redraw();
-  updateInspector();
-  calculate();
-  setStatus("Object deleted");
+  project.elements=project.elements.filter(e=>e.id!==selected);
+  selected=null;redraw();updateInspector();calculate();status("Object deleted");
 }
-
 function duplicateSelected() {
-  const element = project.elements.find(item => item.id === selected);
-  if(!element) return;
-
-  const copy = {...element};
+  const e=getSelected();
+  if(!e) { status("Select an object first");return; }
+  const copy={...e};
   delete copy.id;
-  copy.x += 0.5;
-  copy.y += 0.5;
-
-  addElement(copy);
-  setStatus("Object duplicated");
+  copy.x+=.5;copy.y+=.5;
+  addElement(copy);status("Object duplicated");
 }
+function applyProperties() {
+  const e=getSelected();
+  if(!e) { status("Select an object first");return; }
+  const w=Number($("objectWidth").value);
+  const h=Number($("objectHeight").value);
+  const rotation=Number($("objectRotation").value)||0;
+  if(!(w>0&&h>0)) { alert("Enter positive width and height.");return; }
+  snapshot();
+  e.w=Math.sign(e.w||1)*w;
+  e.h=Math.sign(e.h||1)*h;
+  e.rotation=rotation;
+  redraw();updateInspector();calculate();status("Properties updated");
+}
+$("applyProperties").addEventListener("click",applyProperties);
+$("deleteSelected").addEventListener("click",deleteSelected);
+$("duplicateSelected").addEventListener("click",duplicateSelected);
 
 function undo() {
-  if(!undoStack.length) {
-    setStatus("Nothing to undo");
-    return;
-  }
-
+  if(!undoStack.length) { status("Nothing to undo");return; }
   redoStack.push(JSON.stringify(project));
-  project = JSON.parse(undoStack.pop());
-  selected = null;
-
-  redraw();
-  updateInspector();
-  calculate();
-  setStatus("Undo");
+  project=JSON.parse(undoStack.pop());
+  selected=null;redraw();updateInspector();calculate();status("Undo");
 }
-
 function redo() {
-  if(!redoStack.length) {
-    setStatus("Nothing to redo");
-    return;
-  }
-
+  if(!redoStack.length) { status("Nothing to redo");return; }
   undoStack.push(JSON.stringify(project));
-  project = JSON.parse(redoStack.pop());
-  selected = null;
-
-  redraw();
-  updateInspector();
-  calculate();
-  setStatus("Redo");
+  project=JSON.parse(redoStack.pop());
+  selected=null;redraw();updateInspector();calculate();status("Redo");
 }
 
-/* --------------------------------
-   ARCHITECTURE BUTTONS
--------------------------------- */
-
-document.getElementById("createRoom").addEventListener("click",createRoomCentered);
-
-document.getElementById("addRoom").addEventListener("click",() => {
-  const values = validRoomDimensions();
-  if(!values) return;
-
-  const d = dims();
-  const center = toWorld({x:d.w/2,y:d.h/2});
-
-  createRoom(
-    center.x-values.length/2+1,
-    center.y-values.width/2+1,
-    values.length,
-    values.width
-  );
+/* ---------- ROOM GENERATOR AND OBJECT LIBRARY ---------- */
+$("createRoom").addEventListener("click",createRoomCentered);
+$("addRoom").addEventListener("click",()=>{
+  const values=validRoomDimensions();if(!values)return;
+  const d=dims(),center=toWorld({x:d.w/2,y:d.h/2});
+  createRoom(center.x-values.length/2+1,center.y-values.width/2+1,values.length,values.width);
 });
-
-document.getElementById("deleteSelected").addEventListener("click",deleteSelected);
-document.getElementById("duplicateSelected").addEventListener("click",duplicateSelected);
-document.getElementById("calculate").addEventListener("click",calculate);
-
-document.getElementById("gridToggle").addEventListener("click",event => {
-  gridOn = !gridOn;
-  event.currentTarget.textContent = "Grid " + (gridOn ? "ON" : "OFF");
-  redraw();
-});
-
-document.getElementById("snapToggle").addEventListener("click",event => {
-  snapOn = !snapOn;
-  event.currentTarget.textContent = "Snap " + (snapOn ? "ON" : "OFF");
-});
-
-document.getElementById("zoomReset").addEventListener("click",() => {
-  scale = 45;
-  offset = {x:0,y:0};
-  redraw();
-  setStatus("View reset");
-});
-
-document.getElementById("insertObject").addEventListener("click",() => {
-  const label = document.getElementById("objectPreset").value.toLowerCase();
-  const category = document.getElementById("objectType").value;
-
-  const d = dims();
-  const point = toWorld({x:d.w/2,y:d.h/2});
-
-  const sizes = {
-    sofa:[2,0.9],
-    bed:[2,1.6],
-    "dining table":[1.5,1],
-    "kitchen cabinet":[2,0.6],
-    wardrobe:[1.2,0.6],
-    desk:[1.2,0.6],
-    toilet:[0.7,0.7],
-    "wash basin":[0.6,0.5],
-    window:[1.2,0.15],
-    door:[0.9,0.15],
-    column:[0.3,0.3],
-    stairs:[2,1]
-  };
-
-  const size = sizes[label] || [1,1];
-  const type = ["door","window","column","stairs"].includes(label)
-    ? label : category;
-
+const objectSizes = {
+  "sofa":[2,.9],"armchair":[.9,.9],"coffee table":[1,.6],"tv cabinet":[1.6,.45],
+  "bookshelf":[1.2,.35],"rug":[2,1.5],"side table":[.5,.5],
+  "bed":[2,1.6],"wardrobe":[1.2,.6],"bedside table":[.5,.45],
+  "dresser":[1.2,.5],"mirror":[.7,.08],"chest of drawers":[1,.5],
+  "dining table":[1.5,1],"dining chair":[.5,.5],"bar stool":[.4,.4],"sideboard":[1.4,.45],
+  "kitchen cabinet":[2,.6],"kitchen island":[1.8,.9],"sink":[.8,.6],
+  "refrigerator":[.8,.75],"cooker":[.6,.65],"dishwasher":[.6,.6],
+  "toilet":[.7,.7],"wash basin":[.6,.5],"bathtub":[1.7,.75],"shower":[.9,.9],
+  "bathroom cabinet":[.8,.4],"desk":[1.2,.6],"office chair":[.6,.6],
+  "bookcase":[1.2,.35],"filing cabinet":[.5,.6],
+  "garden chair":[.6,.6],"outdoor table":[1.2,.8],"sun lounger":[2,.7],
+  "plant pot":[.4,.4],"bench":[1.5,.5],
+  "ceiling light":[.4,.4],"pendant light":[.35,.35],"floor lamp":[.35,.35],
+  "table lamp":[.25,.25],"wall light":[.25,.15],
+  "door":[.9,.15],"window":[1.2,.15],"column":[.3,.3],"stairs":[2,1],
+  "partition wall":[2,.15]
+};
+$("insertObject").addEventListener("click",()=>{
+  const label=presetSelect.value;
+  if(!label) { status("Choose an object first");return; }
+  const key=label.toLowerCase();
+  const size=objectSizes[key]||[1,1];
+  const d=dims(),point=toWorld({x:d.w/2,y:d.h/2});
+  const special=["door","window","column","stairs","partition wall"].includes(key);
   addElement({
-    type,
+    type:special?key:"furniture",
+    category:categorySelect.value,
     label,
     x:point.x-size[0]/2,
     y:point.y-size[1]/2,
-    w:size[0],
-    h:size[1]
+    w:size[0],h:size[1],rotation:0
   });
-
-  setStatus(label + " inserted");
+  status(label+" inserted. Drag to reposition.");
 });
 
-/* --------------------------------
-   PROJECT SAVE, IMPORT AND EXPORT
--------------------------------- */
+/* ---------- BASIC ESTIMATE ---------- */
+function calculate() {
+  const rooms=project.elements.filter(e=>e.type==="room");
+  if(!rooms.length) {
+    $("estimate").textContent="Create a room to calculate a basic conceptual estimate.";
+    return;
+  }
+  const area=rooms.reduce((s,e)=>s+Math.abs(e.w*e.h),0);
+  const wallArea=rooms.reduce((s,e)=>s+2*(Math.abs(e.w)+Math.abs(e.h))*(e.wallHeight||3),0);
+  $("estimate").innerHTML=
+    `Floor area: <b>${area.toFixed(2)} m²</b><br>`+
+    `Approx. gross wall area: <b>${wallArea.toFixed(2)} m²</b><br>`+
+    `<span class="small">No opening deductions, block quantities, structural steel or supplier pricing. Have construction specifications checked by qualified professionals.</span>`;
+}
+$("calculate").addEventListener("click",calculate);
 
+/* ---------- VIEW CONTROLS ---------- */
+$("gridToggle").addEventListener("click",()=>{
+  gridOn=!gridOn;$("gridToggle").textContent="Grid "+(gridOn?"ON":"OFF");redraw();
+});
+$("snapToggle").addEventListener("click",()=>{
+  snapOn=!snapOn;$("snapToggle").textContent="Snap "+(snapOn?"ON":"OFF");status("Snap "+(snapOn?"ON":"OFF"));
+});
+$("zoomReset").addEventListener("click",()=>{
+  scale=45;offset={x:0,y:0};redraw();status("View reset");
+});
+
+/* ---------- SAVE, IMPORT AND EXPORT ---------- */
 function saveLocal() {
   try {
     localStorage.setItem("moncadDraft",JSON.stringify(project));
-    setStatus("Local draft saved");
-    alert("MONCAD draft saved in this browser. This is not cloud backup.");
-  } catch(error) {
-    alert("The draft could not be saved. Browser storage may be full.");
-  }
+    status("Local draft saved");
+    alert("MONCAD project saved in this browser. This is not cloud backup.");
+  } catch(error) { alert("Could not save. Browser storage may be full."); }
 }
-
-document.getElementById("saveProject").addEventListener("click",saveLocal);
-
+$("saveProject").addEventListener("click",saveLocal);
 function downloadFile(content,type,filename) {
-  const blob = new Blob([content],{type});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-
-  setTimeout(() => URL.revokeObjectURL(url),1000);
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download=filename;
+  document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-
 function downloadJSON() {
-  downloadFile(
-    JSON.stringify(project,null,2),
-    "application/json",
-    "MONCAD-project.json"
-  );
+  downloadFile(JSON.stringify(project,null,2),"application/json","MONCAD-project.json");
 }
-
-document.getElementById("exportProject").addEventListener("click",downloadJSON);
-
-document.getElementById("importProject").addEventListener("click",() => {
-  document.getElementById("importFile").click();
-});
-
-document.getElementById("importFile").addEventListener("change",event => {
-  const file = event.target.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
+$("exportProject").addEventListener("click",downloadJSON);
+$("importProject").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",event=>{
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
     try {
-      const imported = JSON.parse(reader.result);
-
-      if(
-        !imported ||
-        !Array.isArray(imported.elements) ||
-        !imported.elements.every(element =>
-          element &&
-          typeof element.x === "number" &&
-          typeof element.y === "number" &&
-          typeof element.w === "number" &&
-          typeof element.h === "number"
-        )
-      ) {
-        throw new Error("Invalid project structure");
-      }
-
-      snapshot();
-      project = imported;
-      selected = null;
-
-      redraw();
-      updateInspector();
-      calculate();
-      setStatus("Project imported");
-    } catch(error) {
-      alert("This file is not a valid MONCAD project backup.");
-    }
-
-    event.target.value = "";
+      const imported=JSON.parse(reader.result);
+      if(!imported||!Array.isArray(imported.elements)) throw new Error("Invalid project");
+      snapshot();project=imported;selected=null;
+      redraw();updateInspector();calculate();status("Project imported");
+    } catch(error) { alert("This is not a valid MONCAD project backup."); }
+    event.target.value="";
   };
-
   reader.readAsText(file);
 });
-
-document.getElementById("exportImage").addEventListener("click",() => {
-  const link = document.createElement("a");
-  link.href = canvas.toDataURL("image/png");
-  link.download = "MONCAD-drawing.png";
+$("exportImage").addEventListener("click",()=>{
+  const link=document.createElement("a");
+  link.href=canvas.toDataURL("image/png");
+  link.download="MONCAD-drawing.png";
   link.click();
 });
 
-/* --------------------------------
-   MENU ACTIONS
--------------------------------- */
-
+/* ---------- MENU ACTION ROUTER ---------- */
 function menuAction(action) {
-  const value = action.toLowerCase();
-
-  if(value === "undo") undo();
-  else if(value === "redo") redo();
-  else if(value === "delete") deleteSelected();
-  else if(value === "duplicate") duplicateSelected();
-  else if(value === "save" || value === "save draft") saveLocal();
-  else if(value.includes("export image")) downloadDrawing();
-  else if(value.includes("backup") || value === "export") downloadJSON();
-
-  else if(value === "new project") {
-    if(confirm("Start a new project? Save your current work first if you need it.")) {
-      snapshot();
-      project = {name:"Untitled",elements:[]};
-      selected = null;
-      redraw();
-      updateInspector();
-      calculate();
-      setStatus("New project");
+  const value=action.toLowerCase();
+  const tools=["select","wall","room","line","rectangle","curve","door","window","move"];
+  if(tools.includes(value)) { selectTool(action);return; }
+  switch(value) {
+    case "undo":undo();break;
+    case "redo":redo();break;
+    case "delete":deleteSelected();break;
+    case "duplicate":duplicateSelected();break;
+    case "rotate": {
+      const e=getSelected();
+      if(!e) { status("Select an object first");break; }
+      snapshot();e.rotation=(e.rotation||0)+90;redraw();updateInspector();status("Object rotated 90°");break;
     }
+    case "save":
+    case "save draft":saveLocal();break;
+    case "export image":$("exportImage").click();break;
+    case "export project backup":downloadJSON();break;
+    case "import":
+    case "open project":$("importFile").click();break;
+    case "new project":
+      if(confirm("Start a new project? Export your current work first if needed.")) {
+        snapshot();project={name:"Untitled",elements:[]};selected=null;
+        redraw();updateInspector();calculate();status("New project");
+      } break;
+    case "architecture studio":switchStudio("architecture");break;
+    case "fashion studio":switchStudio("fashion");break;
+    case "learning academy":switchStudio("academy");break;
+    case "account":$("accountModal").classList.remove("hidden");break;
+    case "room generator":
+      switchStudio("architecture");
+      $("roomLength").focus();
+      status("Enter room dimensions, then choose Create Drawing");
+      break;
+    case "furniture":categorySelect.value="living";updateLibrary();break;
+    case "accessories":categorySelect.value="outdoor";updateLibrary();break;
+    case "lighting":categorySelect.value="lighting";updateLibrary();break;
+    case "fixtures":categorySelect.value="fixture";updateLibrary();break;
+    case "grid":$("gridToggle").click();break;
+    case "snap":$("snapToggle").click();break;
+    case "zoom in":scale=Math.min(200,scale*1.15);redraw();break;
+    case "zoom out":scale=Math.max(15,scale/1.15);redraw();break;
+    case "reset view":$("zoomReset").click();break;
+    case "2d":switchStudio("architecture");break;
+    case "3d preview":
+      alert("The 3D modelling engine is a future development feature. This version provides 2D drafting and an animated architectural welcome illustration.");
+      break;
+    case "print":window.print();break;
+    case "materials":
+    case "boq":
+    case "cost estimate":
+    case "measurements":calculate();status("Basic room measurements and conceptual estimate displayed");break;
+    default:status("Action not yet available: "+action);
   }
-
-  else if(value === "import" || value === "open project") {
-    document.getElementById("importFile").click();
-  }
-
-  else if(value === "architecture studio") switchStudio("architecture");
-  else if(value === "fashion studio") switchStudio("fashion");
-  else if(value === "learning academy" || value.includes("academy")) switchStudio("academy");
-  else if(value.includes("account")) document.getElementById("accountModal").classList.remove("hidden");
-
-  else if(value === "room generator") {
-    switchStudio("architecture");
-    createRoomCentered();
-  }
-
-  else if(["select","wall","room","line","rectangle","curve","door","window","move"].includes(value)) {
-    selectTool(action);
-  }
-
-  else if(value === "grid") document.getElementById("gridToggle").click();
-  else if(value === "zoom in") {
-    scale = Math.min(200,scale*1.15);
-    redraw();
-  }
-  else if(value === "zoom out") {
-    scale = Math.max(15,scale/1.15);
-    redraw();
-  }
-  else if(value === "2d") switchStudio("architecture");
-  else if(value.includes("3d")) {
-    alert("3D modelling and rendering are planned future features. This prototype currently provides a 2D drafting canvas.");
-  }
-  else if(value === "print") window.print();
-  else if(value.includes("materials") || value.includes("boq") || value.includes("cost")) calculate();
-  else if(["furniture","accessories","lighting","fixtures"].includes(value)) {
-    document.getElementById("objectType").value =
-      value === "furniture" ? "furniture" :
-      value === "fixtures" ? "fixture" : value;
-    setStatus("Object category: " + action);
-  }
-  else selectTool(action);
 }
 
-function downloadDrawing() {
-  document.getElementById("exportImage").click();
-}
-
-/* --------------------------------
-   COMMAND BAR AND KEYBOARD
--------------------------------- */
-
-document.getElementById("runCommand").addEventListener("click",() => {
-  const command = document.getElementById("command").value.trim().toLowerCase();
-
-  if(command === "undo") undo();
-  else if(command === "redo") redo();
-  else if(command === "save") saveLocal();
-  else if(command === "room") createRoomCentered();
-  else if(command === "delete") deleteSelected();
-  else if(command === "grid") document.getElementById("gridToggle").click();
-  else if(command === "export") downloadJSON();
-  else if(command === "select") selectTool("Select");
-  else if(["wall","line","rectangle","curve","door","window","move"].includes(command)) {
-    selectTool(command.charAt(0).toUpperCase()+command.slice(1));
-  } else if(command) {
-    setStatus("Unknown command: " + command);
-  }
-
-  document.getElementById("command").value = "";
+/* ---------- COMMAND BAR AND KEYBOARD ---------- */
+$("runCommand").addEventListener("click",()=>{
+  const command=$("command").value.trim().toLowerCase();
+  const commands={
+    undo:"Undo",redo:"Redo",save:"Save",room:"Room Generator",
+    delete:"Delete",grid:"Grid",snap:"Snap",export:"Export Project Backup",
+    select:"Select",wall:"Wall",line:"Line",rectangle:"Rectangle",
+    curve:"Curve",door:"Door",window:"Window",move:"Move"
+  };
+  if(command==="room") menuAction("Room Generator");
+  else if(command==="save") saveLocal();
+  else if(command==="export") downloadJSON();
+  else if(commands[command]) menuAction(commands[command]);
+  else if(command) status("Unknown command: "+command);
+  $("command").value="";
 });
-
-document.getElementById("command").addEventListener("keydown",event => {
-  if(event.key === "Enter") document.getElementById("runCommand").click();
+$("command").addEventListener("keydown",event=>{
+  if(event.key==="Enter") $("runCommand").click();
 });
-
-document.addEventListener("keydown",event => {
+document.addEventListener("keydown",event=>{
   if(event.target.matches("input,textarea,select")) return;
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="z") { event.preventDefault();undo(); }
+  else if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="y") { event.preventDefault();redo(); }
+  else if(event.key==="Delete"||event.key==="Backspace") deleteSelected();
+});
 
-  if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
-    event.preventDefault();
-    undo();
-  } else if((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y") {
-    event.preventDefault();
-    redo();
-  } else if(event.key === "Delete" || event.key === "Backspace") {
-    deleteSelected();
+/* ---------- FASHION STUDIO ---------- */
+const fashionCanvas=$("fashionCanvas");
+const fashionCtx=fashionCanvas.getContext("2d");
+let fashionDrawing=false;
+fashionCanvas.addEventListener("pointerdown",event=>{
+  fashionDrawing=true;
+  fashionCanvas.setPointerCapture(event.pointerId);
+  const r=fashionCanvas.getBoundingClientRect();
+  fashionCtx.beginPath();
+  fashionCtx.moveTo((event.clientX-r.left)*fashionCanvas.width/r.width,(event.clientY-r.top)*fashionCanvas.height/r.height);
+});
+fashionCanvas.addEventListener("pointermove",event=>{
+  if(!fashionDrawing)return;
+  const r=fashionCanvas.getBoundingClientRect();
+  fashionCtx.lineWidth=2;fashionCtx.lineCap="round";fashionCtx.strokeStyle="#182944";
+  fashionCtx.lineTo((event.clientX-r.left)*fashionCanvas.width/r.width,(event.clientY-r.top)*fashionCanvas.height/r.height);
+  fashionCtx.stroke();
+});
+fashionCanvas.addEventListener("pointerup",()=>fashionDrawing=false);
+fashionCanvas.addEventListener("pointercancel",()=>fashionDrawing=false);
+$("fashionSketch").addEventListener("click",()=>{
+  fashionCtx.strokeStyle="#b9c7d8";fashionCtx.lineWidth=2;
+  fashionCtx.beginPath();
+  fashionCtx.moveTo(320,80);fashionCtx.lineTo(270,110);fashionCtx.lineTo(250,190);
+  fashionCtx.lineTo(280,210);fashionCtx.lineTo(300,150);fashionCtx.lineTo(300,280);
+  fashionCtx.lineTo(250,430);fashionCtx.lineTo(390,430);fashionCtx.lineTo(340,280);
+  fashionCtx.lineTo(340,150);fashionCtx.lineTo(360,210);fashionCtx.lineTo(390,190);
+  fashionCtx.lineTo(370,110);fashionCtx.lineTo(320,80);fashionCtx.stroke();
+  status("Fashion sketch guide added");
+});
+$("clearFashion").addEventListener("click",()=>{
+  if(confirm("Clear the current sketch? Save a draft first if needed.")) {
+    fashionCtx.clearRect(0,0,fashionCanvas.width,fashionCanvas.height);
+    status("Fashion sketch cleared");
   }
 });
-
-/* --------------------------------
-   FASHION STUDIO
--------------------------------- */
-
-const fashionCanvas = document.getElementById("fashionCanvas");
-const fashionCtx = fashionCanvas.getContext("2d");
-let fashionDrawing = false;
-
-function resizeFashionDisplay() {
-  /* The fashion canvas keeps its logical drawing dimensions. */
-}
-
-fashionCanvas.addEventListener("pointerdown",event => {
-  fashionDrawing = true;
-  fashionCanvas.setPointerCapture(event.pointerId);
-
-  const rect = fashionCanvas.getBoundingClientRect();
-  const x = (event.clientX-rect.left)*fashionCanvas.width/rect.width;
-  const y = (event.clientY-rect.top)*fashionCanvas.height/rect.height;
-
-  fashionCtx.beginPath();
-  fashionCtx.moveTo(x,y);
-});
-
-fashionCanvas.addEventListener("pointermove",event => {
-  if(!fashionDrawing) return;
-
-  const rect = fashionCanvas.getBoundingClientRect();
-  const x = (event.clientX-rect.left)*fashionCanvas.width/rect.width;
-  const y = (event.clientY-rect.top)*fashionCanvas.height/rect.height;
-
-  fashionCtx.lineWidth = 2;
-  fashionCtx.lineCap = "round";
-  fashionCtx.strokeStyle = "#182944";
-  fashionCtx.lineTo(x,y);
-  fashionCtx.stroke();
-});
-
-fashionCanvas.addEventListener("pointerup",() => fashionDrawing = false);
-fashionCanvas.addEventListener("pointercancel",() => fashionDrawing = false);
-
-document.getElementById("fashionSketch").addEventListener("click",() => {
-  fashionCtx.strokeStyle = "#b9c7d8";
-  fashionCtx.lineWidth = 2;
-  fashionCtx.beginPath();
-
-  fashionCtx.moveTo(320,80);
-  fashionCtx.lineTo(270,110);
-  fashionCtx.lineTo(250,190);
-  fashionCtx.lineTo(280,210);
-  fashionCtx.lineTo(300,150);
-  fashionCtx.lineTo(300,280);
-  fashionCtx.lineTo(250,430);
-  fashionCtx.lineTo(390,430);
-  fashionCtx.lineTo(340,280);
-  fashionCtx.lineTo(340,150);
-  fashionCtx.lineTo(360,210);
-  fashionCtx.lineTo(390,190);
-  fashionCtx.lineTo(370,110);
-  fashionCtx.lineTo(320,80);
-  fashionCtx.stroke();
-
-  setStatus("Fashion sketch guide added");
-});
-
-document.getElementById("clearFashion").addEventListener("click",() => {
-  if(!confirm("Clear the current fashion sketch? Save a draft first if needed.")) return;
-
-  fashionCtx.clearRect(0,0,fashionCanvas.width,fashionCanvas.height);
-  setStatus("Fashion sketch cleared");
-});
-
 function getFashionDrafts() {
   try {
-    const drafts = JSON.parse(localStorage.getItem("moncadFashionDrafts") || "[]");
-    return Array.isArray(drafts) ? drafts : [];
-  } catch(error) {
-    return [];
-  }
+    const data=JSON.parse(localStorage.getItem("moncadFashionDrafts")||"[]");
+    return Array.isArray(data)?data:[];
+  } catch(error) { return []; }
 }
-
 function showFashionHistory() {
-  const history = document.getElementById("fashionHistory");
-  const drafts = getFashionDrafts();
-
+  const history=$("fashionHistory");
   history.replaceChildren();
-
-  const heading = document.createElement("b");
-  heading.textContent = "Saved Draft History";
+  const heading=document.createElement("b");
+  heading.textContent="Saved Draft History";
   history.appendChild(heading);
-
+  const drafts=getFashionDrafts();
   if(!drafts.length) {
-    const empty = document.createElement("p");
-    empty.textContent = "No drafts saved yet.";
-    history.appendChild(empty);
-    return;
+    const p=document.createElement("p");p.textContent="No drafts saved yet.";history.appendChild(p);return;
   }
-
-  drafts.slice(0,10).forEach((draft,index) => {
-    const button = document.createElement("button");
-    button.className = "history-item";
-
-    const date = new Date(draft.time).toLocaleString();
-    button.textContent = `${draft.name} · ${date}`;
-
-    button.addEventListener("click",() => restoreFashionDraft(index));
+  drafts.slice(0,10).forEach((draft,index)=>{
+    const button=document.createElement("button");
+    button.className="history-item";
+    button.textContent=(draft.name||"Untitled")+" · "+new Date(draft.time).toLocaleString();
+    button.addEventListener("click",()=>restoreFashionDraft(index));
     history.appendChild(button);
   });
 }
-
 function restoreFashionDraft(index) {
-  const drafts = getFashionDrafts();
-  const draft = drafts[index];
-
-  if(!draft) return;
-
-  document.getElementById("fashionProjectName").value = draft.name || "";
-  document.getElementById("fashionNotes").value = draft.notes || "";
-
+  const draft=getFashionDrafts()[index];if(!draft)return;
+  $("fashionProjectName").value=draft.name||"";
+  $("fashionNotes").value=draft.notes||"";
   if(draft.sketch) {
-    const image = new Image();
-
-    image.onload = () => {
+    const image=new Image();
+    image.onload=()=>{
       fashionCtx.clearRect(0,0,fashionCanvas.width,fashionCanvas.height);
       fashionCtx.drawImage(image,0,0,fashionCanvas.width,fashionCanvas.height);
     };
-
-    image.onerror = () => alert("The saved sketch could not be restored.");
-    image.src = draft.sketch;
+    image.src=draft.sketch;
   }
-
-  setStatus("Fashion draft restored");
+  status("Fashion draft restored");
 }
-
-document.getElementById("saveFashion").addEventListener("click",() => {
-  const drafts = getFashionDrafts();
-
-  const draft = {
-    name:document.getElementById("fashionProjectName").value.trim() || "Untitled fashion design",
-    notes:document.getElementById("fashionNotes").value,
+$("saveFashion").addEventListener("click",()=>{
+  const drafts=getFashionDrafts();
+  const draft={
+    name:$("fashionProjectName").value.trim()||"Untitled fashion design",
+    notes:$("fashionNotes").value,
     time:Date.now(),
     sketch:fashionCanvas.toDataURL("image/png")
   };
-
-  drafts.unshift(draft);
-
   try {
+    drafts.unshift(draft);
     localStorage.setItem("moncadFashionDrafts",JSON.stringify(drafts.slice(0,30)));
     showFashionHistory();
-    setStatus("Fashion draft saved");
+    status("Fashion draft saved");
     alert("Fashion draft saved locally with a timestamp. Keep separate backups. This record is supporting documentation, not guaranteed legal proof of ownership.");
-  } catch(error) {
-    alert("The fashion draft could not be saved. Browser storage may be full. Export or back up your work.");
-  }
+  } catch(error) { alert("Could not save the draft. Browser storage may be full."); }
 });
 
-/* --------------------------------
-   WELCOME, MODAL AND STARTUP
--------------------------------- */
-
-document.getElementById("skipWelcome").addEventListener("click",() => {
-  document.getElementById("welcome").classList.add("hidden");
+/* ---------- WELCOME AND ACCOUNT ---------- */
+function enterWorkspace() {
+  $("welcome").classList.add("hidden");
   resizeCanvas();
+}
+$("skipWelcome").addEventListener("click",enterWorkspace);
+$("skipAnimation").addEventListener("click",enterWorkspace);
+$("closeModal").addEventListener("click",()=>$("accountModal").classList.add("hidden"));
+$("accountModal").addEventListener("click",event=>{
+  if(event.target===$("accountModal")) $("accountModal").classList.add("hidden");
 });
 
-document.getElementById("closeModal").addEventListener("click",() => {
-  document.getElementById("accountModal").classList.add("hidden");
-});
-
+/* ---------- STARTUP ---------- */
 selectTool("Select");
 showFashionHistory();
-
-requestAnimationFrame(() => {
+requestAnimationFrame(()=>{
   resizeCanvas();
   calculate();
 });
-
 try {
-  const saved = localStorage.getItem("moncadDraft");
-
-  if(saved && confirm("Restore your locally saved MONCAD project?")) {
-    const restored = JSON.parse(saved);
-
-    if(restored && Array.isArray(restored.elements)) {
-      project = restored;
-      redraw();
-      calculate();
-      setStatus("Local project restored");
+  const saved=localStorage.getItem("moncadDraft");
+  if(saved&&confirm("Restore your locally saved MONCAD project?")) {
+    const restored=JSON.parse(saved);
+    if(restored&&Array.isArray(restored.elements)) {
+      project=restored;redraw();calculate();updateInspector();status("Local project restored");
     }
   }
 } catch(error) {
-  console.warn("Could not restore the local MONCAD project.",error);
+  console.warn("Could not restore local MONCAD project.",error);
 }
-
 </script>
 </body>
 </html>
