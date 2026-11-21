@@ -2067,5 +2067,340 @@ resizeCanvas();
 
 console.log("MONCAD prototype initialised.");
 </script>
+  
+<!-- MONCAD ANIMATED WELCOME SCREEN -->
+<style>
+#moncad-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #f7f9fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: #102b50;
+}
+#moncad-intro .intro-content {
+  text-align: center;
+  width: min(90%, 620px);
+}
+#moncad-intro .blueprint {
+  width: min(75vw, 360px);
+  margin: 0 auto 18px;
+}
+#moncad-intro .blueprint path,
+#moncad-intro .blueprint line,
+#moncad-intro .blueprint polyline {
+  fill: none;
+  stroke: #b18a45;
+  stroke-width: 2;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: moncad-draw 3s ease forwards;
+}
+#moncad-intro .blueprint .building {
+  stroke: #183d68;
+  stroke-width: 3;
+  animation-delay: .8s;
+}
+#moncad-intro .brand {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: moncad-reveal 1s ease forwards;
+  animation-delay: 3s;
+}
+#moncad-intro .brand-name {
+  font-size: clamp(38px, 8vw, 58px);
+  font-weight: 800;
+  letter-spacing: 9px;
+  color: #102b50;
+}
+#moncad-intro .tagline {
+  color: #a77d35;
+  letter-spacing: 4px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+#moncad-intro .welcome {
+  margin-top: 30px;
+  font-size: 21px;
+  opacity: 0;
+  animation: moncad-reveal 1s ease forwards;
+  animation-delay: 4s;
+}
+#moncad-intro .intro-actions {
+  margin-top: 25px;
+  opacity: 0;
+  animation: moncad-reveal 1s ease forwards;
+  animation-delay: 4.8s;
+}
+#moncad-intro button {
+  border: 0;
+  border-radius: 5px;
+  padding: 13px 30px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#moncad-enter {
+  background: #102b50;
+  color: white;
+}
+#moncad-skip {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  background: transparent;
+  color: #102b50;
+  font-size: 13px;
+}
+@keyframes moncad-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes moncad-reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #moncad-intro * {
+    animation-duration: .01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+</style>
+
+<div id="moncad-intro">
+  <button id="moncad-skip" type="button">SKIP INTRO</button>
+
+  <div class="intro-content">
+    <svg class="blueprint" viewBox="0 0 400 270"
+         role="img" aria-label="Architectural building drawing">
+      <!-- Blueprint ground -->
+      <line x1="35" y1="235" x2="365" y2="235"/>
+      <line x1="55" y1="245" x2="345" y2="245"/>
+
+      <!-- Building outline -->
+      <g class="building">
+        <path d="M85 220 V105 L200 35 L315 105 V220 Z"/>
+        <path d="M85 105 H315"/>
+        <path d="M200 35 V220"/>
+        <path d="M120 130 H175 V220 H120 Z"/>
+        <path d="M225 130 H280 V180 H225 Z"/>
+        <path d="M225 195 H280 V220 H225 Z"/>
+        <path d="M85 220 H315"/>
+      </g>
+
+      <!-- Architectural guide lines -->
+      <line x1="200" y1="15" x2="200" y2="250"/>
+      <line x1="65" y1="105" x2="335" y2="105"/>
+      <line x1="65" y1="225" x2="335" y2="225"/>
+    </svg>
+
+    <div class="brand">
+      <div class="brand-name">MONCAD</div>
+      <div class="tagline">IMAGINE. DESIGN. BUILD.</div>
+    </div>
+
+    <div class="welcome">Welcome to MONCAD</div>
+
+    <div class="intro-actions">
+      <button id="moncad-enter" type="button">ENTER STUDIO</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const intro = document.getElementById("moncad-intro");
+  if (!intro) return;
+
+  function closeIntro() {
+    intro.style.transition = "opacity .7s ease";
+    intro.style.opacity = "0";
+    setTimeout(() => intro.remove(), 750);
+    sessionStorage.setItem("moncadIntroSeen", "yes");
+  }
+
+  document.getElementById("moncad-enter")
+    .addEventListener("click", closeIntro);
+
+  document.getElementById("moncad-skip")
+    .addEventListener("click", closeIntro);
+
+  // Show the intro only once per browser tab session.
+  if (sessionStorage.getItem("moncadIntroSeen") === "yes") {
+    intro.remove();
+  }
+})();
+</script>
+
+<!-- MONCAD ANIMATED WELCOME SCREEN -->
+<style>
+#moncad-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #f7f9fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: #102b50;
+}
+#moncad-intro .intro-content {
+  text-align: center;
+  width: min(90%, 620px);
+}
+#moncad-intro .blueprint {
+  width: min(75vw, 360px);
+  margin: 0 auto 18px;
+}
+#moncad-intro .blueprint path,
+#moncad-intro .blueprint line,
+#moncad-intro .blueprint polyline {
+  fill: none;
+  stroke: #b18a45;
+  stroke-width: 2;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: moncad-draw 3s ease forwards;
+}
+#moncad-intro .blueprint .building {
+  stroke: #183d68;
+  stroke-width: 3;
+  animation-delay: .8s;
+}
+#moncad-intro .brand {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: moncad-reveal 1s ease forwards;
+  animation-delay: 3s;
+}
+#moncad-intro .brand-name {
+  font-size: clamp(38px, 8vw, 58px);
+  font-weight: 800;
+  letter-spacing: 9px;
+  color: #102b50;
+}
+#moncad-intro .tagline {
+  color: #a77d35;
+  letter-spacing: 4px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+#moncad-intro .welcome {
+  margin-top: 30px;
+  font-size: 21px;
+  opacity: 0;
+  animation: moncad-reveal 1s ease forwards;
+  animation-delay: 4s;
+}
+#moncad-intro .intro-actions {
+  margin-top: 25px;
+  opacity: 0;
+  animation: moncad-reveal 1s ease forwards;
+  animation-delay: 4.8s;
+}
+#moncad-intro button {
+  border: 0;
+  border-radius: 5px;
+  padding: 13px 30px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#moncad-enter {
+  background: #102b50;
+  color: white;
+}
+#moncad-skip {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  background: transparent;
+  color: #102b50;
+  font-size: 13px;
+}
+@keyframes moncad-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes moncad-reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #moncad-intro * {
+    animation-duration: .01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+</style>
+
+<div id="moncad-intro">
+  <button id="moncad-skip" type="button">SKIP INTRO</button>
+
+  <div class="intro-content">
+    <svg class="blueprint" viewBox="0 0 400 270"
+         role="img" aria-label="Architectural building drawing">
+      <!-- Blueprint ground -->
+      <line x1="35" y1="235" x2="365" y2="235"/>
+      <line x1="55" y1="245" x2="345" y2="245"/>
+
+      <!-- Building outline -->
+      <g class="building">
+        <path d="M85 220 V105 L200 35 L315 105 V220 Z"/>
+        <path d="M85 105 H315"/>
+        <path d="M200 35 V220"/>
+        <path d="M120 130 H175 V220 H120 Z"/>
+        <path d="M225 130 H280 V180 H225 Z"/>
+        <path d="M225 195 H280 V220 H225 Z"/>
+        <path d="M85 220 H315"/>
+      </g>
+
+      <!-- Architectural guide lines -->
+      <line x1="200" y1="15" x2="200" y2="250"/>
+      <line x1="65" y1="105" x2="335" y2="105"/>
+      <line x1="65" y1="225" x2="335" y2="225"/>
+    </svg>
+
+    <div class="brand">
+      <div class="brand-name">MONCAD</div>
+      <div class="tagline">IMAGINE. DESIGN. BUILD.</div>
+    </div>
+
+    <div class="welcome">Welcome to MONCAD</div>
+
+    <div class="intro-actions">
+      <button id="moncad-enter" type="button">ENTER STUDIO</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const intro = document.getElementById("moncad-intro");
+  if (!intro) return;
+
+  function closeIntro() {
+    intro.style.transition = "opacity .7s ease";
+    intro.style.opacity = "0";
+    setTimeout(() => intro.remove(), 750);
+    sessionStorage.setItem("moncadIntroSeen", "yes");
+  }
+
+  document.getElementById("moncad-enter")
+    .addEventListener("click", closeIntro);
+
+  document.getElementById("moncad-skip")
+    .addEventListener("click", closeIntro);
+
+  // Show the intro only once per browser tab session.
+  if (sessionStorage.getItem("moncadIntroSeen") === "yes") {
+    intro.remove();
+  }
+})();
+</script>
+<!-- END MONCAD ANIMATED WELCOME SCREEN -->
 </body>
 </html>
