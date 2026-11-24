@@ -1,2119 +1,457 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MONCAD | Architectural Design Studio</title>
-<style>
-:root {
-  --navy:#101820;
-  --panel:#182630;
-  --panel2:#263946;
-  --gold:#d6b56d;
-  --line:#405462;
-  --text:#f5f7f8;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:var(--navy);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-}
-header {
-  min-height:65px;
-  padding:13px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  background:var(--panel);
-  border-bottom:1px solid var(--line);
-}
-.logo {
-  font-size:25px;
-  font-weight:bold;
-  letter-spacing:2px;
-  color:var(--gold);
-}
-.header-note { color:#b9c7cf; font-size:13px; }
-.layout { display:flex; min-height:calc(100vh - 65px); }
-.sidebar {
-  width:250px;
-  flex-shrink:0;
-  padding:16px;
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  overflow-y:auto;
-}
-.sidebar h3 {
-  color:var(--gold);
-  font-size:14px;
-  margin:5px 0 12px;
-}
-.tool-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-}
-button {
-  font:inherit;
-  cursor:pointer;
-}
-.tool,.action,.mode-button {
-  color:white;
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:6px;
-  padding:10px 7px;
-  min-height:40px;
-}
-.tool.active,.mode-button.active {
-  color:var(--navy);
-  background:var(--gold);
-  border-color:var(--gold);
-  font-weight:bold;
-}
-.action {
-  width:100%;
-  margin-top:7px;
-}
-button:hover { border-color:var(--gold); }
-.section {
-  border-top:1px solid var(--line);
-  margin-top:16px;
-  padding-top:13px;
-}
-.field-label {
-  display:block;
-  font-size:12px;
-  color:#cbd5db;
-  margin:10px 0 5px;
-}
-input {
-  width:100%;
-  padding:10px;
-  color:white;
-  background:#0e1820;
-  border:1px solid var(--line);
-  border-radius:5px;
-  font-size:15px;
-}
-input:focus { outline:1px solid var(--gold); }
-.property-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-.property-grid .field-label { margin-top:5px; }
-.small-action { width:100%; margin-top:7px; padding:9px; color:white; background:#263946; border:1px solid var(--line); border-radius:5px; }
-.toggle-row { display:flex; align-items:center; gap:8px; color:#d8e0e5; font-size:12px; margin-top:9px; }
-.toggle-row input { width:auto; accent-color:var(--gold); }
-.help {
-  color:#aebdc6;
-  font-size:11px;
-  line-height:1.5;
-}
-.main {
-  flex:1;
-  min-width:0;
-  padding:17px;
-}
-.topline {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:13px;
-}
-.main h2 { margin:0 0 5px; font-size:21px; }
-.subtitle { color:#aebdc6; font-size:12px; margin:0; }
-.mode-switch { display:flex; gap:7px; }
-.mode-button { min-width:105px; }
-.canvas-shell {
-  height:min(75vh,800px);
-  min-height:420px;
-  border:2px solid var(--line);
-  border-radius:7px;
-  background:white;
-  overflow:hidden;
-}
-canvas {
-  display:block;
-  width:100%;
-  height:100%;
-  touch-action:none;
-}
-.status {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:space-between;
-  gap:8px;
-  color:#c4d0d7;
-  font-size:12px;
-  padding:10px 2px;
-}
-.status strong { color:var(--gold); }
-.quick-ribbon{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 12px;padding:8px;background:#15232d;border:1px solid var(--line);border-radius:7px}
-.quick-ribbon .ribbon-group{display:flex;gap:5px;align-items:center;padding-right:8px;border-right:1px solid #405462}
-.quick-ribbon .ribbon-group:last-child{border-right:0;padding-right:0}
-.icon-tool{width:39px;height:37px;display:grid;place-items:center;background:#263946;color:#f5f7f8;border:1px solid #405462;border-radius:6px;font-size:17px;position:relative}
-.icon-tool span{font-size:9px;position:absolute;bottom:2px;right:4px;color:#d6b56d}
-.icon-tool:hover,.icon-tool:focus{border-color:var(--gold);color:var(--gold)}
-.icon-tool.active{background:var(--gold);color:#101820;border-color:var(--gold)}
-.icon-tool[title]:hover:after{content:attr(title);position:absolute;z-index:30;top:42px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#101820;color:white;border:1px solid var(--gold);padding:5px 7px;border-radius:4px;font-size:11px}
-@media(max-width:760px) {
-  .layout { flex-direction:column; }
-  .sidebar {
-    width:100%;
-    border-right:0;
-    border-bottom:1px solid var(--line);
-  }
-  .main { padding:12px; }
-  .canvas-shell { height:62vh; min-height:380px; }
-  header { padding:12px 14px; }
-}
-
-
-.welcome-splash{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at center,#1b303d 0%,#101820 68%);display:grid;place-items:center;overflow:hidden;transition:opacity .65s ease,visibility .65s ease}.welcome-splash.dismissed{opacity:0;visibility:hidden;pointer-events:none}.splash-blueprint{position:absolute;width:min(72vw,620px);height:min(58vh,420px);border:1px solid #d6b56d55;transform:perspective(700px) rotateX(58deg) rotateZ(-28deg);animation:blueprintBuild 2.3s ease both}.splash-blueprint span{position:absolute;border:1px solid #d6b56d99;opacity:0;animation:lineReveal 1.2s ease forwards}.splash-blueprint span:nth-child(1){inset:8% 8% 48% 8%;animation-delay:.15s}.splash-blueprint span:nth-child(2){inset:48% 8% 8% 8%;animation-delay:.35s}.splash-blueprint span:nth-child(3){left:30%;top:8%;width:1px;height:84%;animation-delay:.5s}.splash-blueprint span:nth-child(4){left:68%;top:8%;width:1px;height:84%;animation-delay:.65s}.splash-blueprint span:nth-child(5){left:8%;top:30%;width:84%;height:1px;animation-delay:.8s}.splash-blueprint span:nth-child(6){left:8%;top:68%;width:84%;height:1px;animation-delay:.95s}.splash-brand{position:relative;text-align:center;animation:brandReveal 1.1s 1.4s both}.splash-logo{font-size:clamp(42px,8vw,76px);font-weight:800;letter-spacing:9px;color:var(--gold);text-shadow:0 0 25px #d6b56d44}.splash-tagline{font-size:10px;letter-spacing:4px;color:#dce3e7}.splash-brand p{font-size:17px;color:#f3f5f6;letter-spacing:2px;margin-top:25px}.skip-welcome{position:absolute;right:22px;bottom:22px;background:transparent;color:#e5e9ec;border:1px solid #9aaab4;border-radius:4px;padding:9px 15px}@keyframes blueprintBuild{from{opacity:0;transform:perspective(700px) rotateX(58deg) rotateZ(-28deg) scale(.65)}to{opacity:1;transform:perspective(700px) rotateX(58deg) rotateZ(-28deg) scale(1)}}@keyframes lineReveal{to{opacity:1}}@keyframes brandReveal{from{opacity:0;transform:translateY(18px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
-
-/* MONCAD platform shell and additional studios */
-.brand-lockup{display:flex;flex-direction:column;gap:2px}.brand-sub{font-size:9px;letter-spacing:1.5px;color:#c5ced3}.brand-sub span{color:var(--gold)}
-.header-actions{display:flex;align-items:center;gap:14px}.register-button{background:var(--gold);color:#101820;border:1px solid var(--gold);border-radius:5px;padding:9px 16px;font-weight:bold}
-.studio-nav{display:flex;gap:6px;padding:10px 20px;background:#111e27;border-bottom:1px solid var(--line);overflow-x:auto}
-.studio-nav-btn{white-space:nowrap;background:transparent;color:#d6dfe4;border:1px solid transparent;border-radius:5px;padding:10px 15px}.studio-nav-btn.active{color:var(--gold);border-color:var(--gold);background:#1d2c36}
-.studio-panel{display:none}.studio-panel.active{display:block}.studio-page{padding:22px;max-width:1500px;margin:auto}.studio-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}.studio-heading h2{margin:0 0 6px;font-size:24px}.studio-heading p{margin:0;color:#b5c2c9;font-size:13px}.studio-tag{color:var(--gold);font-size:10px;letter-spacing:1.5px;border:1px solid #6c5a36;padding:8px 10px;border-radius:3px;white-space:nowrap}
-.fashion-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}.fashion-tools{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:16px}.fashion-tools h3,.academy-card h3{color:var(--gold);margin:0 0 12px;font-size:15px}.fashion-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.fashion-tool{background:var(--panel2);color:white;border:1px solid var(--line);border-radius:5px;padding:10px 5px}.fashion-tool.active{background:var(--gold);color:var(--navy);font-weight:bold}.fashion-tools input[type=color]{height:40px;padding:3px}.fashion-tools input[type=range]{padding:0;accent-color:var(--gold)}.fashion-canvas-wrap{background:#fff;border:1px solid #b7c1c7;border-radius:6px;overflow:hidden}.fashion-paper-head{display:flex;justify-content:space-between;padding:12px 16px;background:#f0f2f3;color:#263946;font-size:11px;letter-spacing:1px}.fashion-paper-head span{letter-spacing:0;color:#657680}.fashion-canvas-wrap canvas{width:100%;height:auto;aspect-ratio:10/7;touch-action:none;cursor:crosshair;background:#fff}.fashion-workarea>.help{margin-top:10px}.draft-list{display:flex;flex-direction:column;gap:7px;margin-top:10px;max-height:260px;overflow:auto}.draft-entry{border:1px solid var(--line);border-radius:5px;padding:8px;font-size:11px;color:#e1e7ea}.draft-entry strong{display:block;color:var(--gold);margin-bottom:3px}.draft-entry button{margin-top:6px;width:100%;background:#263946;color:white;border:1px solid var(--line);border-radius:4px;padding:6px}
-.academy-notice{border-left:3px solid var(--gold);background:#1b2a34;padding:14px 16px;margin:16px 0 20px;color:#e5eaed}.academy-notice p{margin:5px 0 0;color:#b8c5cc;font-size:13px;line-height:1.5}.academy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.academy-card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:18px}.academy-card p{font-size:13px;color:#bdc9cf;line-height:1.55;min-height:42px}.lesson-number{color:var(--gold);font-size:11px;letter-spacing:2px;display:block;margin-bottom:12px}.lesson-detail{color:#dce4e8;font-size:13px;line-height:1.7;margin-top:12px;border-top:1px solid var(--line);padding-top:8px}.lesson-detail ol{padding-left:20px}.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:20px;z-index:1000}.modal-backdrop[hidden]{display:none}.modal-card{position:relative;max-width:440px;background:#182630;border:1px solid var(--gold);border-radius:9px;padding:26px;color:#f5f7f8;box-shadow:0 20px 70px #0008}.modal-card h2{color:var(--gold);margin-top:0}.modal-card p{line-height:1.6;color:#c6d1d7;font-size:14px}.modal-close{position:absolute;right:12px;top:8px;background:transparent;border:0;color:white;font-size:26px}
-@media(max-width:850px){.fashion-layout{grid-template-columns:1fr}.fashion-tools{order:2}.academy-grid{grid-template-columns:1fr}.studio-page{padding:14px}.studio-heading{align-items:flex-start;flex-direction:column}}
-@media(max-width:600px){.moncad-header{align-items:flex-start}.header-actions{flex-direction:column;align-items:flex-end;gap:6px}.header-note{font-size:10px}.brand-sub{font-size:8px}.studio-nav{padding:8px}.studio-nav-btn{padding:9px 11px;font-size:12px}}
-
-</style>
-</head>
-<body>
-<div id="welcomeSplash" class="welcome-splash" aria-label="Welcome to MONCAD">
-  <div class="splash-blueprint" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-  <div class="splash-brand"><div class="splash-logo">MONCAD</div><div class="splash-tagline">IMAGINE. DESIGN. BUILD.</div><p>Welcome to MONCAD</p></div>
-  <button id="skipWelcome" class="skip-welcome">Skip intro</button>
-</div>
-<header class="moncad-header">
-  <div class="brand-lockup"><div class="logo">MONCAD</div><div class="brand-sub">DESIGN <span>•</span> IMAGINE. DESIGN. BUILD.</div></div>
-  <div class="header-actions"><span class="header-note">Creative Design Platform</span><button class="register-button" id="openRegister">Register</button></div>
-</header>
-<nav class="studio-nav" aria-label="MONCAD studios">
-  <button class="studio-nav-btn active" data-studio="architectureStudio">Architecture Studio</button>
-  <button class="studio-nav-btn" data-studio="fashionStudio">Fashion Studio</button>
-  <button class="studio-nav-btn" data-studio="academyStudio">Learning Academy</button>
-</nav>
-
-<section id="architectureStudio" class="studio-panel active">
-<div class="layout">
-<aside class="sidebar">
-
-  <h3>Drawing Tools</h3>
-  <div class="tool-grid">
-    <button class="tool active" data-tool="wall">Wall</button>
-    <button class="tool" data-tool="room">Room</button>
-    <button class="tool" data-tool="door">Door</button>
-    <button class="tool" data-tool="window">Window</button>
-    <button class="tool" data-tool="line">Line</button>
-    <button class="tool" data-tool="rectangle">Rectangle</button>
-    <button class="tool" data-tool="curve">Curve</button>
-    <button class="tool" data-tool="select">Select</button>
-    <button class="tool" data-tool="move">Move</button>
-    <button class="tool" data-tool="pan">Pan</button>
-    <button class="tool" data-tool="erase">Erase</button>
-
-  </div>
-
-  <div class="section">
-    <h3>Measurements</h3>
-    <div class="property-grid">
-      <div>
-        <label class="field-label" for="elementWidth">Width</label>
-        <input id="elementWidth" type="number" min="0.1" step="0.1" value="4">
-      </div>
-      <div>
-        <label class="field-label" for="elementLength">Length</label>
-        <input id="elementLength" type="number" min="0.1" step="0.1" value="5">
-      </div>
-      <div>
-        <label class="field-label" for="wallThickness">Wall thickness</label>
-        <input id="wallThickness" type="number" min="0.05" step="0.05" value="0.2">
-      </div>
-      <div>
-        <label class="field-label" for="measurementUnit">Units</label>
-        <select id="measurementUnit">
-          <option value="m">Metres (m)</option>
-          <option value="cm">Centimetres (cm)</option>
-          <option value="mm">Millimetres (mm)</option>
-        </select>
-      </div>
-    </div>
-    <p class="help">Enter dimensions in the selected unit. Drawing dimensions are stored internally in metres.</p>
-  </div>
-
-  <div class="section">
-    <h3>Grid Settings</h3>
-    <label class="field-label" for="gridSize">Grid spacing</label>
-    <select id="gridSize">
-      <option value="25">25 pixels</option>
-      <option value="50" selected>50 pixels</option>
-      <option value="10">10 pixels</option>
-      <option value="0">Grid off</option>
-    </select>
-    <label class="toggle-row">
-      <input id="snapToGrid" type="checkbox" checked>
-      Snap drawing to grid
-    </label>
-  </div>
-
-  <div class="section">
-    <h3>Project Actions</h3>
-    <button class="action" id="undoArchitecture">↶ Undo</button>
-    <button class="action" id="redoArchitecture">↷ Redo</button>
-    <button class="action" id="deleteArchitecture">Delete selected</button>
-    <button class="action" id="clearArchitecture">Clear drawing</button>
-    <button class="action" id="saveArchitecture">Save project</button>
-    <button class="action" id="loadArchitecture">Load project</button>
-    <input id="architectureFile" type="file" accept=".json,application/json" hidden>
-    <button class="action" id="exportArchitecture">Export project record</button>
-  </div>
-</aside>
-
-<main class="main">
-  <div class="topline">
-    <div>
-      <h2>Architecture Studio</h2>
-      <p class="subtitle">Create measured floor plans and explore your design in 3D preview.</p>
-    </div>
-    <div class="mode-switch">
-      <button class="mode-button active" id="view2D">2D Floor Plan</button>
-      <button class="mode-button" id="view3D">3D Preview</button>
-    </div>
-  </div>
-
-  <div class="quick-ribbon" aria-label="Architecture quick tools">
-    <div class="ribbon-group">
-      <button class="icon-tool active" data-tool="select" title="Select">↖</button>
-      <button class="icon-tool" data-tool="move" title="Move">✥</button>
-      <button class="icon-tool" data-tool="pan" title="Pan">✋</button>
-    </div>
-    <div class="ribbon-group">
-      <button class="icon-tool" data-tool="wall" title="Wall">▰</button>
-      <button class="icon-tool" data-tool="room" title="Room">□</button>
-      <button class="icon-tool" data-tool="door" title="Door">▱</button>
-      <button class="icon-tool" data-tool="window" title="Window">▥</button>
-    </div>
-    <div class="ribbon-group">
-      <button class="icon-tool" data-tool="line" title="Line">／</button>
-      <button class="icon-tool" data-tool="rectangle" title="Rectangle">▭</button>
-      <button class="icon-tool" data-tool="curve" title="Curve">⌒</button>
-      <button class="icon-tool" data-tool="erase" title="Erase">⌫</button>
-    </div>
-    <div class="ribbon-group">
-      <button class="icon-tool" id="zoomIn" title="Zoom in">＋</button>
-      <button class="icon-tool" id="zoomOut" title="Zoom out">－</button>
-      <button class="icon-tool" id="fitDrawing" title="Fit drawing">⛶</button>
-    </div>
-  </div>
-
-  <div class="canvas-shell" id="architectureCanvasShell">
-    <canvas id="architectureCanvas" aria-label="Architecture drawing workspace"></canvas>
-  </div>
-  <div class="status">
-    <span id="architectureStatus">Ready to design</span>
-    <span>MONCAD Architecture Studio</span>
-    <span id="zoomStatus">Zoom: 100%</span>
-  </div>
-</main>
-</div>
-</section>
-
-<section id="fashionStudio" class="studio-panel">
-  <div class="studio-page">
-    <div class="studio-heading">
-      <div>
-        <h2>Fashion Studio</h2>
-        <p>Sketch original concepts, explore garment ideas and preserve your design drafts.</p>
-      </div>
-      <span class="studio-tag">MONCAD CREATIVE WORKSPACE</span>
-    </div>
-
-    <div class="fashion-layout">
-      <aside class="fashion-tools">
-        <h3>Fashion Design Tools</h3>
-        <div class="fashion-tool-grid">
-          <button class="fashion-tool active" data-fashion-tool="pen">✎ Pen</button>
-          <button class="fashion-tool" data-fashion-tool="line">／ Line</button>
-          <button class="fashion-tool" data-fashion-tool="rectangle">▭ Shape</button>
-          <button class="fashion-tool" data-fashion-tool="eraser">⌫ Eraser</button>
-        </div>
-
-        <div class="section">
-          <h3>Design Category</h3>
-          <label class="field-label" for="fashionCategory">Choose category</label>
-          <select id="fashionCategory">
-            <option value="Casual Wear">Casual Wear</option>
-            <option value="Formal Wear">Formal Wear</option>
-            <option value="Evening Wear">Evening Wear</option>
-            <option value="Traditional Wear">Traditional Wear</option>
-            <option value="Accessories">Accessories</option>
-          </select>
-          <label class="field-label" for="fashionDesignName">Design name</label>
-          <input id="fashionDesignName" type="text" maxlength="80" placeholder="My fashion design">
-        </div>
-
-        <div class="section">
-          <h3>Drawing Settings</h3>
-          <label class="field-label" for="fashionColor">Pen colour</label>
-          <input id="fashionColor" type="color" value="#182630">
-          <label class="field-label" for="fashionLineWidth">Line thickness</label>
-          <input id="fashionLineWidth" type="range" min="1" max="20" value="3">
-        </div>
-
-        <div class="section">
-          <h3>Draft Actions</h3>
-          <button class="action" id="undoFashion">↶ Undo</button>
-          <button class="action" id="clearFashion">Clear sketch</button>
-          <button class="action" id="saveFashionDraft">Save draft</button>
-          <button class="action" id="exportFashionRecord">Export draft record</button>
-          <p class="help">Drafts are stored in this browser on this device. This is not cloud backup. Export your records regularly and keep a separate copy.</p>
-        </div>
-
-        <div class="section">
-          <h3>Draft History</h3>
-          <div id="fashionDraftHistory" class="draft-list">
-            <p class="help">Your saved drafts will appear here.</p>
-          </div>
-        </div>
-      </aside>
-
-      <div class="fashion-workarea">
-        <div class="fashion-canvas-wrap">
-          <div class="fashion-paper-head">
-            <strong>MONCAD FASHION DESIGN SHEET</strong>
-            <span>ORIGINAL DESIGN WORKSPACE</span>
-          </div>
-          <canvas id="fashionCanvas" width="1000" height="700" aria-label="Fashion sketch canvas"></canvas>
-        </div>
-        <p class="help">Use your mouse, trackpad or touch screen to sketch. Save drafts to preserve dated versions of your work.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="academyStudio" class="studio-panel">
-  <div class="studio-page">
-    <div class="studio-heading">
-      <div>
-        <h2>MONCAD Learning Academy</h2>
-        <p>Practical learning resources for design and creative workflows.</p>
-      </div>
-      <span class="studio-tag">LEARN • PRACTISE • CREATE</span>
-    </div>
-
-    <div class="academy-notice">
-      <strong>Learning resource notice</strong>
-      <p>MONCAD Academy provides tutorials and practical learning activities. It is not presented as an accredited educational institution and does not award academic qualifications or formal certificates.</p>
-    </div>
-
-    <div class="academy-grid">
-      <article class="academy-card">
-        <span class="lesson-number">LESSON 01</span>
-        <h3>Introduction to Architecture Design</h3>
-        <p>Understand the basics of floor plans, room layouts and architectural drawing.</p>
-        <button class="action academy-lesson" data-lesson="architecture">Open lesson</button>
-        <div class="lesson-detail" id="lesson-architecture" hidden>
-          <ol>
-            <li>Identify the purpose of a floor plan.</li>
-            <li>Learn how walls, doors and windows are represented.</li>
-            <li>Practise drawing a simple room layout.</li>
-            <li>Check dimensions and proportions before saving.</li>
-          </ol>
-        </div>
-      </article>
-
-      <article class="academy-card">
-        <span class="lesson-number">LESSON 02</span>
-        <h3>Understanding Measurements</h3>
-        <p>Learn how dimensions and measurement units support accurate design work.</p>
-        <button class="action academy-lesson" data-lesson="measurements">Open lesson</button>
-        <div class="lesson-detail" id="lesson-measurements" hidden>
-          <ol>
-            <li>Understand metres, centimetres and millimetres.</li>
-            <li>Learn why consistent units matter.</li>
-            <li>Practise measuring a room.</li>
-            <li>Record dimensions clearly on a drawing.</li>
-          </ol>
-        </div>
-      </article>
-
-      <article class="academy-card">
-        <span class="lesson-number">LESSON 03</span>
-        <h3>Fashion Sketching Basics</h3>
-        <p>Explore sketching tools, garment concepts and creative design development.</p>
-        <button class="action academy-lesson" data-lesson="fashion">Open lesson</button>
-        <div class="lesson-detail" id="lesson-fashion" hidden>
-          <ol>
-            <li>Start with a simple garment silhouette.</li>
-            <li>Use lines to define shape and construction.</li>
-            <li>Experiment with colour and details.</li>
-            <li>Save versions as your design develops.</li>
-          </ol>
-        </div>
-      </article>
-
-      <article class="academy-card">
-        <span class="lesson-number">LESSON 04</span>
-        <h3>Saving and Organising Projects</h3>
-        <p>Learn to name, save and preserve design project versions.</p>
-        <button class="action academy-lesson" data-lesson="projects">Open lesson</button>
-        <div class="lesson-detail" id="lesson-projects" hidden>
-          <ol>
-            <li>Give each project a clear name.</li>
-            <li>Save a new version after important changes.</li>
-            <li>Keep exported copies in a safe location.</li>
-            <li>Record the date and design category.</li>
-          </ol>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<div class="modal-backdrop" id="registerModal" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="registerTitle">
-    <button class="modal-close" id="closeRegister" aria-label="Close">&times;</button>
-    <h2 id="registerTitle">MONCAD Membership</h2>
-    <p>Online account registration is planned for a future release. Secure registration, password recovery and private project storage require a protected server-side service.</p>
-    <p>This preview does not collect or store passwords or personal account details.</p>
-    <button class="action" id="registerOk">Continue exploring MONCAD</button>
-  </div>
-</div>
-
-<script>
-/* =========================================================
-   MONCAD — PART 3
-   Navigation, welcome screen and architecture drawing
-   ========================================================= */
+/* =====================================================
+   MONCAD MASTER TOOLBAR FOUNDATION V1
+   MONCAD | Imagine. Design. Build.
+   Test integration only — do not replace editor.html
+===================================================== */
 
 (() => {
   "use strict";
 
-  const $ = (id) => document.getElementById(id);
-  const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+  if (window.MONCADToolbar) return;
 
-  /* ---------- General helpers ---------- */
-
-  function setStatus(message) {
-    const status = $("architectureStatus");
-    if (status) status.textContent = message;
-  }
-
-  function cloneData(value) {
-    return JSON.parse(JSON.stringify(value));
-  }
-
-  function downloadFile(filename, content, type = "application/json") {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-
-  /* ---------- Studio navigation ---------- */
-
-  function openStudio(studioName) {
-    $$(".studio-panel").forEach((panel) => {
-      panel.classList.toggle(
-        "active",
-        panel.id === studioName + "Studio"
-      );
-    });
-
-    $$(".studio-nav-btn").forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.studio === studioName
-      );
-    });
-
-    if (studioName === "architecture") {
-      requestAnimationFrame(resizeArchitectureCanvas);
-    }
-
-    if (studioName === "fashion") {
-      requestAnimationFrame(resizeFashionCanvas);
-    }
-  }
-
-  $$(".studio-nav-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const studio = button.dataset.studio;
-      if (studio) openStudio(studio);
-    });
-  });
-
-  /* ---------- Welcome screen ---------- */
-
-  function dismissWelcome() {
-    const splash = $("welcomeSplash");
-    if (!splash) return;
-
-    splash.classList.add("dismissed");
-    splash.setAttribute("aria-hidden", "true");
-  }
-
-  $("skipWelcome")?.addEventListener("click", dismissWelcome);
-
-  /* ---------- Registration preview ---------- */
-
-  const registerModal = $("registerModal");
-
-  $("openRegister")?.addEventListener("click", () => {
-    if (registerModal) {
-      registerModal.hidden = false;
-      $("closeRegister")?.focus();
-    }
-  });
-
-  function closeRegisterModal() {
-    if (registerModal) registerModal.hidden = true;
-  }
-
-  $("closeRegister")?.addEventListener("click", closeRegisterModal);
-  $("registerOk")?.addEventListener("click", closeRegisterModal);
-
-  registerModal?.addEventListener("click", (event) => {
-    if (event.target === registerModal) {
-      closeRegisterModal();
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeRegisterModal();
-  });
-
-  /* =========================================================
-     ARCHITECTURE STUDIO
-     ========================================================= */
-
-  const canvas = $("architectureCanvas");
-  const canvasShell = $("architectureCanvasShell");
-  const ctx = canvas?.getContext("2d");
-
-  const architecture = {
-    elements: [],
-    selectedId: null,
-    tool: "wall",
-    view: "2d",
-    zoom: 1,
-    offsetX: 0,
-    offsetY: 0,
-    drawing: null,
-    moving: null,
-    history: [],
-    historyIndex: -1,
-    nextId: 1,
-    pointerDown: false
+  const STATUS = {
+    READY: "ready",
+    PARTIAL: "partial",
+    PLANNED: "planned"
   };
 
-  const PIXELS_PER_METRE = 50;
-
-  /* ---------- History ---------- */
-
-  function saveArchitectureHistory() {
-    const snapshot = cloneData(architecture.elements);
-
-    architecture.history =
-      architecture.history.slice(0, architecture.historyIndex + 1);
-
-    architecture.history.push(snapshot);
-
-    if (architecture.history.length > 50) {
-      architecture.history.shift();
-    }
-
-    architecture.historyIndex = architecture.history.length - 1;
-  }
-
-  function restoreArchitectureHistory(index) {
-    if (index < 0 || index >= architecture.history.length) return;
-
-    architecture.historyIndex = index;
-    architecture.elements = cloneData(architecture.history[index]);
-    architecture.selectedId = null;
-
-    drawArchitecture();
-    setStatus("Architecture project history restored.");
-  }
-
-  $("undoArchitecture")?.addEventListener("click", () => {
-    restoreArchitectureHistory(architecture.historyIndex - 1);
-  });
-
-  $("redoArchitecture")?.addEventListener("click", () => {
-    restoreArchitectureHistory(architecture.historyIndex + 1);
-  });
-
-  /* ---------- Canvas sizing ---------- */
-
-  function resizeArchitectureCanvas() {
-    if (!canvas || !ctx || !canvasShell) return;
-
-    const rect = canvasShell.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-
-    const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-
-    canvas.style.width = rect.width + "px";
-    canvas.style.height = rect.height + "px";
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    drawArchitecture();
-  }
-
-  /* ---------- Coordinate conversion ---------- */
-
-  function screenPoint(event) {
-    const rect = canvas.getBoundingClientRect();
-
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-  }
-
-  function worldPoint(event) {
-    const point = screenPoint(event);
-
-    return {
-      x: (point.x - architecture.offsetX) / architecture.zoom,
-      y: (point.y - architecture.offsetY) / architecture.zoom
-    };
-  }
-
-  function snapPoint(point) {
-    if (!$("snapToGrid")?.checked) return point;
-
-    const grid = Math.max(
-      5,
-      Number($("gridSize")?.value) || 50
-    );
-
-    return {
-      x: Math.round(point.x / grid) * grid,
-      y: Math.round(point.y / grid) * grid
-    };
-  }
-
-  /* ---------- Drawing helpers ---------- */
-
-  function drawGrid() {
-    if (!ctx || !canvas) return;
-
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    const grid = Math.max(5, Number($("gridSize")?.value) || 50);
-    const spacing = grid * architecture.zoom;
-
-    if (spacing < 4) return;
-
-    ctx.save();
-    ctx.strokeStyle = "rgba(190, 174, 135, 0.16)";
-    ctx.lineWidth = 1;
-
-    const startX =
-      ((architecture.offsetX % spacing) + spacing) % spacing;
-
-    const startY =
-      ((architecture.offsetY % spacing) + spacing) % spacing;
-
-    for (let x = startX; x < width; x += spacing) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
-    }
-
-    for (let y = startY; y < height; y += spacing) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
-
-    ctx.restore();
-  }
-
-  function drawElement(element, preview = false) {
-    if (!ctx || !element) return;
-
-    const x = Math.min(element.x1, element.x2);
-    const y = Math.min(element.y1, element.y2);
-    const width = Math.abs(element.x2 - element.x1);
-    const height = Math.abs(element.y2 - element.y1);
-
-    ctx.save();
-
-    ctx.strokeStyle = element.color || "#d7b56d";
-    ctx.fillStyle = element.fill || "rgba(215,181,109,0.12)";
-    ctx.lineWidth = Math.max(1, element.thickness || 3);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    if (preview) {
-      ctx.setLineDash([7, 5]);
-    }
-
-    switch (element.type) {
-      case "wall":
-        ctx.lineWidth = Math.max(3, element.thickness || 8);
-        ctx.beginPath();
-        ctx.moveTo(element.x1, element.y1);
-        ctx.lineTo(element.x2, element.y2);
-        ctx.stroke();
-        break;
-
-      case "line":
-      case "curve":
-        ctx.beginPath();
-        ctx.moveTo(element.x1, element.y1);
-
-        if (element.type === "curve") {
-          ctx.quadraticCurveTo(
-            element.x1,
-            element.y2,
-            element.x2,
-            element.y2
-          );
-        } else {
-          ctx.lineTo(element.x2, element.y2);
-        }
-
-        ctx.stroke();
-        break;
-
-      case "room":
-      case "rectangle":
-        ctx.fillRect(x, y, width, height);
-        ctx.strokeRect(x, y, width, height);
-        break;
-
-      case "door": {
-        ctx.beginPath();
-        ctx.moveTo(element.x1, element.y1);
-        ctx.lineTo(element.x2, element.y2);
-        ctx.stroke();
-
-        const radius = Math.max(10, Math.min(width, height) || 30);
-        ctx.beginPath();
-        ctx.arc(
-          element.x1,
-          element.y1,
-          radius,
-          0,
-          Math.PI / 2
-        );
-        ctx.stroke();
-        break;
-      }
-
-      case "window":
-        ctx.lineWidth = Math.max(2, element.thickness || 5);
-        ctx.beginPath();
-        ctx.moveTo(element.x1, element.y1);
-        ctx.lineTo(element.x2, element.y2);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(element.x1, element.y1 + 5);
-        ctx.lineTo(element.x2, element.y2 + 5);
-        ctx.stroke();
-        break;
-
-      default:
-        ctx.strokeRect(x, y, width, height);
-    }
-
-    if (architecture.selectedId === element.id) {
-      ctx.setLineDash([5, 4]);
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(x - 5, y - 5, width + 10, height + 10);
-    }
-
-    ctx.restore();
-  }
-
-  function draw3DPreview() {
-    if (!ctx || !canvas) return;
-
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-
-    ctx.save();
-
-    ctx.fillStyle = "#101c2b";
-    ctx.fillRect(0, 0, width, height);
-
-    ctx.fillStyle = "#d7b56d";
-    ctx.font = "bold 15px Arial";
-    ctx.fillText("MONCAD — CONCEPTUAL 3D PREVIEW", 24, 32);
-
-    ctx.fillStyle = "rgba(215,181,109,0.10)";
-    ctx.strokeStyle = "#d7b56d";
-    ctx.lineWidth = 2;
-
-    const baseX = width * 0.25;
-    const baseY = height * 0.65;
-    const roomW = Math.min(width * 0.40, 320);
-    const roomH = Math.min(height * 0.30, 180);
-    const depth = Math.min(roomW * 0.28, 90);
-
-    ctx.beginPath();
-    ctx.moveTo(baseX, baseY);
-    ctx.lineTo(baseX + depth, baseY - depth * 0.55);
-    ctx.lineTo(baseX + roomW + depth, baseY - depth * 0.55);
-    ctx.lineTo(baseX + roomW, baseY);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(baseX, baseY);
-    ctx.lineTo(baseX, baseY - roomH);
-    ctx.lineTo(baseX + depth, baseY - roomH - depth * 0.55);
-    ctx.lineTo(baseX + depth, baseY - depth * 0.55);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(baseX + depth, baseY - depth * 0.55);
-    ctx.lineTo(baseX + depth, baseY - roomH - depth * 0.55);
-    ctx.lineTo(baseX + roomW + depth, baseY - roomH - depth * 0.55);
-    ctx.lineTo(baseX + roomW + depth, baseY - depth * 0.55);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = "#e8d5aa";
-    ctx.font = "13px Arial";
-    ctx.fillText(
-      "Conceptual preview — not a construction-ready 3D model",
-      24,
-      height - 24
-    );
-
-    ctx.restore();
-  }
-
-  function drawArchitecture() {
-    if (!ctx || !canvas) return;
-
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.restore();
-
-    if (architecture.view === "3d") {
-      draw3DPreview();
-      return;
-    }
-
-    drawGrid();
-
-    ctx.save();
-
-    ctx.translate(
-      architecture.offsetX,
-      architecture.offsetY
-    );
-
-    ctx.scale(architecture.zoom, architecture.zoom);
-
-    architecture.elements.forEach((element) => {
-      drawElement(element);
-    });
-
-    if (architecture.drawing) {
-      drawElement(architecture.drawing, true);
-    }
-
-    ctx.restore();
-  }
-
-  /* ---------- Tool selection ---------- */
-
-  function chooseArchitectureTool(tool) {
-    architecture.tool = tool;
-
-    $$("[data-tool]").forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.tool === tool
-      );
-    });
-
-    setStatus("Selected tool: " + tool);
-  }
-
-  $$("[data-tool]").forEach((button) => {
-    button.addEventListener("click", () => {
-      chooseArchitectureTool(button.dataset.tool);
-    });
-  });
-
-  /* ---------- Element selection ---------- */
-
-  function findElementAt(point) {
-    for (let i = architecture.elements.length - 1; i >= 0; i--) {
-      const element = architecture.elements[i];
-
-      const left = Math.min(element.x1, element.x2) - 12;
-      const right = Math.max(element.x1, element.x2) + 12;
-      const top = Math.min(element.y1, element.y2) - 12;
-      const bottom = Math.max(element.y1, element.y2) + 12;
-
-      if (
-        point.x >= left &&
-        point.x <= right &&
-        point.y >= top &&
-        point.y <= bottom
-      ) {
-        return element;
-      }
-    }
-
-    return null;
-  }
-
-  /* ---------- Measurement helpers ---------- */
-
-  function getMeasurementPixels(value) {
-    const unit = $("measurementUnit")?.value || "m";
-    const number = Math.max(0, Number(value) || 0);
-
-    let metres = number;
-
-    if (unit === "cm") metres = number / 100;
-    if (unit === "mm") metres = number / 1000;
-
-    return metres * PIXELS_PER_METRE;
-  }
-
-  function getWallThickness() {
-    const unit = $("measurementUnit")?.value || "m";
-    const value = Number($("wallThickness")?.value) || 0.15;
-
-    return Math.max(2, getMeasurementPixels(value));
-  }
-
-  /* ---------- Create architecture element ---------- */
-
-  function createArchitectureElement(start, end) {
-    const type = architecture.tool;
-
-    let x2 = end.x;
-    let y2 = end.y;
-
-    if (
-      Math.abs(x2 - start.x) < 8 &&
-      Math.abs(y2 - start.y) < 8
-    ) {
-      const width = getMeasurementPixels(
-        $("elementWidth")?.value || 4
-      );
-
-      const length = getMeasurementPixels(
-        $("elementLength")?.value || 5
-      );
-
-      x2 = start.x + Math.max(10, width);
-      y2 = start.y + Math.max(10, length);
-    }
-
-    const element = {
-      id: architecture.nextId++,
-      type,
-      x1: start.x,
-      y1: start.y,
-      x2,
-      y2,
-      thickness: getWallThickness(),
-      color: type === "wall" ? "#e1c27b" : "#d7b56d",
-      fill: "rgba(215,181,109,0.10)"
-    };
-
-    return element;
-  }
-
-  /* ---------- Pointer drawing ---------- */
-
-  function onArchitecturePointerDown(event) {
-    if (!canvas || architecture.view !== "2d") return;
-
-    event.preventDefault();
-
-    canvas.setPointerCapture?.(event.pointerId);
-
-    architecture.pointerDown = true;
-
-    const point = snapPoint(worldPoint(event));
-
-    if (architecture.tool === "select") {
-      const selected = findElementAt(point);
-
-      architecture.selectedId = selected?.id ?? null;
-
-      if (selected) {
-        architecture.moving = {
-          id: selected.id,
-          startX: point.x,
-          startY: point.y,
-          original: cloneData(selected)
-        };
-
-        saveArchitectureHistory();
-      }
-
-      drawArchitecture();
-      return;
-    }
-
-    if (architecture.tool === "erase") {
-      const selected = findElementAt(point);
-
-      if (selected) {
-        saveArchitectureHistory();
-
-        architecture.elements = architecture.elements.filter(
-          (element) => element.id !== selected.id
-        );
-
-        architecture.selectedId = null;
-        drawArchitecture();
-        setStatus("Selected element erased.");
-      }
-
-      return;
-    }
-
-    if (architecture.tool === "pan") {
-      architecture.moving = {
-        pan: true,
-        startX: event.clientX,
-        startY: event.clientY,
-        originalX: architecture.offsetX,
-        originalY: architecture.offsetY
-      };
-
-      return;
-    }
-
-    architecture.drawing = {
-      ...createArchitectureElement(point, point),
-      x2: point.x,
-      y2: point.y
-    };
-
-    drawArchitecture();
-  }
-
-  function onArchitecturePointerMove(event) {
-    if (!architecture.pointerDown || !canvas) return;
-
-    if (architecture.moving?.pan) {
-      architecture.offsetX =
-        architecture.moving.originalX +
-        event.clientX -
-        architecture.moving.startX;
-
-      architecture.offsetY =
-        architecture.moving.originalY +
-        event.clientY -
-        architecture.moving.startY;
-
-      drawArchitecture();
-      return;
-    }
-
-    const point = snapPoint(worldPoint(event));
-
-    if (architecture.moving && !architecture.moving.pan) {
-      const element = architecture.elements.find(
-        (item) => item.id === architecture.moving.id
-      );
-
-      if (element) {
-        const dx = point.x - architecture.moving.startX;
-        const dy = point.y - architecture.moving.startY;
-
-        element.x1 = architecture.moving.original.x1 + dx;
-        element.y1 = architecture.moving.original.y1 + dy;
-        element.x2 = architecture.moving.original.x2 + dx;
-        element.y2 = architecture.moving.original.y2 + dy;
-      }
-
-      drawArchitecture();
-      return;
-    }
-
-    if (architecture.drawing) {
-      architecture.drawing.x2 = point.x;
-      architecture.drawing.y2 = point.y;
-      drawArchitecture();
-    }
-  }
-
-  function onArchitecturePointerUp() {
-    if (!architecture.pointerDown) return;
-
-    architecture.pointerDown = false;
-
-    if (architecture.drawing) {
-      const element = architecture.drawing;
-      architecture.drawing = null;
-
-      if (
-        Math.abs(element.x2 - element.x1) > 3 ||
-        Math.abs(element.y2 - element.y1) > 3
-      ) {
-        saveArchitectureHistory();
-        architecture.elements.push(element);
-        architecture.selectedId = element.id;
-        setStatus("New " + element.type + " added.");
-      }
-    }
-
-    architecture.moving = null;
-
-    drawArchitecture();
-  }
-
-  if (canvas) {
-    canvas.addEventListener("pointerdown", onArchitecturePointerDown);
-    canvas.addEventListener("pointermove", onArchitecturePointerMove);
-    canvas.addEventListener("pointerup", onArchitecturePointerUp);
-    canvas.addEventListener("pointercancel", onArchitecturePointerUp);
-  }
-
-  /* ---------- Delete and clear ---------- */
-
-  $("deleteArchitecture")?.addEventListener("click", () => {
-    if (!architecture.selectedId) {
-      setStatus("Select an element first.");
-      return;
-    }
-
-    saveArchitectureHistory();
-
-    architecture.elements = architecture.elements.filter(
-      (element) => element.id !== architecture.selectedId
-    );
-
-    architecture.selectedId = null;
-    drawArchitecture();
-    setStatus("Selected element deleted.");
-  });
-
-  $("clearArchitecture")?.addEventListener("click", () => {
-    if (!architecture.elements.length) {
-      setStatus("The drawing is already empty.");
-      return;
-    }
-
-    if (!confirm("Clear all architecture drawing elements?")) return;
-
-    saveArchitectureHistory();
-    architecture.elements = [];
-    architecture.selectedId = null;
-
-    drawArchitecture();
-    setStatus("Architecture drawing cleared.");
-  });
-
-  /* ---------- Zoom and view controls ---------- */
-
-  function updateZoomStatus() {
-    if ($("zoomStatus")) {
-      $("zoomStatus").textContent =
-        Math.round(architecture.zoom * 100) + "%";
-    }
-  }
-
-  $("zoomIn")?.addEventListener("click", () => {
-    architecture.zoom = Math.min(3, architecture.zoom * 1.2);
-    updateZoomStatus();
-    drawArchitecture();
-  });
-
-  $("zoomOut")?.addEventListener("click", () => {
-    architecture.zoom = Math.max(0.25, architecture.zoom / 1.2);
-    updateZoomStatus();
-    drawArchitecture();
-  });
-
-  $("fitDrawing")?.addEventListener("click", () => {
-    architecture.zoom = 1;
-    architecture.offsetX = 0;
-    architecture.offsetY = 0;
-
-    updateZoomStatus();
-    drawArchitecture();
-  });
-
-  $("view2D")?.addEventListener("click", () => {
-    architecture.view = "2d";
-    $("view2D")?.classList.add("active");
-    $("view3D")?.classList.remove("active");
-    drawArchitecture();
-    setStatus("2D floor-plan workspace.");
-  });
-
-  $("view3D")?.addEventListener("click", () => {
-    architecture.view = "3d";
-    $("view3D")?.classList.add("active");
-    $("view2D")?.classList.remove("active");
-    drawArchitecture();
-    setStatus("Conceptual 3D preview. Full 3D modeling is a future development stage.");
-  });
-
-  $("gridSize")?.addEventListener("change", drawArchitecture);
-  $("snapToGrid")?.addEventListener("change", drawArchitecture);
-
-  /* ---------- Initial architecture setup ---------- */
-
-  if (architecture.history.length === 0) {
-    saveArchitectureHistory();
-  }
-
-  if (canvas) {
-    resizeArchitectureCanvas();
-    window.addEventListener("resize", resizeArchitectureCanvas);
-  }
-
-  updateZoomStatus();
-
-  /* Expose selected helpers for the next MONCAD code parts. */
-  window.MONCAD = window.MONCAD || {};
-
-  window.MONCAD.architecture = architecture;
-  window.MONCAD.openStudio = openStudio;
-  window.MONCAD.drawArchitecture = drawArchitecture;
-  window.MONCAD.resizeArchitectureCanvas = resizeArchitectureCanvas;
-  window.MONCAD.downloadFile = downloadFile;
-  window.MONCAD.setStatus = setStatus;
-
-})();
-</script>
-
-<script>
-/* =========================================================
-   MONCAD — PART 4
-   Architecture project files and Fashion Studio
-   ========================================================= */
-
-(() => {
-  "use strict";
-
-  const $ = (id) => document.getElementById(id);
-  const MONCAD = window.MONCAD || {};
-
-  const downloadFile = MONCAD.downloadFile || function (filename, content, type) {
-    const blob = new Blob([content], { type: type || "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-
-  /* =========================================================
-     ARCHITECTURE PROJECT SAVE / LOAD / EXPORT
-     ========================================================= */
-
-  const architecture = MONCAD.architecture;
-
-  function architectureProjectData() {
-    return {
-      application: "MONCAD",
-      projectType: "Architecture Studio",
-      formatVersion: 1,
-      savedAt: new Date().toISOString(),
-      units: $("measurementUnit")?.value || "m",
-      elements: architecture.elements
-    };
-  }
-
-  $("saveArchitecture")?.addEventListener("click", () => {
-    if (!architecture) return;
-
-    const project = architectureProjectData();
-
-    downloadFile(
-      "MONCAD-Architecture-Project.json",
-      JSON.stringify(project, null, 2),
-      "application/json"
-    );
-
-    MONCAD.setStatus?.("Architecture project exported as a JSON file.");
-  });
-
-  $("exportArchitecture")?.addEventListener("click", () => {
-    if (!architecture) return;
-
-    const project = architectureProjectData();
-
-    downloadFile(
-      "MONCAD-Architecture-Design-Record.json",
-      JSON.stringify(project, null, 2),
-      "application/json"
-    );
-
-    MONCAD.setStatus?.("Architecture design record exported.");
-  });
-
-  function isValidArchitectureProject(data) {
-    if (!data || data.application !== "MONCAD") return false;
-    if (!Array.isArray(data.elements)) return false;
-    if (data.elements.length > 10000) return false;
-
-    const allowedTypes = [
-      "wall",
-      "room",
-      "door",
-      "window",
-      "line",
-      "rectangle",
-      "curve"
-    ];
-
-    return data.elements.every((element) => {
-      if (!element || typeof element !== "object") return false;
-      if (!allowedTypes.includes(element.type)) return false;
-
-      return [
-        element.x1,
-        element.y1,
-        element.x2,
-        element.y2
-      ].every((value) => Number.isFinite(value));
-    });
-  }
-
-  $("loadArchitecture")?.addEventListener("click", () => {
-    $("architectureFile")?.click();
-  });
-
-  $("architectureFile")?.addEventListener("change", async (event) => {
-    const file = event.target.files?.[0];
-    if (!file || !architecture) return;
-
-    try {
-      const text = await file.text();
-      const project = JSON.parse(text);
-
-      if (!isValidArchitectureProject(project)) {
-        throw new Error("This is not a valid MONCAD architecture project.");
-      }
-
-      architecture.elements = project.elements.map((element, index) => ({
-        id: index + 1,
-        type: element.type,
-        x1: Number(element.x1),
-        y1: Number(element.y1),
-        x2: Number(element.x2),
-        y2: Number(element.y2),
-        thickness: Math.max(1, Number(element.thickness) || 3),
-        color: typeof element.color === "string" ? element.color : "#d7b56d",
-        fill: "rgba(215,181,109,0.10)"
-      }));
-
-      architecture.nextId = architecture.elements.length + 1;
-      architecture.selectedId = null;
-
-      architecture.history = [];
-      architecture.historyIndex = -1;
-
-      const snapshot = JSON.parse(JSON.stringify(architecture.elements));
-      architecture.history.push(snapshot);
-      architecture.historyIndex = 0;
-
-      MONCAD.drawArchitecture?.();
-      MONCAD.setStatus?.("MONCAD architecture project loaded successfully.");
-    } catch (error) {
-      alert("Unable to load project: " + error.message);
-    } finally {
-      event.target.value = "";
-    }
-  });
-
-  /* =========================================================
-     FASHION STUDIO
-     ========================================================= */
-
-  const fashionCanvas = $("fashionCanvas");
-  const fashionContext = fashionCanvas?.getContext("2d");
-
-  const FASHION_STORAGE_KEY = "MONCAD_FASHION_DRAFTS_V1";
-
-  const fashion = {
-    tool: "pen",
-    drawing: false,
-    start: null,
-    last: null,
-    snapshot: null,
-    history: [],
-    historyIndex: -1,
-    drafts: [],
-    draftVersion: 0
-  };
-
-  /* ---------- Fashion storage ---------- */
-
-  function loadFashionDrafts() {
-    try {
-      const stored = localStorage.getItem(FASHION_STORAGE_KEY);
-      const parsed = stored ? JSON.parse(stored) : [];
-
-      fashion.drafts = Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-      fashion.drafts = [];
-      console.warn("MONCAD: Unable to read saved fashion drafts.", error);
-    }
-  }
-
-  function storeFashionDrafts() {
-    try {
-      localStorage.setItem(
-        FASHION_STORAGE_KEY,
-        JSON.stringify(fashion.drafts)
-      );
-      return true;
-    } catch (error) {
-      alert(
-        "MONCAD could not save this draft in browser storage. " +
-        "Your browser may be out of storage space or have storage disabled."
-      );
-      return false;
-    }
-  }
-
-  /* ---------- Fashion canvas sizing ---------- */
-
-  function resizeFashionCanvas() {
-    if (!fashionCanvas || !fashionContext) return;
-
-    const rect = fashionCanvas.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-
-    const oldImage = document.createElement("canvas");
-    oldImage.width = fashionCanvas.width;
-    oldImage.height = fashionCanvas.height;
-
-    const oldContext = oldImage.getContext("2d");
-    oldContext?.drawImage(fashionCanvas, 0, 0);
-
-    const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-    fashionCanvas.width = Math.round(rect.width * dpr);
-    fashionCanvas.height = Math.round(rect.height * dpr);
-
-    fashionCanvas.style.width = rect.width + "px";
-    fashionCanvas.style.height = rect.height + "px";
-
-    fashionContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    if (oldImage.width && oldImage.height) {
-      fashionContext.drawImage(
-        oldImage,
-        0,
-        0,
-        oldImage.width,
-        oldImage.height,
-        0,
-        0,
-        rect.width,
-        rect.height
-      );
-    }
-  }
-
-  /* ---------- Fashion history ---------- */
-
-  function saveFashionHistory() {
-    if (!fashionCanvas) return;
-
-    const image = fashionCanvas.toDataURL("image/png");
-
-    fashion.history =
-      fashion.history.slice(0, fashion.historyIndex + 1);
-
-    fashion.history.push(image);
-
-    if (fashion.history.length > 30) {
-      fashion.history.shift();
-    }
-
-    fashion.historyIndex = fashion.history.length - 1;
-  }
-
-  function restoreFashionHistory(index) {
-    if (
-      index < 0 ||
-      index >= fashion.history.length ||
-      !fashionContext
-    ) return;
-
-    const image = new Image();
-
-    image.onload = () => {
-      const rect = fashionCanvas.getBoundingClientRect();
-
-      fashionContext.clearRect(0, 0, rect.width, rect.height);
-      fashionContext.drawImage(image, 0, 0, rect.width, rect.height);
-    };
-
-    image.src = fashion.history[index];
-    fashion.historyIndex = index;
-  }
-
-  /* ---------- Fashion tool selection ---------- */
-
-  function chooseFashionTool(tool) {
-    fashion.tool = tool;
-
-    document.querySelectorAll(".fashion-tool").forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.fashionTool === tool
-      );
-    });
-  }
-
-  document.querySelectorAll(".fashion-tool").forEach((button) => {
-    button.addEventListener("click", () => {
-      chooseFashionTool(button.dataset.fashionTool);
-    });
-  });
-
-  /* ---------- Fashion drawing helpers ---------- */
-
-  function fashionPoint(event) {
-    const rect = fashionCanvas.getBoundingClientRect();
-
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-  }
-
-  function fashionColor() {
-    return $("fashionColor")?.value || "#d7b56d";
-  }
-
-  function fashionLineWidth() {
-    return Math.max(
-      1,
-      Number($("fashionLineWidth")?.value) || 3
-    );
-  }
-
-  function drawFashionPreview(point) {
-    if (!fashionContext || !fashion.start || !fashion.snapshot) return;
-
-    const rect = fashionCanvas.getBoundingClientRect();
-
-    fashionContext.clearRect(0, 0, rect.width, rect.height);
-    fashionContext.drawImage(
-      fashion.snapshot,
-      0,
-      0,
-      rect.width,
-      rect.height
-    );
-
-    fashionContext.strokeStyle = fashionColor();
-    fashionContext.lineWidth = fashionLineWidth();
-    fashionContext.lineCap = "round";
-    fashionContext.lineJoin = "round";
-
-    if (fashion.tool === "rectangle") {
-      fashionContext.strokeRect(
-        fashion.start.x,
-        fashion.start.y,
-        point.x - fashion.start.x,
-        point.y - fashion.start.y
-      );
-    } else if (fashion.tool === "line") {
-      fashionContext.beginPath();
-      fashionContext.moveTo(fashion.start.x, fashion.start.y);
-      fashionContext.lineTo(point.x, point.y);
-      fashionContext.stroke();
-    }
-  }
-
-  /* ---------- Fashion pointer drawing ---------- */
-
-  function fashionPointerDown(event) {
-    if (!fashionCanvas || !fashionContext) return;
-
-    event.preventDefault();
-    fashionCanvas.setPointerCapture?.(event.pointerId);
-
-    const point = fashionPoint(event);
-
-    fashion.drawing = true;
-    fashion.start = point;
-    fashion.last = point;
-
-    fashion.snapshot = document.createElement("canvas");
-    fashion.snapshot.width = fashionCanvas.width;
-    fashion.snapshot.height = fashionCanvas.height;
-
-    const snapshotContext = fashion.snapshot.getContext("2d");
-    snapshotContext?.drawImage(fashionCanvas, 0, 0);
-
-    saveFashionHistory();
-
-    if (fashion.tool === "pen" || fashion.tool === "eraser") {
-      fashionContext.beginPath();
-      fashionContext.moveTo(point.x, point.y);
-    }
-  }
-
-  function fashionPointerMove(event) {
-    if (!fashion.drawing || !fashionContext) return;
-
-    const point = fashionPoint(event);
-
-    if (
-      fashion.tool === "rectangle" ||
-      fashion.tool === "line"
-    ) {
-      drawFashionPreview(point);
-      return;
-    }
-
-    fashionContext.lineCap = "round";
-    fashionContext.lineJoin = "round";
-
-    fashionContext.lineWidth =
-      fashion.tool === "eraser" ? 22 : fashionLineWidth();
-
-    fashionContext.strokeStyle =
-      fashion.tool === "eraser" ? "#ffffff" : fashionColor();
-
-    fashionContext.globalCompositeOperation =
-      fashion.tool === "eraser" ? "destination-out" : "source-over";
-
-    fashionContext.beginPath();
-    fashionContext.moveTo(fashion.last.x, fashion.last.y);
-    fashionContext.lineTo(point.x, point.y);
-    fashionContext.stroke();
-
-    fashionContext.globalCompositeOperation = "source-over";
-
-    fashion.last = point;
-  }
-
-  function fashionPointerUp(event) {
-    if (!fashion.drawing || !fashionContext) return;
-
-    const point = fashionPoint(event);
-
-    if (
-      fashion.tool === "rectangle" ||
-      fashion.tool === "line"
-    ) {
-      drawFashionPreview(point);
-    }
-
-    fashion.drawing = false;
-    fashion.start = null;
-    fashion.last = null;
-    fashion.snapshot = null;
-  }
-
-  if (fashionCanvas) {
-    fashionCanvas.addEventListener("pointerdown", fashionPointerDown);
-    fashionCanvas.addEventListener("pointermove", fashionPointerMove);
-    fashionCanvas.addEventListener("pointerup", fashionPointerUp);
-    fashionCanvas.addEventListener("pointercancel", fashionPointerUp);
-  }
-
-  /* ---------- Fashion undo and clear ---------- */
-
-  $("undoFashion")?.addEventListener("click", () => {
-    restoreFashionHistory(fashion.historyIndex - 1);
-  });
-
-  $("clearFashion")?.addEventListener("click", () => {
-    if (!fashionContext || !fashionCanvas) return;
-
-    if (!confirm("Clear the current fashion design?")) return;
-
-    saveFashionHistory();
-
-    const rect = fashionCanvas.getBoundingClientRect();
-
-    fashionContext.clearRect(0, 0, rect.width, rect.height);
-
-    saveFashionHistory();
-  });
-
-  /* ---------- Fashion draft history display ---------- */
-
-  function renderFashionDraftHistory() {
-    const container = $("fashionDraftHistory");
-    if (!container) return;
-
-    container.replaceChildren();
-
-    if (!fashion.drafts.length) {
-      const message = document.createElement("p");
-      message.textContent = "No saved fashion drafts yet.";
-      container.appendChild(message);
-      return;
-    }
-
-    fashion.drafts
-      .slice()
-      .reverse()
-      .forEach((draft) => {
-        const item = document.createElement("div");
-        item.className = "fashion-draft-item";
-
-        const title = document.createElement("strong");
-        title.textContent =
-          draft.name + " — Version " + draft.version;
-
-        const date = document.createElement("small");
-        date.textContent = new Date(draft.createdAt).toLocaleString();
-
-        const loadButton = document.createElement("button");
-        loadButton.type = "button";
-        loadButton.className = "action";
-        loadButton.textContent = "Open Draft";
-
-        loadButton.addEventListener("click", () => {
-          if (!fashionContext || !fashionCanvas) return;
-
-          const image = new Image();
-
-          image.onload = () => {
-            const rect = fashionCanvas.getBoundingClientRect();
-
-            fashionContext.clearRect(0, 0, rect.width, rect.height);
-            fashionContext.drawImage(
-              image,
-              0,
-              0,
-              rect.width,
-              rect.height
-            );
-
-            saveFashionHistory();
-          };
-
-          image.src = draft.image;
-        });
-
-        item.append(title, document.createElement("br"), date);
-        item.appendChild(document.createElement("br"));
-        item.appendChild(loadButton);
-
-        container.appendChild(item);
-      });
-  }
-
-  /* ---------- Save dated fashion draft ---------- */
-
-  $("saveFashionDraft")?.addEventListener("click", () => {
-    if (!fashionCanvas) return;
-
-    const name =
-      $("fashionDesignName")?.value.trim() || "Untitled Fashion Design";
-
-    const category =
-      $("fashionCategory")?.value || "Fashion Design";
-
-    const existingVersions = fashion.drafts.filter(
-      (draft) => draft.name === name
-    );
-
-    const nextVersion =
-      existingVersions.length
-        ? Math.max(...existingVersions.map((draft) => draft.version || 0)) + 1
-        : 1;
-
-    const draft = {
-      id: "fashion-" + Date.now(),
-      name,
-      category,
-      version: nextVersion,
-      createdAt: new Date().toISOString(),
-      image: fashionCanvas.toDataURL("image/png"),
-      application: "MONCAD"
-    };
-
-    fashion.drafts.push(draft);
-
-    if (!storeFashionDrafts()) {
-      fashion.drafts.pop();
-      return;
-    }
-
-    renderFashionDraftHistory();
-
-    alert(
-      "Fashion draft saved in this browser.\n" +
-      "Version: " + nextVersion
-    );
-  });
-
-  /* ---------- Export fashion design record ---------- */
-
-  $("exportFashionRecord")?.addEventListener("click", () => {
-    const name =
-      $("fashionDesignName")?.value.trim() || "Untitled Fashion Design";
-
-    const record = {
-      application: "MONCAD",
-      recordType: "Fashion Design Draft Record",
-      exportedAt: new Date().toISOString(),
-      designName: name,
-      category: $("fashionCategory")?.value || "Fashion Design",
-      savedDrafts: fashion.drafts.filter(
-        (draft) => draft.name === name
-      )
-    };
-
-    downloadFile(
-      "MONCAD-Fashion-Design-Record.json",
-      JSON.stringify(record, null, 2),
-      "application/json"
-    );
-  });
-
-  /* ---------- Initial Fashion setup ---------- */
-
-  loadFashionDrafts();
-  renderFashionDraftHistory();
-
-  if (fashionCanvas) {
-    resizeFashionCanvas();
-    saveFashionHistory();
-
-    window.addEventListener("resize", resizeFashionCanvas);
-  }
-
-  MONCAD.fashion = fashion;
-  MONCAD.resizeFashionCanvas = resizeFashionCanvas;
-
-  window.MONCAD = MONCAD;
-
-})();
-</script>
-
-<script>
-/* =========================================================
-   MONCAD — PART 5
-   Learning Academy, final setup and initialization
-   ========================================================= */
-
-(() => {
-  "use strict";
-
-  const $ = (id) => document.getElementById(id);
-  const MONCAD = window.MONCAD || {};
-
-  /* =========================================================
-     LEARNING ACADEMY
-     ========================================================= */
-
-  const academyButtons = document.querySelectorAll(".academy-lesson");
-
-  const academyLessons = [
-    "lesson-architecture",
-    "lesson-measurements",
-    "lesson-fashion",
-    "lesson-projects"
+  // MASTER TOOLBAR CONFIGURATION
+  const toolbarData = [
+    { tab:"Home", group:"Standard", tools:"New|new Open|open Save|save Save As|saveAs Plot/Print|plot Undo|undo Redo|redo Cut|cut Copy|copy Paste|paste" },
+    { tab:"Home", group:"Draw", tools:"Line|line Polyline|polyline Polygon|polygon Rectangle|rectangle Arc|arc Circle|circle Ellipse|ellipse Spline|spline Hatch|hatch" },
+    { tab:"Home", group:"Modify", tools:"Erase|erase Copy|copy Mirror|mirror Offset|offset Array|array Move|move Rotate|rotate Scale|scale Trim|trim Extend|extend Fillet|fillet Explode|explode" },
+    { tab:"Home", group:"Architecture", tools:"Wall|wall Room|room Door|door Window|window Stairs|stairs Roof|roof Column|column Furniture|furniture" },
+    { tab:"Home", group:"Layers", tools:"Layer Manager|layerManager Current Layer|currentLayer Lock|layerLock Freeze|layerFreeze Layer Off|layerOff" },
+    { tab:"Home", group:"Properties", tools:"Object Color|objectColor Linetype|linetype Lineweight|lineweight Plot Style|plotStyle" },
+    { tab:"Home", group:"Annotation & Styles", tools:"Text|text Multiline Text|mtext Leader|leader Table|table Text Style|textStyle Dimension Style|dimensionStyle Table Style|tableStyle Multileader Style|multileaderStyle" },
+    { tab:"Home", group:"Dimensions", tools:"Linear|dimLinear Aligned|dimAligned Angular|dimAngular Arc Length|dimArcLength Radius|dimRadius Diameter|dimDiameter Ordinate|dimOrdinate Continue|dimContinue Baseline|dimBaseline" },
+    { tab:"Home", group:"Object Snap", tools:"Endpoint|osnapEndpoint Midpoint|osnapMidpoint Center|osnapCenter Quadrant|osnapQuadrant Tangent|osnapTangent Perpendicular|osnapPerpendicular Intersection|osnapIntersection Node|osnapNode" },
+
+    { tab:"View", group:"Navigation", tools:"Zoom|zoom Pan|pan Named Views|namedViews Plan View|planView 3D View|view3d" },
+    { tab:"View", group:"Orbit", tools:"3D Orbit|orbit3d Constrained Orbit|orbitConstrained Free Orbit|orbitFree" },
+    { tab:"View", group:"Visual Styles", tools:"Wireframe|wireframe Conceptual|conceptual Hidden|hidden Realistic|realistic Shaded|shaded" },
+    { tab:"View", group:"UCS", tools:"UCS Origin|ucsOrigin UCS Face|ucsFace UCS Object|ucsObject World UCS|ucsWorld" },
+
+    { tab:"Tools", group:"Inquiry", tools:"Distance|distance Radius|radius Angle|angle Area|area Volume|volume List|list ID Point|idPoint" },
+    { tab:"Tools", group:"References", tools:"Attach DWG|attachDwg Attach PDF|attachPdf Attach Image|attachImage Attach DWF|attachDwf Reference Manager|referenceManager" },
+    { tab:"Tools", group:"Express Tools", tools:"Text Utilities|textUtilities Layout Utilities|layoutUtilities Layer Utilities|layerUtilities Block Utilities|blockUtilities" },
+    { tab:"Tools", group:"Blocks", tools:"Create Block|blockCreate Insert Block|blockInsert Edit Block|blockEdit Explode Block|blockExplode" },
+
+    { tab:"3D", group:"3D Modeling", tools:"Box|box Extrude|extrude Revolve|revolve Loft|loft Sweep|sweep Polysolid|polysolid Presspull|presspull" },
+    { tab:"3D", group:"Modeling", tools:"Solid Creation|solidCreation Surface Creation|surfaceCreation" },
+    { tab:"3D", group:"Lights & Render", tools:"Place Light|placeLight Materials|materials Sun & Sky|sunSky Render|render" },
+
+    { tab:"Output", group:"Output", tools:"Save|save Save As|saveAs Export|export Export PDF|exportPdf Print|print" }
   ];
 
-  function openAcademyLesson(lessonName) {
-    academyLessons.forEach((id) => {
-      const panel = $(id);
+  // ICONS — MONCAD SYMBOL LIBRARY
+  const iconMap = {
+    new:"＋", open:"↗", save:"▣", saveAs:"▤",
+    plot:"▧", undo:"↶", redo:"↷", cut:"✂",
+    copy:"▢", paste:"▣",
 
-      if (panel) {
-        panel.hidden = id !== "lesson-" + lessonName;
-      }
-    });
+    line:"╱", polyline:"⌁", polygon:"⬠",
+    rectangle:"▭", arc:"⌒", circle:"○",
+    ellipse:"⬭", spline:"∿", hatch:"▨",
 
-    academyButtons.forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.lesson === lessonName
-      );
-    });
-  }
+    erase:"⌫", mirror:"⇋", offset:"↔",
+    array:"▦", move:"✥", rotate:"⟳",
+    scale:"⤢", trim:"✂", extend:"↗",
+    fillet:"◜", explode:"✳",
 
-  academyButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const lesson = button.dataset.lesson;
+    wall:"▰", room:"⌂", door:"▯",
+    window:"▤", stairs:"▥", roof:"⌃",
+    column:"▮", furniture:"▣",
 
-      if (lesson) {
-        openAcademyLesson(lesson);
+    layerManager:"▤", currentLayer:"▱",
+    layerLock:"🔒", layerFreeze:"❄",
+    layerOff:"◉",
+
+    objectColor:"◉", linetype:"╌",
+    lineweight:"━", plotStyle:"▧",
+
+    text:"T", mtext:"T+", leader:"↗",
+    table:"▦", textStyle:"T",
+    dimensionStyle:"↔", tableStyle:"▦",
+    multileaderStyle:"↗",
+
+    dimLinear:"↔", dimAligned:"⤢",
+    dimAngular:"∠", dimArcLength:"⌒",
+    dimRadius:"R", dimDiameter:"Ø",
+    dimOrdinate:"⊥", dimContinue:"↔+",
+    dimBaseline:"↔",
+
+    osnapEndpoint:"●", osnapMidpoint:"◆",
+    osnapCenter:"◎", osnapQuadrant:"◇",
+    osnapTangent:"⌁", osnapPerpendicular:"⊥",
+    osnapIntersection:"✕", osnapNode:"•",
+
+    zoom:"⌕", pan:"✥", namedViews:"▣",
+    planView:"⌂", view3d:"◇",
+    orbit3d:"⟳", orbitConstrained:"⟳",
+    orbitFree:"⟳",
+
+    wireframe:"▱", conceptual:"◩",
+    hidden:"◧", realistic:"▣", shaded:"◩",
+
+    ucsOrigin:"⊙", ucsFace:"▰",
+    ucsObject:"◇", ucsWorld:"⊕",
+
+    distance:"↔", radius:"R", angle:"∠",
+    area:"▱", volume:"◇", list:"≡",
+    idPoint:"⊙",
+
+    attachDwg:"▤", attachPdf:"▧",
+    attachImage:"▣", attachDwf:"▤",
+    referenceManager:"≡",
+
+    textUtilities:"T", layoutUtilities:"▦",
+    layerUtilities:"▤", blockUtilities:"▣",
+
+    blockCreate:"▣", blockInsert:"▣",
+    blockEdit:"✎", blockExplode:"✳",
+
+    box:"▣", extrude:"⬆", revolve:"⟳",
+    loft:"◇", sweep:"∿", polysolid:"▰",
+    presspull:"⬆",
+
+    solidCreation:"▣", surfaceCreation:"◇",
+    placeLight:"☼", materials:"◩",
+    sunSky:"☼", render:"▧",
+
+    export:"⇩", exportPdf:"▧", print:"▧"
+  };
+
+  // COMMAND REGISTRY
+  const commands = {};
+
+  toolbarData.forEach(group => {
+    group.tools.split(" ").forEach(item => {
+      const [label,id] = item.split("|");
+
+      if (!commands[id]) {
+        commands[id] = {
+          id,
+          label,
+          icon:iconMap[id] || "◇",
+          status:STATUS.PLANNED,
+          handler:null
+        };
       }
     });
   });
 
-  /* Show the first Academy lesson when available. */
+  // CONNECT A COMMAND TO AN ACTUAL FUNCTION
+  function register(id,handler,status=STATUS.READY) {
+    if (!commands[id] || typeof handler !== "function")
+      return false;
 
-  if (academyButtons.length > 0) {
-    const firstLesson = academyButtons[0].dataset.lesson;
+    commands[id].handler = handler;
+    commands[id].status = status;
+    return true;
+  }
 
-    if (firstLesson) {
-      openAcademyLesson(firstLesson);
+  // UPDATE STATUS
+  function setStatus(id,status) {
+    if (!commands[id] ||
+        !Object.values(STATUS).includes(status))
+      return false;
+
+    commands[id].status = status;
+    return true;
+  }
+
+  // EXECUTE COMMAND
+  function execute(id,context) {
+    const command = commands[id];
+
+    if (!command)
+      return {ok:false,message:"Unknown command"};
+
+    if (!command.handler)
+      return {
+        ok:false,
+        message:command.label +
+          " is " + command.status.toUpperCase() +
+          " — not connected yet."
+      };
+
+    try {
+      command.handler(context);
+
+      return {
+        ok:true,
+        message:command.label + " executed."
+      };
+
+    } catch(error) {
+      return {
+        ok:false,
+        message:error.message
+      };
     }
   }
 
-  /* =========================================================
-     FINAL STUDIO INITIALIZATION
-     ========================================================= */
+  // RIBBON UI
+  function mount(target,options={}) {
 
-  function initializeMONCAD() {
-    const architecturePanel = $("architectureStudio");
-    const fashionPanel = $("fashionStudio");
-    const academyPanel = $("academyStudio");
+    const host = typeof target === "string"
+      ? document.querySelector(target)
+      : target;
 
-    if (!architecturePanel) {
-      console.error("MONCAD: Architecture Studio was not found.");
-    }
+    if (!host) return false;
 
-    if (!fashionPanel) {
-      console.error("MONCAD: Fashion Studio was not found.");
-    }
+    host.innerHTML = "";
 
-    if (!academyPanel) {
-      console.error("MONCAD: Learning Academy was not found.");
-    }
+    host.classList.add("moncad-toolbar-host");
 
-    /* Set the initial workspace. */
+    const style = document.createElement("style");
 
-    if (
-      !document.querySelector(".studio-panel.active") &&
-      architecturePanel
-    ) {
-      architecturePanel.classList.add("active");
-    }
-
-    document.querySelectorAll(".studio-nav-btn").forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.studio === "architecture" &&
-        architecturePanel?.classList.contains("active")
-      );
-    });
-
-    /* Refresh the canvases after the page layout is ready. */
-
-    requestAnimationFrame(() => {
-      MONCAD.resizeArchitectureCanvas?.();
-      MONCAD.resizeFashionCanvas?.();
-      MONCAD.drawArchitecture?.();
-    });
-
-    /* Set the default Academy lesson visibility. */
-
-    academyLessons.forEach((id) => {
-      const panel = $(id);
-
-      if (panel && !panel.hidden) {
-        panel.hidden = true;
+    style.textContent = `
+      .moncad-toolbar-host {
+        background:#101a2b;
+        color:#f4f2ec;
+        border:1px solid #29384f;
+        border-radius:8px;
+        font-family:system-ui,sans-serif;
+        overflow:hidden;
       }
+
+      .mc-quick {
+        background:#0b1422;
+        padding:8px;
+        border-bottom:1px solid #29384f;
+        color:#d8b45a;
+        font-weight:bold;
+      }
+
+      .mc-tabs {
+        display:flex;
+        gap:3px;
+        overflow:auto;
+        background:#142238;
+        padding:4px;
+      }
+
+      .mc-tab {
+        background:transparent;
+        border:0;
+        color:#eee;
+        padding:9px 14px;
+        cursor:pointer;
+        border-radius:5px;
+        white-space:nowrap;
+      }
+
+      .mc-tab.active {
+        background:#d8b45a;
+        color:#111827;
+        font-weight:bold;
+      }
+
+      .mc-panel {
+        display:flex;
+        gap:8px;
+        padding:8px;
+        overflow:auto;
+        min-height:100px;
+      }
+
+      .mc-group {
+        flex:0 0 auto;
+        border-right:1px solid #33445d;
+        padding:0 8px;
+      }
+
+      .mc-group-title {
+        color:#d8b45a;
+        text-transform:uppercase;
+        font-size:10px;
+        letter-spacing:1px;
+        margin-bottom:6px;
+      }
+
+      .mc-group-items {
+        display:flex;
+        flex-wrap:wrap;
+        gap:5px;
+        max-width:330px;
+      }
+
+      .mc-tool {
+        min-width:60px;
+        min-height:55px;
+        padding:5px;
+        background:#1a2a40;
+        color:#fff;
+        border:1px solid transparent;
+        border-radius:5px;
+        cursor:pointer;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        gap:3px;
+      }
+
+      .mc-tool:hover {
+        border-color:#d8b45a;
+        background:#253a56;
+      }
+
+      .mc-icon {
+        font-size:19px;
+        color:#d8b45a;
+      }
+
+      .mc-label {
+        font-size:10px;
+        text-align:center;
+      }
+
+      .mc-status {
+        font-size:8px;
+        opacity:.7;
+        text-transform:uppercase;
+      }
+
+      .mc-message {
+        border-top:1px solid #29384f;
+        color:#d8b45a;
+        padding:6px 9px;
+        min-height:20px;
+      }
+
+      @media(max-width:700px) {
+        .mc-tool {
+          min-width:65px;
+          min-height:60px;
+        }
+        .mc-group-items {
+          max-width:230px;
+        }
+      }
+    `;
+
+    host.appendChild(style);
+
+    const quick = document.createElement("div");
+    quick.className = "mc-quick";
+    quick.textContent = "MONCAD  |  Imagine. Design. Build.";
+
+    const tabs = document.createElement("div");
+    tabs.className = "mc-tabs";
+
+    const panel = document.createElement("div");
+    panel.className = "mc-panel";
+
+    const message = document.createElement("div");
+    message.className = "mc-message";
+    message.textContent =
+      "Toolbar foundation — commands require integration.";
+
+    host.append(quick,tabs,panel,message);
+
+    const tabNames = [...new Set(toolbarData.map(g=>g.tab))];
+
+    function renderTab(tabName) {
+
+      tabs.querySelectorAll(".mc-tab").forEach(button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.tab === tabName
+        );
+      });
+
+      panel.innerHTML = "";
+
+      toolbarData
+        .filter(group => group.tab === tabName)
+        .forEach(group => {
+
+          const section = document.createElement("section");
+          section.className = "mc-group";
+
+          const heading = document.createElement("div");
+          heading.className = "mc-group-title";
+          heading.textContent = group.group;
+
+          const items = document.createElement("div");
+          items.className = "mc-group-items";
+
+          group.tools.split(" ").forEach(item => {
+
+            const [label,id] = item.split("|");
+            const command = commands[id];
+
+            const button = document.createElement("button");
+            button.className = "mc-tool";
+
+            button.title =
+              label + " — Status: " + command.status;
+
+            button.innerHTML = `
+              <span class="mc-icon">
+                ${command.icon}
+              </span>
+
+              <span class="mc-label">
+                ${label}
+              </span>
+
+              <span class="mc-status">
+                ${command.status}
+              </span>
+            `;
+
+            button.addEventListener("click",() => {
+
+              const result = execute(id,options.context);
+
+              message.textContent = result.message;
+
+              if (options.onCommand)
+                options.onCommand(id,result);
+            });
+
+            items.appendChild(button);
+          });
+
+          section.append(heading,items);
+          panel.appendChild(section);
+        });
+    }
+
+    tabNames.forEach((tab,index) => {
+
+      const button = document.createElement("button");
+      button.className = "mc-tab";
+      button.textContent = tab;
+      button.dataset.tab = tab;
+
+      if (index === 0)
+        button.classList.add("active");
+
+      button.addEventListener("click",() => renderTab(tab));
+
+      tabs.appendChild(button);
     });
 
-    if (academyButtons.length > 0) {
-      const firstLesson = academyButtons[0].dataset.lesson;
+    renderTab(tabNames[0]);
 
-      if (firstLesson) {
-        openAcademyLesson(firstLesson);
-      }
-    }
-
-    console.info("MONCAD editor initialization completed.");
+    return {host,renderTab};
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initializeMONCAD,
-      { once: true }
-    );
-  } else {
-    initializeMONCAD();
-  }
-
-  /* =========================================================
-     MONCAD APPLICATION INFORMATION
-     ========================================================= */
-
-  MONCAD.application = {
-    name: "MONCAD",
-    tagline: "IMAGINE. DESIGN. BUILD.",
-    version: "Preview 1.0",
-    studios: [
-      "Architecture Studio",
-      "Fashion Studio",
-      "Learning Academy"
-    ],
-    capabilities: {
-      architecture: [
-        "2D drawing tools",
-        "Grid and snap controls",
-        "Basic measurements",
-        "Conceptual 3D preview",
-        "Project JSON export and import"
-      ],
-      fashion: [
-        "Fashion drawing tools",
-        "Design colors",
-        "Undo and clear",
-        "Browser-based draft history",
-        "Design record export"
-      ],
-      academy: [
-        "Architecture tutorials",
-        "Measurement guidance",
-        "Fashion tutorials",
-        "Project guidance"
-      ]
-    }
+  // PUBLIC MONCAD API
+  window.MONCADToolbar = {
+    version:"1.0.0",
+    STATUS,
+    toolbarData,
+    commands,
+    register,
+    setStatus,
+    execute,
+    mount
   };
 
-  window.MONCAD = MONCAD;
-
 })();
-</script>
-</body>
-</html>
-
