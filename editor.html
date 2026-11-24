@@ -2192,7 +2192,118 @@ canvas {
  renderTabs();renderPanel();
 })();
 </script>
+<script>
+/* MONCAD MASTER TOOLBAR FOUNDATION V1
+   Additive interface only. Existing editor code is not replaced.
+   Available actions connect only to controls already present in editor.html.
+*/
+(function () {
+  "use strict";
+  if (document.getElementById("moncad-master-toolbar")) return;
 
+  const categories = [["Standard & Quick Access", [["Save Project", "click", "saveArchitecture"], ["Load Project", "click", "loadArchitecture"], ["Export Project", "click", "exportArchitecture"]]], ["Draw", [["Wall", "tool", "wall"], ["Room", "tool", "room"], ["Door", "tool", "door"], ["Window", "tool", "window"]]], ["Modify", [["Select", "tool", "select"], ["Move", "tool", "move"], ["Undo", "click", "undoArchitecture"], ["Redo", "click", "redoArchitecture"], ["Delete", "click", "deleteArchitecture"]]], ["Layers", []], ["Properties", [["Element Width", "focus", "elementWidth"], ["Element Length", "focus", "elementLength"], ["Wall Thickness", "focus", "wallThickness"]]], ["Styles", []], ["Dimensions", [["Measurement Unit", "focus", "measurementUnit"]]], ["Object Snap", [["Snap to Grid", "click", "snapToGrid"]]], ["Navigation & View", [["Zoom In", "click", "zoomIn"], ["Zoom Out", "click", "zoomOut"], ["Fit Drawing", "click", "fitDrawing"]]], ["Orbit", []], ["Inquiry", []], ["References", []], ["Express Tools", []], ["3D Modeling", [["3D Preview", "click", "view3D"]]], ["Modeling", []], ["Visual Styles", []], ["Lights & Render", []], ["UCS", []], ["Annotation & Text", []], ["Blocks & Components", []], ["Selection & Groups", [["Clear Drawing", "click", "clearArchitecture"]]], ["Clipboard", []], ["Layout & Sheets", []], ["Output & Publishing", [["Export Project Record", "click", "exportArchitecture"]]], ["Constraints & Parameters", []], ["Project Management", [["Save Project", "click", "saveArchitecture"], ["Load Project", "click", "loadArchitecture"]]], ["Collaboration", []]];
+  const host = document.querySelector("#architectureStudio .main .quick-ribbon");
+  if (!host) {
+    console.warn("MONCAD toolbar: existing Architecture quick ribbon was not found.");
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.textContent = `
+    #moncad-master-toolbar{margin:0 0 12px;padding:10px;background:#101e29;border:1px solid #b99a5b;border-radius:9px;color:#f5f1e7;font:13px Arial,sans-serif}
+    #moncad-master-toolbar .mct-head{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:9px}
+    #moncad-master-toolbar .mct-brand{font-weight:700;letter-spacing:.08em;color:#d9bd7a}
+    #moncad-master-toolbar .mct-search{min-width:180px;max-width:280px;flex:1;padding:8px 10px;border:1px solid #526574;border-radius:6px;background:#1c2d39;color:#fff}
+    #moncad-master-toolbar .mct-tabs{display:flex;gap:5px;overflow-x:auto;padding:2px 0 8px}
+    #moncad-master-toolbar .mct-tab{white-space:nowrap;border:1px solid #435665;border-radius:6px;padding:7px 9px;background:#20323f;color:#f5f1e7;cursor:pointer}
+    #moncad-master-toolbar .mct-tab[aria-selected="true"]{background:#b99a5b;color:#14212a;border-color:#d8bd80;font-weight:700}
+    #moncad-master-toolbar .mct-panel{display:flex;gap:7px;flex-wrap:wrap;min-height:38px}
+    #moncad-master-toolbar .mct-action{padding:8px 10px;border:1px solid #526574;border-radius:6px;background:#263b49;color:#fff;cursor:pointer}
+    #moncad-master-toolbar .mct-action:hover{border-color:#d9bd7a}
+    #moncad-master-toolbar .mct-action:disabled{opacity:.55;cursor:not-allowed;border-style:dashed}
+    #moncad-master-toolbar .mct-note{color:#b8c4cb;font-size:11px;align-self:center}
+    @media(max-width:600px){#moncad-master-toolbar{padding:8px}#moncad-master-toolbar .mct-search{max-width:none;width:100%}}
+  `;
+  document.head.appendChild(style);
+
+  const root = document.createElement("section");
+  root.id = "moncad-master-toolbar";
+  root.setAttribute("aria-label", "MONCAD Master Toolbar");
+  root.innerHTML = `
+    <div class="mct-head">
+      <span class="mct-brand">MONCAD · MASTER TOOLBAR</span>
+      <input class="mct-search" type="search" placeholder="Search toolbar tools…" aria-label="Search toolbar tools">
+    </div>
+    <div class="mct-tabs" role="tablist" aria-label="Toolbar categories"></div>
+    <div class="mct-panel" aria-live="polite"></div>
+  `;
+  host.parentNode.insertBefore(root, host);
+
+  const tabs = root.querySelector(".mct-tabs");
+  const panel = root.querySelector(".mct-panel");
+  const search = root.querySelector(".mct-search");
+  let activeIndex = 0;
+
+  function activate(index) {
+    activeIndex = index;
+    [...tabs.children].forEach((tab, i) => tab.setAttribute("aria-selected", String(i === index)));
+    renderPanel();
+  }
+
+  function runAction(item) {
+    const [, type, target] = item;
+    if (type === "click") {
+      const control = document.getElementById(target);
+      if (control) control.click();
+    } else if (type === "focus") {
+      const control = document.getElementById(target);
+      if (control) control.focus();
+    } else if (type === "tool") {
+      const control = document.querySelector('#architectureStudio [data-tool="' + CSS.escape(target) + '"]');
+      if (control) control.click();
+    }
+  }
+
+  function renderPanel() {
+    panel.replaceChildren();
+    const term = search.value.trim().toLowerCase();
+    const category = categories[activeIndex];
+    const items = category[1].filter(item => !term || item[0].toLowerCase().includes(term) || category[0].toLowerCase().includes(term));
+    if (!items.length) {
+      const note = document.createElement("span");
+      note.className = "mct-note";
+      note.textContent = term ? "No matching available tool in this category." : "Tools in this category are planned for future development.";
+      panel.appendChild(note);
+    }
+    items.forEach(item => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "mct-action";
+      button.textContent = item[0];
+      button.addEventListener("click", () => runAction(item));
+      panel.appendChild(button);
+    });
+    if (!category[1].length && !term) {
+      const note = document.createElement("span");
+      note.className = "mct-note";
+      note.textContent = "Planned — not yet implemented. This toolbar does not claim these tools are active.";
+      panel.appendChild(note);
+    }
+  }
+
+  categories.forEach((category, index) => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = "mct-tab";
+    tab.setAttribute("role", "tab");
+    tab.textContent = category[0];
+    tab.addEventListener("click", () => activate(index));
+    tabs.appendChild(tab);
+  });
+  search.addEventListener("input", renderPanel);
+  activate(0);
+})();
+</script>
 </body>
 </html>
 
