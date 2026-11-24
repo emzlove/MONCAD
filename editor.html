@@ -2114,6 +2114,85 @@ canvas {
 
 })();
 </script>
+  <!-- =========================================================
+ MONCAD MASTER TOOLBAR — V1 FOUNDATION
+ Paste this entire block immediately BEFORE </body> in editor.html.
+ Existing editor features are connected where available. Other tools
+ are clearly marked Planned and are not presented as working features.
+========================================================= -->
+<style>
+#moncadMasterToolbar{margin:12px 20px 16px;padding:13px;background:#15232d;border:1px solid #405462;border-radius:9px;color:#f5f7f8}
+#moncadMasterToolbar *{box-sizing:border-box}
+#moncadMasterToolbar .mt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+#moncadMasterToolbar .mt-title{color:#d6b56d;font-weight:700;letter-spacing:1.4px;font-size:13px}
+#moncadMasterToolbar .mt-sub{font-size:11px;color:#aebdc6}
+#moncadMasterToolbar .mt-search{width:min(100%,300px);padding:9px 11px;background:#0e1820;border:1px solid #405462;border-radius:6px;color:#fff}
+#moncadMasterToolbar .mt-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:thin}
+#moncadMasterToolbar .mt-tab{flex:0 0 auto;padding:8px 10px;border:1px solid #405462;border-radius:6px;background:#263946;color:#eaf0f3;font-size:11px;white-space:nowrap}
+#moncadMasterToolbar .mt-tab[aria-selected=true]{background:#d6b56d;color:#101820;border-color:#d6b56d;font-weight:700}
+#moncadMasterToolbar .mt-panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:7px;padding-top:8px;border-top:1px solid #405462}
+#moncadMasterToolbar .mt-tool{min-height:48px;text-align:left;padding:8px 10px;background:#20323e;border:1px solid #405462;border-radius:6px;color:#f5f7f8}
+#moncadMasterToolbar .mt-tool strong{display:block;font-size:12px}
+#moncadMasterToolbar .mt-tool small{display:block;margin-top:4px;font-size:10px;color:#b7c4cb}
+#moncadMasterToolbar .mt-tool:not(:disabled):hover{border-color:#d6b56d;color:#d6b56d}
+#moncadMasterToolbar .mt-tool:disabled{opacity:.55;cursor:not-allowed}
+#moncadMasterToolbar .mt-empty{grid-column:1/-1;color:#bdc9cf;font-size:12px;padding:12px}
+@media(max-width:760px){#moncadMasterToolbar{margin:10px 12px}#moncadMasterToolbar .mt-panel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<div id="moncadMasterToolbar" aria-label="MONCAD master toolbar">
+ <div class="mt-head">
+  <div><div class="mt-title">MONCAD MASTER TOOLBAR · 27 CATEGORIES</div><div class="mt-sub">Available tools connect to the current editor. Planned tools are shown but not yet enabled.</div></div>
+  <input class="mt-search" type="search" placeholder="Search all 27 categories…" aria-label="Search MONCAD tools">
+ </div>
+ <div class="mt-tabs" role="tablist" aria-label="Toolbar categories"></div>
+ <div class="mt-panel" role="tabpanel" aria-live="polite"></div>
+</div>
+<script>
+(() => {
+ "use strict";
+ const root=document.getElementById('moncadMasterToolbar');
+ if(!root || root.dataset.initialized==='true') return;
+ root.dataset.initialized='true';
+ const categories=[
+  {name:'1. Standard & Quick Access',tools:[['Select','Available','[data-tool="select"]'],['Undo','Available','#undoArchitecture'],['Redo','Available','#redoArchitecture'],['Save project','Available','#saveArchitecture'],['Load project','Available','#loadArchitecture'],['Export project record','Available','#exportArchitecture']]},
+  {name:'2. Draw',tools:[['Wall','Available','[data-tool="wall"]'],['Room','Available','[data-tool="room"]'],['Door','Available','[data-tool="door"]'],['Window','Available','[data-tool="window"]'],['Line','Available','[data-tool="line"]'],['Rectangle','Available','[data-tool="rectangle"]'],['Curve','Available','[data-tool="curve"]']]},
+  {name:'3. Modify',tools:[['Move','Available','[data-tool="move"]'],['Erase','Available','[data-tool="erase"]'],['Delete selected','Available','#deleteArchitecture'],['Offset','Planned'],['Trim / Extend','Planned'],['Mirror / Rotate','Planned']]},
+  {name:'4. Layers',tools:[['Layer manager','Planned'],['Create / rename layer','Planned'],['Show / hide layer','Planned'],['Lock layer','Planned']]},
+  {name:'5. Properties',tools:[['Width / Length','Available','#elementWidth'],['Wall thickness','Available','#wallThickness'],['Measurement units','Available','#measurementUnit'],['Object properties panel','Planned']]},
+  {name:'6. Styles',tools:[['Line styles','Planned'],['Object colours','Planned'],['Material library','Planned']]},
+  {name:'7. Dimensions',tools:[['Dimension tool','Planned'],['Linear / aligned dimensions','Planned'],['Area measurement','Planned']]},
+  {name:'8. Object Snap',tools:[['Snap to grid','Available','#snapToGrid'],['Endpoint / midpoint snap','Planned'],['Intersection snap','Planned']]},
+  {name:'9. Navigation & View',tools:[['Zoom in','Available','#zoomIn'],['Zoom out','Available','#zoomOut'],['Fit drawing','Available','#fitDrawing'],['2D floor plan','Available','#view2D'],['3D preview','Available','#view3D']]},
+  {name:'10. Orbit',tools:[['3D orbit controls','Planned'],['Pan / zoom 3D camera','Planned']]},
+  {name:'11. Inquiry',tools:[['Measure distance','Planned'],['Measure area / perimeter','Planned'],['Object information','Planned']]},
+  {name:'12. References',tools:[['Attach image / reference','Planned'],['Reference manager','Planned']]},
+  {name:'13. Express Tools',tools:[['Quick select','Planned'],['Align objects','Planned'],['Array tools','Planned']]},
+  {name:'14. 3D Modeling',tools:[['3D solid tools','Planned'],['Extrude','Planned'],['Push / Pull','Planned'],['3D primitives','Planned']]},
+  {name:'15. Modeling',tools:[['Walls / openings workflow','Planned'],['Stairs / roof / furniture','Planned'],['Architectural components','Planned']]},
+  {name:'16. Visual Styles',tools:[['Wireframe','Planned'],['Shaded / realistic','Planned'],['Material preview','Planned']]},
+  {name:'17. Lights & Render',tools:[['Add lights','Planned'],['Render settings','Planned'],['Render image','Planned']]},
+  {name:'18. UCS',tools:[['Set user coordinate system','Planned'],['World / object coordinates','Planned']]},
+  {name:'19. Annotation & Text',tools:[['Text / labels','Planned'],['Leader notes','Planned'],['Room tags','Planned']]},
+  {name:'20. Blocks & Components',tools:[['Create reusable block','Planned'],['Insert component','Planned'],['Component library','Planned']]},
+  {name:'21. Selection & Groups',tools:[['Group selection','Planned'],['Select similar','Planned'],['Selection filters','Planned']]},
+  {name:'22. Clipboard',tools:[['Copy','Planned'],['Paste','Planned'],['Duplicate','Planned']]},
+  {name:'23. Layout & Sheets',tools:[['Create sheet','Planned'],['Viewports','Planned'],['Title block','Planned']]},
+  {name:'24. Output & Publishing',tools:[['Export PDF','Planned'],['Print layout','Planned'],['Publish drawing set','Planned']]},
+  {name:'25. Constraints & Parameters',tools:[['Geometric constraints','Planned'],['Dimensional parameters','Planned'],['Design rules','Planned']]},
+  {name:'26. Project Management',tools:[['Project details','Planned'],['Version history','Planned'],['Project assets','Planned']]},
+  {name:'27. Collaboration',tools:[['Invite collaborators','Planned'],['Comments / review','Planned'],['Shared cloud workspace','Planned']]}
+ ];
+ const tabs=root.querySelector('.mt-tabs'),panel=root.querySelector('.mt-panel'),search=root.querySelector('.mt-search');
+ let active=0,query='';
+ function activate(index){active=index;renderTabs();renderPanel();}
+ function renderTabs(){tabs.replaceChildren();categories.forEach((cat,i)=>{const b=document.createElement('button');b.type='button';b.className='mt-tab';b.textContent=cat.name;b.setAttribute('role','tab');b.setAttribute('aria-selected',String(i===active));b.addEventListener('click',()=>activate(i));tabs.appendChild(b);});}
+ function trigger(selector){const target=document.querySelector(selector);if(!target)return false;if(target.matches('input[type=checkbox]'))target.click();else target.click();return true;}
+ function renderPanel(){panel.replaceChildren();const items=categories[active].tools.filter(t=>(categories[active].name+' '+t[0]).toLowerCase().includes(query));if(!items.length){const e=document.createElement('div');e.className='mt-empty';e.textContent='No matching tools in this category.';panel.appendChild(e);return;}items.forEach(([name,status,selector])=>{const b=document.createElement('button');b.type='button';b.className='mt-tool';const title=document.createElement('strong');title.textContent=name;const note=document.createElement('small');note.textContent=status==='Available'?'Connected to current editor':'Planned for a future development phase';b.append(title,note);if(status!=='Available'){b.disabled=true;b.title='This feature is not implemented yet.';}else{b.addEventListener('click',()=>{if(!trigger(selector)){note.textContent='Existing control not found on this page';return;} });}panel.appendChild(b);});}
+ search.addEventListener('input',()=>{query=search.value.trim().toLowerCase();if(query){const found=categories.findIndex(c=>(c.name+' '+c.tools.map(t=>t[0]).join(' ')).toLowerCase().includes(query));if(found>=0)active=found;renderTabs();renderPanel();}else{renderTabs();renderPanel();}});
+ renderTabs();renderPanel();
+})();
+</script>
+
 </body>
 </html>
 
